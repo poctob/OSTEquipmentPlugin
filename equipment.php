@@ -107,5 +107,15 @@ class EquipmentPlugin extends Plugin {
        return $installer->install();
         
     }
+    
+    /**
+     * Uninstall hook.
+     * @param type $errors
+     * @return boolean
+     */
+    function pre_uninstall(&$errors) {
+       $installer = new EquipmentInstaller();
+       return $installer->remove();
+    }
   
 }

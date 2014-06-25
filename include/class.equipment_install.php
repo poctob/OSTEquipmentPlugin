@@ -46,5 +46,32 @@ class EquipmentInstaller extends SetupWizard {
 
       return true;
     }
+    
+     function remove() {
+            
+         $schemaFile =EQUIPMENT_PLUGIN_ROOT.'install/sql/remove_equipment.sql'; //DB dump.	
+        
+        //Last minute checks.
+        if(!file_exists($schemaFile))
+	{
+	    echo '<br />';
+	    var_dump($schemaFile);
+	    echo '<br />';    
+            echo 'File Access Error - please make sure your download is the latest (#1)';  
+            echo '<br />'; 
+	    $this->error='File Access Error!';   
+            return false;
+	    
+	}	
+        elseif(!$this->load_sql_file($schemaFile,TABLE_PREFIX, true, true))
+	{
+            echo '<br />';
+            echo 'Error parsing SQL schema! Get help from developers (#4)';          
+	    echo '<br />';       
+            return false;
+	}
+
+      return true;
+    }
 }
 ?>
