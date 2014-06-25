@@ -47,6 +47,8 @@ class EquipmentInstaller extends SetupWizard {
       return true;
     }
     
+    
+    
      function remove() {
             
          $schemaFile =EQUIPMENT_PLUGIN_ROOT.'install/sql/remove_equipment.sql'; //DB dump.	
@@ -72,6 +74,39 @@ class EquipmentInstaller extends SetupWizard {
 	}
 
       return true;
+    }
+    
+     /**
+      * Overriding split, we need semicolons in procedures and triggers, so 
+      * the dollar sign is used instead.
+      * @param type $schema
+      * @param type $prefix
+      * @param type $abort
+      * @param type $debug
+      * @return boolean
+      */
+    function load_sql($schema, $prefix, $abort=true, $debug=false) {
+
+        # Strip comments and remarks
+        $schema=preg_replace('%^\s*(#|--).*$%m', '', $schema);
+        # Replace table prefix
+        $schema = str_replace('%TABLE_PREFIX%', $prefix, $schema);
+        # Split by dollar signs - and cleanup
+        if(!($statements = array_filter(array_map('trim',
+                // Thanks, http://stackoverflow.com/a/3147901
+                preg_split("/\\$(?=(?:[^']*'[^']*')*[^']*$)/", $schema)))))
+            return $this->abort('Error parsing SQL schema', $debug);
+
+
+        db_query('SET SESSION SQL_MODE =""', false);
+        foreach($statements as $k=>$sql) {
+            if(db_query($sql, false)) continue;
+            $error = "[$sql] ".db_error();
+            if($abort)
+                    return $this->abort($error, $debug);
+        }
+
+        return true;
     }
 }
 ?>

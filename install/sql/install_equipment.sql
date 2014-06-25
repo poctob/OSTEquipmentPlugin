@@ -1,4 +1,5 @@
-CREATE TABLE `%TABLE_PREFIX%equipment` (
+
+CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment` (
   `equipment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `category_id` int(10) unsigned NOT NULL DEFAULT '0',
   `status_id` int(10) unsigned NOT NULL DEFAULT '0',
@@ -12,9 +13,9 @@ CREATE TABLE `%TABLE_PREFIX%equipment` (
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`equipment_id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8$
 
-CREATE TABLE `%TABLE_PREFIX%equipment_category` (
+CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_category` (
   `category_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `ispublic` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `name` varchar(125) DEFAULT NULL,
@@ -24,9 +25,9 @@ CREATE TABLE `%TABLE_PREFIX%equipment_category` (
   `updated` date NOT NULL,
   PRIMARY KEY (`category_id`),
   KEY `ispublic` (`ispublic`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8$
 
-CREATE TABLE `%TABLE_PREFIX%equipment_status` (
+CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_status` (
   `status_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(125) DEFAULT NULL,
   `description` text NOT NULL,
@@ -34,25 +35,26 @@ CREATE TABLE `%TABLE_PREFIX%equipment_status` (
   `color` varchar(45) DEFAULT NULL,
   `baseline` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`status_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8$
 
-CREATE TABLE `%TABLE_PREFIX%equipment_ticket` (
+CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket` (
   `equipment_id` int(11) NOT NULL,
   `ticket_id` int(11) NOT NULL,
   `created` date NOT NULL,
   PRIMARY KEY (`equipment_id`,`ticket_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8$
 
 INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
-VALUES ('equipment_status',NOW(),'internal equipment plugin list, do not modify',NOW()); 
+VALUES ('equipment_status',NOW(),'internal equipment plugin list, do not modify',NOW())$ 
 
 INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
-VALUES ('equipment',NOW(),'internal equipment plugin list, do not modify',NOW()); 
+VALUES ('equipment',NOW(),'internal equipment plugin list, do not modify',NOW())$ 
 
 INSERT INTO `%TABLE_PREFIX%form` (`type`, `deletable`,`title`, `notes`, `created`, `updated`)
-VALUES ('G',0,'Equipment','Equipment internal form',NOW(),NOW()); 
+VALUES ('G',0,'Equipment','Equipment internal form',NOW(),NOW())$ 
 
-DELIMITER $$
+DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%CreateEquipmentFormFields`$
+
 CREATE PROCEDURE `%TABLE_PREFIX%CreateEquipmentFormFields`()
 BEGIN
 	SET @form_id = (SELECT id FROM `%TABLE_PREFIX%form` WHERE title='Equipment');
@@ -81,7 +83,7 @@ BEGIN
 			NOW(),
 			NOW());	
 
-		INSERT INTO `%TABLE_PREFIX%form_fieldform_field`
+		INSERT INTO `%TABLE_PREFIX%form_field`
 			(`form_id`,
 			`type`,
 			`label`,
@@ -102,26 +104,22 @@ BEGIN
 			NOW(),
 			NOW());					
 	END IF;
-END$$
-DELIMITER ;
+END$
 
-call `%TABLE_PREFIX%CreateEquipmentFormFields`;
+call `%TABLE_PREFIX%CreateEquipmentFormFields`$
 
-DELIMITER $$
 
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_ADEL`$$
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_ADEL`$
 
 CREATE TRIGGER `%TABLE_PREFIX%equipment_ADEL` AFTER DELETE ON `%TABLE_PREFIX%equipment` FOR EACH ROW
 BEGIN
 	SET @pk=OLD.equipment_id;
 	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment');
 	DELETE FROM `%TABLE_PREFIX%list_items` WHERE list_id = @list_pk AND properties=CONCAT('',@pk); 
-END$$
-DELIMITER ;
+END$
 
-DELIMITER $$
 
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_AINS`$$
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_AINS`$
 
 CREATE TRIGGER `%TABLE_PREFIX%equipment_AINS` AFTER INSERT ON `%TABLE_PREFIX%equipment` FOR EACH ROW
 BEGIN
@@ -129,13 +127,10 @@ BEGIN
 	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment');
 	INSERT INTO `%TABLE_PREFIX%list_items` (list_id, `value`, `properties`)
 	VALUES (@list_pk, NEW.name, CONCAT('',@pk)); 
-END$$
-DELIMITER ;
+END$
 
 
-DELIMITER $$
-
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_AUPD`$$
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_AUPD`$
 
 CREATE TRIGGER `%TABLE_PREFIX%equipment_AUPD` AFTER UPDATE ON `%TABLE_PREFIX%equipment` FOR EACH ROW
 BEGIN
@@ -146,23 +141,20 @@ BEGIN
 		DELETE FROM `%TABLE_PREFIX%list_items` WHERE list_id = @list_pk AND properties=CONCAT('',@pk);
 	ELSE
 		SET @list_item_pkid = (SELECT id 
-							   FROM `%TABLE_PREFIX%items `
+							   FROM `%TABLE_PREFIX%list_items`
 							   WHERE list_id = @list_pk AND properties=CONCAT('',@pk));
 
 		IF (@list_item_pkid IS NOT NULL) AND (@list_item_pkid>0) THEN
-			UPDATE `%TABLE_PREFIX%items` SET `value`= NEW.name 
+			UPDATE `%TABLE_PREFIX%list_items` SET `value`= NEW.name 
 			WHERE `properties`= CONCAT('',@pk) AND list_id=@list_pk;
 		ELSE
-			INSERT INTO `%TABLE_PREFIX%items` (list_id, `value`, `properties`)
+			INSERT INTO `%TABLE_PREFIX%list_items` (list_id, `value`, `properties`)
 			VALUES (@list_pk, NEW.name, CONCAT('',@pk));			
 		END IF;
 	END IF; 
-END$$
-DELIMITER ;
+END$
 
-DELIMITER $$
-
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_AINS`$$
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_AINS`$
 
 CREATE TRIGGER `%TABLE_PREFIX%equipment_status_AINS` AFTER INSERT ON `%TABLE_PREFIX%equipment_status` FOR EACH ROW
 BEGIN
@@ -170,33 +162,27 @@ BEGIN
 	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment_status');
 	INSERT INTO `%TABLE_PREFIX%list_items` (list_id, `value`, `properties`) 
 	VALUES (@list_pk, NEW.name, CONCAT('',@pk));
-END $$
-DELIMITER ;
+END$
 
-DELIMITER $$
-
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_AUPD`$$
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_AUPD`$
 
 CREATE TRIGGER `%TABLE_PREFIX%equipment_status_AUPD` AFTER UPDATE ON `%TABLE_PREFIX%equipment_status` FOR EACH ROW
 BEGIN
 	SET @pk=NEW.status_id;
 	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment_status'); 
 	UPDATE `%TABLE_PREFIX%list_items` SET `value`= NEW.name WHERE `properties`= CONCAT('',@pk) AND list_id=@list_pk;
-END $$
-DELIMITER ;
+END$
 
-DELIMITER $$
-
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_ADEL`$$
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_ADEL`$
 
 CREATE TRIGGER `%TABLE_PREFIX%equipment_status_ADEL` AFTER DELETE ON `%TABLE_PREFIX%equipment_status` FOR EACH ROW
 BEGIN
 	SET @pk=OLD.status_id; 
 	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment_status');
 	DELETE FROM `%TABLE_PREFIX%list_items` WHERE list_id = @list_pk AND properties=CONCAT('',@pk);
-END $$
-DELIMITER ;
+END$
 
+DROP VIEW IF EXISTS `%TABLE_PREFIX%EquipmentFormView`$
 
 CREATE VIEW `%TABLE_PREFIX%EquipmentFormView` AS 
 select `%TABLE_PREFIX%form`.`title` AS `title`,
@@ -220,16 +206,15 @@ left join `%TABLE_PREFIX%equipment_status`
 on((`%TABLE_PREFIX%form_entry_values`.`value` = `%TABLE_PREFIX%equipment_status`.`name`))) 
 where ((`%TABLE_PREFIX%form`.`title` = 'Equipment') and 
 (`%TABLE_PREFIX%form`.`id` = `%TABLE_PREFIX%form_entry`.`form_id`) and 
-(`%TABLE_PREFIX%form_entry`.`object_type` = 'T'));
+(`%TABLE_PREFIX%form_entry`.`object_type` = 'T'))$
 
-DELIMITER $$
 
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%ticket_event_AINS`$$
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%ticket_event_AINS`$
 
 CREATE TRIGGER `%TABLE_PREFIX%ticket_event_AINS` AFTER INSERT ON `%TABLE_PREFIX%ticket_event` FOR EACH ROW
 BEGIN
 	IF NEW.state='closed' THEN
-		SET @equipment_id = (SELECT equipment_id FROM `%TABLE_PREFIX%equipment_ticket `
+		SET @equipment_id = (SELECT equipment_id FROM `%TABLE_PREFIX%equipment_ticket`
 							WHERE ticket_id=NEW.ticket_id LIMIT 1);
 		IF ((@equipment_id IS NOT NULL) AND (@equipment_id>0)) THEN
 			SET @status_id = (SELECT status_id FROM `%TABLE_PREFIX%equipment_status`
@@ -259,5 +244,4 @@ BEGIN
 		END IF;
 	
 	END IF;
-END$$
-DELIMITER ;
+END$
