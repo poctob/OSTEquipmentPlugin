@@ -1,0 +1,10 @@
+#nav li a.equipment {
+  background-image: url('../images/icons/equipment.png');
+}
+
+#nav li a.equipment_status {
+  background-image: url('../images/icons/green_dot.png');
+}
+
+a.equipment_status  { background-image:url(../images/icons/green_dot.gif) }
+a.equipment  { background-image:url(../images/icons/equipment.gif) }
