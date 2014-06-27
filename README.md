@@ -34,6 +34,6 @@ from here https://github.com/poctob/OSTEquipmentPlugin/releases
  category and status before you can add equipment item.
 
 For more information visit Wiki page:
-https://github.com/poctob/OSTEqupmentPlugin/wiki
+https://github.com/poctob/OSTEquipmentPlugin/wiki
 
 email: alexp@xpresstek.net for problems
