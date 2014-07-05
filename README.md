@@ -6,7 +6,7 @@ from here https://github.com/poctob/OSTEquipmentPlugin/releases
 1. Installation - Crash course
 
  a. Unzip the archive into the following directory:
-    [OSTicket root]/include/plugins
+    [OSTicket root]/include/plugins rename the plugin directory to [OSTicket root]/include/plugins/equipment
 
  b. Merge everything from  [Plugin Root]/scp directory into [OSTicket root]/scp directory.
  
