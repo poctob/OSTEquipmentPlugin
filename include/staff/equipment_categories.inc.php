@@ -13,6 +13,8 @@
 **********************************************************************/
 if(!defined('OSTSCPINC') || !$thisstaff) die('Access Denied');
 
+require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment_category.php');
+
 $qstr='';
 $sql='SELECT cat.category_id, cat.name, cat.ispublic, cat.updated, count(equipment.equipment_id) as equipments '.
      ' FROM '.EQUIPMENT_CATEGORY_TABLE.' cat '.
@@ -68,15 +70,18 @@ else
     <thead>
         <tr>
             <th width="7">&nbsp;</th>
-            <th width="500"><a <?php echo $name_sort; ?> href="equipment_categories.php?<?php echo $qstr; ?>&sort=name">Name</a></th>
-            <th width="150"><a  <?php echo $type_sort; ?> href="equipment_categories.php?<?php echo $qstr; ?>&sort=type">Type</a></th>
-            <th width="80"><a  <?php echo $equipments_sort; ?> href="equipment_categories.php?<?php echo $qstr; ?>&sort=equipments">Equipment</a></th>
+            <th width="200"><a <?php echo $name_sort; ?> href="equipment_categories.php?<?php echo $qstr; ?>&sort=name">Name</a></th>
+            <th width="100"><a  <?php echo $type_sort; ?> href="equipment_categories.php?<?php echo $qstr; ?>&sort=type">Type</a></th>
+            <th width="100"><a  <?php echo $equipments_sort; ?> href="equipment_categories.php?<?php echo $qstr; ?>&sort=equipments">Equipment</a></th>
+            <th width="150"><a  <?php echo $open_tickets_sort; ?> href="equipment_categories.php?<?php echo $qstr; ?>&sort=equipments">Open Tickets</a></th>
+            <th width="150"><a  <?php echo $closed_tickets_sort; ?> href="equipment_categories.php?<?php echo $qstr; ?>&sort=equipments">Closed Tickets</a></th>
             <th width="150" nowrap><a  <?php echo $updated_sort; ?>href="equipment_categories.php?<?php echo $qstr; ?>&sort=updated">Last Updated</a></th>
         </tr>
     </thead>
     <tbody>
     <?php
         $total=0;
+       
         $ids=($errors && is_array($_POST['ids']))?$_POST['ids']:null;
         if($res && db_num_rows($res)):
             while ($row = db_fetch_array($res)) {
@@ -85,6 +90,12 @@ else
                     $sel=true;
                 
                 $equipments=0;
+                $open_tickets = Equipment_Category::countOpenTickets($row['category_id']);
+                $closed_tickets = Equipment_Category::countClosedTickets($row['category_id']);
+                
+                $open_tickets_link = sprintf('<a href="equipment_categories.php?id=%d&tickets=%s">%d</a>',$row['category_id'],'open',$open_tickets);
+                $closed_tickets_link = sprintf('<a href="equipment_categories.php?id=%d&tickets=%s">%d</a>',$row['category_id'],'closed',$closed_tickets);
+                
                 if($row['equipments'])
                     $equipments=sprintf('<a href="equipment.php?cid=%d">%d</a>',$row['category_id'],$row['equipments']);
                 ?>
@@ -96,6 +107,8 @@ else
                 <td><a href="equipment_categories.php?id=<?php echo $row['category_id']; ?>"><?php echo Format::truncate($row['name'],200); ?></a>&nbsp;</td>
                 <td><?php echo $row['ispublic']?'<b>Public</b>':'Internal'; ?></td>
                 <td style="text-align:right;padding-right:25px;"><?php echo $equipments; ?></td>
+                <td style="text-align:right;padding-right:25px;"><?php echo $open_tickets_link; ?></td>
+                <td style="text-align:right;padding-right:25px;"><?php echo $closed_tickets_link; ?></td>
                 <td>&nbsp;<?php echo Format::db_datetime($row['updated']); ?></td>
             </tr>
             <?php
@@ -103,7 +116,7 @@ else
         endif; ?>
     <tfoot>
      <tr>
-        <td colspan="5">
+        <td colspan="7">
             <?php if($res && $num){ ?>
             Select:&nbsp;
             <a id="selectAll" href="#ckb">All</a>&nbsp;&nbsp;

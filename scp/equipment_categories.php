@@ -21,8 +21,11 @@ if(!$thisstaff) {
 }
 
 $category=null;
+$tickets_status=null;
 if($_REQUEST['id'] && !($category=Equipment_Category::lookup($_REQUEST['id'])))
     $errors['err']='Unknown or invalid category ID.';
+
+$tickets_status=$_REQUEST['tickets'];
 
 if($_POST){
     switch(strtolower($_POST['do'])) {
@@ -101,10 +104,17 @@ if($_POST){
 }
 
 $page='equipment_categories.inc.php';
-if($category || ($_REQUEST['a'] && !strcasecmp($_REQUEST['a'],'add')))
+if(isset($category) && isset($tickets_status))
+{
+    $page='equipment_category_tickets.inc.php';
+}
+else if($category || ($_REQUEST['a'] && !strcasecmp($_REQUEST['a'],'add')))
+{
     $page='equipment_category.inc.php';
+}
+ 
 $nav->setTabActive('equipment');
 require(STAFFINC_DIR.'header.inc.php');
 require(EQUIPMENT_STAFFINC_DIR.$page);
-include(STAFFINC_DIR.'footer.inc.php');
+require(STAFFINC_DIR.'footer.inc.php');
 ?>

@@ -1,36 +1,38 @@
 <?php
-/*********************************************************************
-    class.equipment_category.php
 
-    Backend support for equipment categories.
+/* * *******************************************************************
+  class.equipment_category.php
 
-    Copyright (c)  2013 XpressTek
-    http://www.xpresstek.net
+  Backend support for equipment categories.
 
-    Released under the GNU General Public License WITHOUT ANY WARRANTY.
-    See LICENSE.TXT for details.
+  Copyright (c)  2013 XpressTek
+  http://www.xpresstek.net
 
-    vim: expandtab sw=4 ts=4 sts=4:
-**********************************************************************/
+  Released under the GNU General Public License WITHOUT ANY WARRANTY.
+  See LICENSE.TXT for details.
+
+  vim: expandtab sw=4 ts=4 sts=4:
+ * ******************************************************************** */
 
 class Equipment_Category {
+
     var $id;
     var $ht;
 
     function Equipment_Category($id) {
-        $this->id=0;
+        $this->id = 0;
         $this->load($id);
     }
 
     function load($id) {
 
-        $sql=' SELECT cat.*,count(equipment.equipment_id) as equipments '
-            .' FROM '.EQUIPMENT_CATEGORY_TABLE.' cat '
-            .' LEFT JOIN '.EQUIPMENT_TABLE.' equipment ON(equipment.category_id=cat.category_id) '
-            .' WHERE cat.category_id='.db_input($id)
-            .' GROUP BY cat.category_id';
+        $sql = ' SELECT cat.*,count(equipment.equipment_id) as equipments '
+                . ' FROM ' . EQUIPMENT_CATEGORY_TABLE . ' cat '
+                . ' LEFT JOIN ' . EQUIPMENT_TABLE . ' equipment ON(equipment.category_id=cat.category_id) '
+                . ' WHERE cat.category_id=' . db_input($id)
+                . ' GROUP BY cat.category_id';
 
-        if (!($res=db_query($sql)) || !db_num_rows($res)) 
+        if (!($res = db_query($sql)) || !db_num_rows($res))
             return false;
 
         $this->ht = db_fetch_array($res);
@@ -44,26 +46,62 @@ class Equipment_Category {
     }
 
     /* ------------------> Getter methods <--------------------- */
-    function getId() { return $this->id; }
-    function getName() { return $this->ht['name']; }
-    function getNumEquipment() { return  $this->ht['equipments']; }
-    function getDescription() { return $this->ht['description']; }
-    function getNotes() { return $this->ht['notes']; }
-    function getCreateDate() { return $this->ht['created']; }
-    function getUpdateDate() { return $this->ht['updated']; }
 
-    function isPublic() { return ($this->ht['ispublic']); }
-    function getHashtable() { return $this->ht; }
-    
+    function getId() {
+        return $this->id;
+    }
+
+    function getName() {
+        return $this->ht['name'];
+    }
+
+    function getNumEquipment() {
+        return $this->ht['equipments'];
+    }
+
+    function getDescription() {
+        return $this->ht['description'];
+    }
+
+    function getNotes() {
+        return $this->ht['notes'];
+    }
+
+    function getCreateDate() {
+        return $this->ht['created'];
+    }
+
+    function getUpdateDate() {
+        return $this->ht['updated'];
+    }
+
+    function isPublic() {
+        return ($this->ht['ispublic']);
+    }
+
+    function getHashtable() {
+        return $this->ht;
+    }
+
     /* ------------------> Setter methods <--------------------- */
-    function setName($name) { $this->ht['name']=$name; }
-    function setNotes($notes) { $this->ht['notes']=$notes; }
-    function setDescription($desc) { $this->ht['description']=$desc; }
+
+    function setName($name) {
+        $this->ht['name'] = $name;
+    }
+
+    function setNotes($notes) {
+        $this->ht['notes'] = $notes;
+    }
+
+    function setDescription($desc) {
+        $this->ht['description'] = $desc;
+    }
 
     /* --------------> Database access methods <---------------- */
-    function update($vars, &$errors) { 
 
-        if(!$this->save($this->getId(), $vars, $errors))
+    function update($vars, &$errors) {
+
+        if (!$this->save($this->getId(), $vars, $errors))
             return false;
 
         //TODO: move FAQs if requested.
@@ -75,13 +113,12 @@ class Equipment_Category {
 
     function delete() {
 
-        $sql='DELETE FROM '.EQUIPMENT_CATEGORY_TABLE
-            .' WHERE category_id='.db_input($this->getId())
-            .' LIMIT 1';
-        if(db_query($sql) && ($num=db_affected_rows())) {
-            db_query('DELETE FROM '.EQUIPMENT_TABLE
-                    .' WHERE category_id='.db_input($this->getId()));
-    
+        $sql = 'DELETE FROM ' . EQUIPMENT_CATEGORY_TABLE
+                . ' WHERE category_id=' . db_input($this->getId())
+                . ' LIMIT 1';
+        if (db_query($sql) && ($num = db_affected_rows())) {
+            db_query('DELETE FROM ' . EQUIPMENT_TABLE
+                    . ' WHERE category_id=' . db_input($this->getId()));
         }
 
         return $num;
@@ -90,78 +127,125 @@ class Equipment_Category {
     /* ------------------> Static methods <--------------------- */
 
     function lookup($id) {
-        return ($id && is_numeric($id) && ($c = new Equipment_Category($id)))?$c:null;
+        return ($id && is_numeric($id) && ($c = new Equipment_Category($id))) ? $c : null;
     }
 
     function findIdByName($name) {
-        $sql='SELECT category_id FROM '.EQUIPMENT_CATEGORY_TABLE.' WHERE name='.db_input($name);
+        $sql = 'SELECT category_id FROM ' . EQUIPMENT_CATEGORY_TABLE . ' WHERE name=' . db_input($name);
         list($id) = db_fetch_row(db_query($sql));
 
         return $id;
     }
 
+    /**
+     * Counts a number of open tickets in this category.
+     * @param type Category Id
+     * @return int
+     */
+    function countOpenTickets($id) {
+        $sql = 'SELECT COUNT(ticket_id) FROM ' . EQUIPMENT_TICKET_VIEW . ' '
+                . 'WHERE category_id=' . db_input($id) . ' '
+                . 'AND status="open"';
+        list($count) = db_fetch_row(db_query($sql));
+        return $count;
+    }
+    
+    
+    function getTicketList($tickets_status, $category_id)
+    {
+         $ticket_ids=array();
+         $sql ='SELECT ticket_id from '.EQUIPMENT_TICKET_VIEW.' '                 
+                 .'where `status`="'.$tickets_status.'"'
+                 . ' AND category_id='.$category_id;
+         
+         
+        if(($res=db_query($sql)) && db_num_rows($res))
+        {
+            while(list($id)=db_fetch_row($res))
+                $ticket_ids[]=$id;
+        }
+
+        return $ticket_ids; 
+    }
+
+    /**
+     * Counts a number of closed tickets in this category.
+     * @param type Category Id
+     * @return int
+     */
+    function countClosedTickets($id) {
+        $sql = 'SELECT COUNT(ticket_id) FROM ' . EQUIPMENT_TICKET_VIEW . ' '
+                . 'WHERE category_id=' . db_input($id) . ' '
+                . 'AND status="closed"';
+        list($count) = db_fetch_row(db_query($sql));
+        return $count;
+    }
+
     function findByName($name) {
-        if(($id=self::findIdByName($name)))
+        if (($id = self::findIdByName($name)))
             return new Equipment_Category($id);
 
         return false;
     }
 
     function validate($vars, &$errors) {
-         return self::save(0, $vars, $errors,true);
+        return self::save(0, $vars, $errors, true);
     }
 
     function create($vars, &$errors) {
         return self::save(0, $vars, $errors);
     }
 
-    function save($id, $vars, &$errors, $validation=false) {
+    function save($id, $vars, &$errors, $validation = false) {
 
         //Cleanup.
-        $vars['name']=Format::striptags(trim($vars['name']));
-      
+        $vars['name'] = Format::striptags(trim($vars['name']));
+
         //validate
-        if($id && $id!=$vars['id'])
-            $errors['err']='Internal error. Try again';
-      
-        if(!$vars['name'])
-            $errors['name']='Category name is required';
-        elseif(strlen($vars['name'])<3)
-            $errors['name']='Name is too short. 3 chars minimum';
-        elseif(($cid=self::findIdByName($vars['name'])) && $cid!=$id)
-            $errors['name']='Category already exists';
+        if ($id && $id != $vars['id'])
+            $errors['err'] = 'Internal error. Try again';
 
-        if(!$vars['description'])
-            $errors['description']='Category description is required';
+        if (!$vars['name'])
+            $errors['name'] = 'Category name is required';
+        elseif (strlen($vars['name']) < 3)
+            $errors['name'] = 'Name is too short. 3 chars minimum';
+        elseif (($cid = self::findIdByName($vars['name'])) && $cid != $id)
+            $errors['name'] = 'Category already exists';
 
-        if($errors) return false;
+        if (!$vars['description'])
+            $errors['description'] = 'Category description is required';
+
+        if ($errors)
+            return false;
 
         /* validation only */
-        if($validation) return true;
+        if ($validation)
+            return true;
 
         //save
-        $sql=' updated=NOW() '.
-             ',ispublic='.db_input(isset($vars['ispublic'])?$vars['ispublic']:0).
-             ',name='.db_input($vars['name']).
-             ',description='.db_input(Format::safe_html($vars['description'])).
-             ',notes='.db_input($vars['notes']);
+        $sql = ' updated=NOW() ' .
+                ',ispublic=' . db_input(isset($vars['ispublic']) ? $vars['ispublic'] : 0) .
+                ',name=' . db_input($vars['name']) .
+                ',description=' . db_input(Format::safe_html($vars['description'])) .
+                ',notes=' . db_input($vars['notes']);
 
-        if($id) {
-            $sql='UPDATE '.EQUIPMENT_CATEGORY_TABLE.' SET '.$sql.' WHERE category_id='.db_input($id);
-            if(db_query($sql))
+        if ($id) {
+            $sql = 'UPDATE ' . EQUIPMENT_CATEGORY_TABLE . ' SET ' . $sql . ' WHERE category_id=' . db_input($id);
+            if (db_query($sql))
                 return true;
 
-            $errors['err']='Unable to update Equipment category.';
-
+            $errors['err'] = 'Unable to update Equipment category.';
         } else {
-            $sql='INSERT INTO '.EQUIPMENT_CATEGORY_TABLE.' SET '.$sql.',created=NOW()';
-            if(db_query($sql) && ($id=db_insert_id()))
+            $sql = 'INSERT INTO ' . EQUIPMENT_CATEGORY_TABLE . ' SET ' . $sql . ',created=NOW()';
+            if (db_query($sql) && ($id = db_insert_id()))
                 return $id;
 
-            $errors['err']='Unable to create Equipment category. Internal error';
+            $errors['err'] = 'Unable to create Equipment category. Internal error';
         }
 
         return false;
     }
+
 }
+
 ?>

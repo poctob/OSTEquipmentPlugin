@@ -208,6 +208,20 @@ where ((`%TABLE_PREFIX%form`.`title` = 'Equipment') and
 (`%TABLE_PREFIX%form`.`id` = `%TABLE_PREFIX%form_entry`.`form_id`) and 
 (`%TABLE_PREFIX%form_entry`.`object_type` = 'T'))$
 
+DROP VIEW IF EXISTS `%TABLE_PREFIX%EquipmentTicketView`$
+
+CREATE VIEW `%TABLE_PREFIX%EquipmentTicketView` AS 
+select `%TABLE_PREFIX%equipment_ticket`.`equipment_id` AS `equipment_id`,
+`%TABLE_PREFIX%equipment_ticket`.`ticket_id` AS `ticket_id`,
+`%TABLE_PREFIX%equipment_ticket`.`created` AS `created`,
+`%TABLE_PREFIX%equipment`.`category_id` AS `category_id`,
+`%TABLE_PREFIX%equipment`.`is_active` AS `is_active`,
+`%TABLE_PREFIX%ticket`.`status` AS `status` 
+from ((`%TABLE_PREFIX%equipment_ticket` 
+left join `%TABLE_PREFIX%equipment` 
+on((`%TABLE_PREFIX%equipment_ticket`.`equipment_id` = `%TABLE_PREFIX%equipment`.`equipment_id`))) 
+left join `%TABLE_PREFIX%ticket` 
+on((`%TABLE_PREFIX%equipment_ticket`.`ticket_id` = `%TABLE_PREFIX%ticket`.`ticket_id`)))$
 
 DROP TRIGGER IF EXISTS `%TABLE_PREFIX%ticket_event_AINS`$
 

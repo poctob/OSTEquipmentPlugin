@@ -22,6 +22,7 @@ define('EQUIPMENT_TABLE',TABLE_PREFIX.'equipment');
 define('EQUIPMENT_CATEGORY_TABLE',TABLE_PREFIX.'equipment_category');
 define('EQUIPMENT_STATUS_TABLE',TABLE_PREFIX.'equipment_status');
 define('EQUIPMENT_TICKET_TABLE',TABLE_PREFIX.'equipment_ticket');
+define('EQUIPMENT_TICKET_VIEW',TABLE_PREFIX.'EquipmentTicketView');
 define('PLUGINS_ROOT',INCLUDE_DIR.'plugins/');
 define('EQUIPMENT_PLUGIN_ROOT',PLUGINS_ROOT.'equipment/');
 define('EQUIPMENT_INCLUDE_DIR',EQUIPMENT_PLUGIN_ROOT.'include/');
