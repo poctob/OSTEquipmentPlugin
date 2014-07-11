@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="../assets/default/css/theme_equipment.css" media="screen">
+<!-- <link rel="stylesheet" href="../assets/default/css/theme_equipment.css" media="screen"> -->
 <?php
 
 /*
@@ -15,7 +15,7 @@
 require_once(INCLUDE_DIR . 'class.plugin.php');
 require_once(INCLUDE_DIR . 'class.signal.php');
 require_once(INCLUDE_DIR . 'class.app.php');
-require_once(INCLUDE_DIR.'/class.dispatcher.php');
+require_once(INCLUDE_DIR . 'class.dispatcher.php');
 require_once(INCLUDE_DIR . 'class.dynamic_forms.php');
 
 require_once('config.php');
@@ -25,10 +25,16 @@ define('EQUIPMENT_CATEGORY_TABLE',TABLE_PREFIX.'equipment_category');
 define('EQUIPMENT_STATUS_TABLE',TABLE_PREFIX.'equipment_status');
 define('EQUIPMENT_TICKET_TABLE',TABLE_PREFIX.'equipment_ticket');
 define('EQUIPMENT_TICKET_VIEW',TABLE_PREFIX.'EquipmentTicketView');
+
+define('OST_ROOT',INCLUDE_DIR.'../');
+
 define('PLUGINS_ROOT',INCLUDE_DIR.'plugins/');
 
 define('EQUIPMENT_PLUGIN_ROOT',__DIR__.'/');
 define('EQUIPMENT_INCLUDE_DIR',EQUIPMENT_PLUGIN_ROOT.'include/');
+define('EQUIPMENT_APP_DIR',EQUIPMENT_PLUGIN_ROOT.'app/');
+define('EQUIPMENT_VENDOR_DIR',EQUIPMENT_PLUGIN_ROOT.'vendor/');
+define('EQUIPMENT_VIEWS_DIR',EQUIPMENT_PLUGIN_ROOT.'views/');
 define('EQUIPMENT_STAFFINC_DIR',EQUIPMENT_INCLUDE_DIR.'staff/');
 define('EQUIPMENT_CLIENTINC_DIR',EQUIPMENT_INCLUDE_DIR.'client/');
 
@@ -69,8 +75,15 @@ class EquipmentPlugin extends Plugin {
     {
         $categories_url=url('^/equipment/categories/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/EquipmentCategory.php:EquipmentCategory',
-                url_get('^default', 'defaultAction')));
+                url_get('^list', 'listAction')));
+                
+     /*   $reditect_url=url('^/equipment/',patterns(               
+                EQUIPMENT_INCLUDE_DIR.'controller/Controller.php:Controller',                
+                url_get('^(?P<url>.*)$', 'redirectAction')))
+                ;*/
+        
         $object->append($categories_url);
+     //   $object->append($reditect_url);
     }
     /**
      * Creates menu links in the staff backend.
@@ -78,10 +91,10 @@ class EquipmentPlugin extends Plugin {
     function createStaffMenu() {
 
         Application::registerStaffApp('Equipment', 
-                'equipment.php', 
+                'dispatcher.php/equipment/items/view', 
                 array(iconclass => 'equipment'));
         Application::registerStaffApp('Equipment Categories', 
-                'equipment_categories.php', 
+                'dispatcher.php/equipment/categories/list', 
                 array(iconclass => 'faq-categories'));
         Application::registerStaffApp('Equipment Status', 
                 'equipment_status.php', 

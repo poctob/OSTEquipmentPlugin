@@ -1,0 +1,33 @@
+{# empty Twig template #}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block title %}Application Title{% endblock %}</title>
+
+        {% block stylesheets %}
+
+        {% endblock %}
+    </head>
+    <body>
+        {% block javascripts %}
+
+        {% endblock %}
+
+
+        <div id="content">
+            {% block body %}
+                <div style="width:700;padding-top:5px; float:left;">
+                    <h2>Equipment Categories</h2>
+                </div>
+                <div style="float:right;text-align:right;padding-top:5px;padding-right:5px;">
+                    <b><a href="add" class="Icon newCategory">Add New Category</a></b></div>
+                <div class="clear"></div>
+            {% endblock %}
+        </div>
+
+        <div id="footer">
+        {% block footer %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{% extends 'layout_categories.html.twig' %}
+
+{% block title %}
+    Equipment Categories
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <table class="list" border="0" cellspacing="1" cellpadding="0" width="940">
+        <caption>
+            {% if categories|length > 0 %}
+                Showing {{ categories|length }} categories
+            {% else %}
+                No Equipment categories found!
+            {% endif %}
+        </caption>
+        <thead>
+            <tr>
+                <th width="7">&nbsp;</th>
+                <th width="200">Name</th>
+                <th width="100">Type</th>
+                <th width="100">Equipment</th>
+                <th width="150">Open Tickets</th>
+                <th width="150">Closed Tickets</th>
+                <th width="150" nowrap>Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+                <tr id="{{ category.category_id }}">
+                    <td width=7px>
+                        <input type="checkbox" name="ids[]" value="{{ category.id }}" class="ckb">                               
+                    </td>
+
+                    <td><a href="view/{{ category.id }}">{{ category.name }}</a></td>
+                    <td>
+                        {% if categories.public == 1 %}
+                            <b>Public</b>
+                        {% else %}
+                            Internal
+                        {% endif %}
+                    </td>
+
+                    <td style="text-align:right;padding-right:25px;">
+                        <a href="../items/list/{{ category.id }}">
+                            {{ category.equipment_count }}
+                        </a>
+                    </td>
+
+                    <td style="text-align:right;padding-right:25px;">
+                        <a href="tickets/open">
+                            {{ category.open_ticket_count }}
+                        </a>
+                    </td>
+
+                    <td style="text-align:right;padding-right:25px;">
+                        <a href="tickets/closed">
+                            {{ category.closed_ticket_count }}
+                        </a>
+                    </td>
+                    <td>{{ category.updated}}</td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}
+

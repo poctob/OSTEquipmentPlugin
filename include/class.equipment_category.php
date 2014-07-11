@@ -18,9 +18,15 @@ class Equipment_Category {
 
     var $id;
     var $ht;
+    var $equipment_count;
+    var $open_ticket_count;
+    var $closed_ticket_count;
 
     function Equipment_Category($id) {
         $this->id = 0;
+        $this->equipment_count = 0;
+        $this->open_ticket_count = 0;
+        $this -> closed_ticket_count = 0 ;
         $this->load($id);
     }
 
@@ -37,7 +43,9 @@ class Equipment_Category {
 
         $this->ht = db_fetch_array($res);
         $this->id = $this->ht['category_id'];
-
+        $this->equipment_count = $this->ht['equipments'];
+        $this->open_ticket_count = $this->countOpenTickets($this->id);
+        $this -> closed_ticket_count = $this->countClosedTickets($this->id); ;
         return true;
     }
 
@@ -56,7 +64,7 @@ class Equipment_Category {
     }
 
     function getNumEquipment() {
-        return $this->ht['equipments'];
+        return $this->equipment_count;
     }
 
     function getDescription() {
@@ -81,6 +89,16 @@ class Equipment_Category {
 
     function getHashtable() {
         return $this->ht;
+    }
+    
+    public function getOpenTicketCount()
+    {
+        return $this->open_ticket_count;
+    }
+    
+     public function getClosedTicketCount()
+    {
+        return $this->closed_ticket_count;
     }
 
     /* ------------------> Setter methods <--------------------- */
@@ -245,6 +263,32 @@ class Equipment_Category {
 
         return false;
     }
+    
+    public static function countAll()
+    {
+         return db_count('SELECT count(*) FROM ' . EQUIPMENT_CATEGORY_TABLE . ' cat ');
+    }
+    
+    public static function getAll()
+    {
+        $categories = array();
+        $sql = 'SELECT category_id ' .
+                ' FROM ' . EQUIPMENT_CATEGORY_TABLE;
+        
+        $res=db_query($sql);
+        if($res && ($num=db_num_rows($res)))
+        {
+            while ($row = db_fetch_array($res)) 
+            {
+                $category = new Equipment_Category($row['category_id']);
+                $categories[] = $category;
+            }
+        }
+        
+        return $categories;
+        
+    }
+    
 
 }
 

@@ -11,12 +11,23 @@
  *
  * @author alex
  */
-class EquipmentCategory {
+require_once ('Controller.php');
+require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment_category.php');
+
+class EquipmentCategory extends Controller {
 
     //put your code here
 
-    static public function defaultAction() {
-        echo "Hi";
+    public function listAction() {
+        $categories = Equipment_Category::getAll();
+        $this->render('categories_view.html.twig', array(
+            'categories' => $categories
+        ));
     }
 
+    public function redirectAction($url) {
+        header('Content-type: text/javascript');
+        include OST_ROOT . 'scp/' . $url;
+    }
+ 
 }
