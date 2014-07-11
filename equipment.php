@@ -15,6 +15,7 @@
 require_once(INCLUDE_DIR . 'class.plugin.php');
 require_once(INCLUDE_DIR . 'class.signal.php');
 require_once(INCLUDE_DIR . 'class.app.php');
+require_once(INCLUDE_DIR . 'class.dynamic_forms.php');
 
 require_once('config.php');
 
@@ -31,6 +32,7 @@ define('EQUIPMENT_STAFFINC_DIR',EQUIPMENT_INCLUDE_DIR.'staff/');
 define('EQUIPMENT_CLIENTINC_DIR',EQUIPMENT_INCLUDE_DIR.'client/');
 
 require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment_install.php');
+
 
 class EquipmentPlugin extends Plugin {
 
@@ -51,6 +53,15 @@ class EquipmentPlugin extends Plugin {
             }
         }
       //  Signal::connect('model.updated', array('EquipmentPlugin', 'callback'));
+    }
+    
+    public static function getCustomForm()
+    {
+        $ep = new EquipmentPlugin();
+        $config = $ep->getConfig();
+        $form_id = $config->get('equipment_custom_form');
+        $form = DynamicForm::lookup($form_id);
+        return $form;
     }
 
     /**

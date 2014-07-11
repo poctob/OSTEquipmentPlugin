@@ -17,8 +17,13 @@ require_once(INCLUDE_DIR.'/class.forms.php');
 
 class EquipmentConfig extends PluginConfig{
     function getOptions() {
+ 
+        $form_choices = array('0' => '--None--');
+        foreach (DynamicForm::objects()->filter(array('type'=>'G')) as $group)
+        {
+            $form_choices[$group->get('id')] = $group->get('title');
+        }
         return array(
-          //  'title' => 'Equipment Options',
             'equipment_backend_enable' => new BooleanField(array(
                 'id'    => 'equipment_backend_enable',
                 'label' => 'Enable Backend',
@@ -30,6 +35,13 @@ class EquipmentConfig extends PluginConfig{
                 'label' => 'Enable Frontend',
                  'configuration' => array(
                     'desc' => 'Client facing interface')  
+            )),
+            'equipment_custom_form' => new ChoiceField(array(
+                'id'    => 'equipment_custom_form',
+                'label' => 'Custom Form Name',
+                'choices' => $form_choices,
+                 'configuration' => array(
+                    'desc' => 'Custom form to use for equipment')  
             )),
                        
     );

@@ -12,6 +12,9 @@
     vim: expandtab sw=4 ts=4 sts=4:
 **********************************************************************/
 if(!defined('OSTSCPINC') || !$thisstaff) die('Access Denied');
+
+require_once(EQUIPMENT_PLUGIN_ROOT . 'equipment.php');
+
 $info=array();
 $qstr='';
 if($equipment){
@@ -66,6 +69,14 @@ $info=Format::htmlchars(($errors && $_POST)?$_POST:$info);
                     <input type="text" size="70" name="serialnumber" value="<?php echo $info['serialnumber']; ?>">
             </td>
         </tr>
+        
+        <tr>
+            <?php                          
+                $form = EquipmentPlugin::getCustomForm();
+                $form->getForm()->render(!$client);
+            ?>
+        </tr>
+        
          <tr>
             <th colspan="2">
                 <em><strong>Description</strong>: &nbsp;</em>
@@ -139,8 +150,9 @@ $info=Format::htmlchars(($errors && $_POST)?$_POST:$info);
                 <textarea name="notes" cols="21" rows="8" style="width: 80%;"><?php echo $info['notes']; ?></textarea>
             </td>
         </tr>
-    </tbody>
+    </tbody>            
 </table>
+
 <p style="padding-left:225px;">
     <input type="submit" name="submit" value="<?php echo $submit_text; ?>">
     <input type="reset"  name="reset"  value="Reset">
