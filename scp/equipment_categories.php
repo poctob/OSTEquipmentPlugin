@@ -14,6 +14,7 @@
 require('staff.inc.php');
 include_once(EQUIPMENT_INCLUDE_DIR.'class.equipment_category.php');
 
+
 /* check permission */
 if(!$thisstaff) {
     header('Location: equipment.php');
