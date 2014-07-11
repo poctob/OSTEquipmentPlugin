@@ -15,6 +15,7 @@
 require_once(INCLUDE_DIR . 'class.plugin.php');
 require_once(INCLUDE_DIR . 'class.signal.php');
 require_once(INCLUDE_DIR . 'class.app.php');
+require_once(INCLUDE_DIR.'/class.dispatcher.php');
 require_once(INCLUDE_DIR . 'class.dynamic_forms.php');
 
 require_once('config.php');
@@ -52,7 +53,7 @@ class EquipmentPlugin extends Plugin {
                 $this->createFrontMenu();
             }
         }
-      //  Signal::connect('model.updated', array('EquipmentPlugin', 'callback'));
+        Signal::connect('apps.scp', array('EquipmentPlugin', 'callbackDispatch'));
     }
     
     public static function getCustomForm()
@@ -64,6 +65,13 @@ class EquipmentPlugin extends Plugin {
         return $form;
     }
 
+    static public function callbackDispatch($object, $data)
+    {
+        $categories_url=url('^/equipment/categories/',patterns(               
+                EQUIPMENT_INCLUDE_DIR.'controller/EquipmentCategory.php:EquipmentCategory',
+                url_get('^default', 'defaultAction')));
+        $object->append($categories_url);
+    }
     /**
      * Creates menu links in the staff backend.
      */
