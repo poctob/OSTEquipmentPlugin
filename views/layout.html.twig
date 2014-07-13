@@ -3,17 +3,14 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>{% block title %}Application Title{% endblock %}</title>
-
-        {% block stylesheets %}
-
-        {% endblock %}
-    </head>
-    <body>
         {% block javascripts %}
 
         {% endblock %}
-
-
+        {% block stylesheets %}
+            <link href="{{ constant('ROOT_PATH') }}scp/css/scp.css" rel="stylesheet" />
+        {% endblock %}
+    </head>
+    <body>
         <div id="content">
             {% block body %}
                 <div style="width:700;padding-top:5px; float:left;">
@@ -24,7 +21,6 @@
                 <div class="clear"></div>
             {% endblock %}
         </div>
-
         <div id="footer">
         {% block footer %}{% endblock %}
     </div>

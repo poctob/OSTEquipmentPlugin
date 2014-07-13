@@ -1,4 +1,4 @@
-<!-- <link rel="stylesheet" href="../assets/default/css/theme_equipment.css" media="screen"> -->
+
 <?php
 
 /*
@@ -33,13 +33,13 @@ define('PLUGINS_ROOT',INCLUDE_DIR.'plugins/');
 define('EQUIPMENT_PLUGIN_ROOT',__DIR__.'/');
 define('EQUIPMENT_INCLUDE_DIR',EQUIPMENT_PLUGIN_ROOT.'include/');
 define('EQUIPMENT_APP_DIR',EQUIPMENT_PLUGIN_ROOT.'app/');
+define('EQUIPMENT_ASSETS_DIR',EQUIPMENT_PLUGIN_ROOT.'assets/');
 define('EQUIPMENT_VENDOR_DIR',EQUIPMENT_PLUGIN_ROOT.'vendor/');
 define('EQUIPMENT_VIEWS_DIR',EQUIPMENT_PLUGIN_ROOT.'views/');
 define('EQUIPMENT_STAFFINC_DIR',EQUIPMENT_INCLUDE_DIR.'staff/');
 define('EQUIPMENT_CLIENTINC_DIR',EQUIPMENT_INCLUDE_DIR.'client/');
 
 require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment_install.php');
-
 
 class EquipmentPlugin extends Plugin {
 
@@ -73,17 +73,22 @@ class EquipmentPlugin extends Plugin {
 
     static public function callbackDispatch($object, $data)
     {
+        
         $categories_url=url('^/equipment/categories/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/EquipmentCategory.php:EquipmentCategory',
-                url_get('^list', 'listAction')));
-                
-     /*   $reditect_url=url('^/equipment/',patterns(               
-                EQUIPMENT_INCLUDE_DIR.'controller/Controller.php:Controller',                
-                url_get('^(?P<url>.*)$', 'redirectAction')))
-                ;*/
+                url_get('^list$', 'listAction'),
+                url_get('^listJson$', 'listJsonAction'),
+                url_get('^view/(?P<id>\d+)$', 'viewAction'),
+                url_post('^save', 'saveAction')));
         
+        $reditect_url=url('^/equipment.*assets/',patterns(               
+                EQUIPMENT_INCLUDE_DIR.'controller/MediaController.php:MediaController',                
+                url_get('^(?P<url>.*)$', 'defaultAction')))
+                ;
+        
+        $object->append($reditect_url);
         $object->append($categories_url);
-     //   $object->append($reditect_url);
+        
     }
     /**
      * Creates menu links in the staff backend.

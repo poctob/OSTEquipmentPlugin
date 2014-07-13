@@ -17,9 +17,13 @@ class Controller {
 
     }
     
-    public function redirectAction($url)
+    public function redirectImagesAction($url)
     {
-        header('Content-type: text/javascript');
-        include INCLUDE_DIR.$url;
+        $url_l=$url;
+        $im = imagecreatefrompng(EQUIPMENT_ASSETS_DIR.$url_l);
+        header('Content-Type: image/jpeg');
+        imagepng($im);
+       // imagedestroy($im);
+      //  echo EQUIPMENT_ASSETS_DIR.$url;
     }
 }

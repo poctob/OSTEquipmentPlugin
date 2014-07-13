@@ -21,13 +21,21 @@ class Equipment_Category {
     var $equipment_count;
     var $open_ticket_count;
     var $closed_ticket_count;
+    var $name;
+    var $ispublic;
+    var $updated;
 
-    function Equipment_Category($id) {
+    function Equipment_Category($id = 0) {
         $this->id = 0;
         $this->equipment_count = 0;
         $this->open_ticket_count = 0;
-        $this -> closed_ticket_count = 0 ;
-        $this->load($id);
+        $this->closed_ticket_count = 0;
+        $this->name = '';
+        $this->ispublic = false;
+        $this->updated = null;
+        if ($id > 0) {
+            $this->load($id);
+        }
     }
 
     function load($id) {
@@ -38,14 +46,19 @@ class Equipment_Category {
                 . ' WHERE cat.category_id=' . db_input($id)
                 . ' GROUP BY cat.category_id';
 
-        if (!($res = db_query($sql)) || !db_num_rows($res))
+        if (!($res = db_query($sql)) || !db_num_rows($res)) {
             return false;
+        }
 
         $this->ht = db_fetch_array($res);
         $this->id = $this->ht['category_id'];
         $this->equipment_count = $this->ht['equipments'];
         $this->open_ticket_count = $this->countOpenTickets($this->id);
-        $this -> closed_ticket_count = $this->countClosedTickets($this->id); ;
+        $this->closed_ticket_count = $this->countClosedTickets($this->id);
+        $this->name = $this->ht['name'];
+        $this->ispublic = $this->ht['ispublic']?'Public':'Private';
+        $this->updated = $this->ht['updated'];
+        
         return true;
     }
 
@@ -60,7 +73,7 @@ class Equipment_Category {
     }
 
     function getName() {
-        return $this->ht['name'];
+        return $this->name;
     }
 
     function getNumEquipment() {
@@ -80,24 +93,22 @@ class Equipment_Category {
     }
 
     function getUpdateDate() {
-        return $this->ht['updated'];
+        return $this->updated;
     }
 
     function isPublic() {
-        return ($this->ht['ispublic']);
+        return ($this->ispublic);
     }
 
     function getHashtable() {
         return $this->ht;
     }
-    
-    public function getOpenTicketCount()
-    {
+
+    public function getOpenTicketCount() {
         return $this->open_ticket_count;
     }
-    
-     public function getClosedTicketCount()
-    {
+
+    public function getClosedTicketCount() {
         return $this->closed_ticket_count;
     }
 
@@ -105,6 +116,7 @@ class Equipment_Category {
 
     function setName($name) {
         $this->ht['name'] = $name;
+        $this->name = $name;
     }
 
     function setNotes($notes) {
@@ -144,7 +156,7 @@ class Equipment_Category {
 
     /* ------------------> Static methods <--------------------- */
 
-    function lookup($id) {
+    static public function lookup($id) {
         return ($id && is_numeric($id) && ($c = new Equipment_Category($id))) ? $c : null;
     }
 
@@ -167,23 +179,20 @@ class Equipment_Category {
         list($count) = db_fetch_row(db_query($sql));
         return $count;
     }
-    
-    
-    function getTicketList($tickets_status, $category_id)
-    {
-         $ticket_ids=array();
-         $sql ='SELECT ticket_id from '.EQUIPMENT_TICKET_VIEW.' '                 
-                 .'where `status`="'.$tickets_status.'"'
-                 . ' AND category_id='.$category_id;
-         
-         
-        if(($res=db_query($sql)) && db_num_rows($res))
-        {
-            while(list($id)=db_fetch_row($res))
-                $ticket_ids[]=$id;
+
+    function getTicketList($tickets_status, $category_id) {
+        $ticket_ids = array();
+        $sql = 'SELECT ticket_id from ' . EQUIPMENT_TICKET_VIEW . ' '
+                . 'where `status`="' . $tickets_status . '"'
+                . ' AND category_id=' . $category_id;
+
+
+        if (($res = db_query($sql)) && db_num_rows($res)) {
+            while (list($id) = db_fetch_row($res))
+                $ticket_ids[] = $id;
         }
 
-        return $ticket_ids; 
+        return $ticket_ids;
     }
 
     /**
@@ -206,15 +215,15 @@ class Equipment_Category {
         return false;
     }
 
-    function validate($vars, &$errors) {
+    public static function validate($vars, &$errors) {
         return self::save(0, $vars, $errors, true);
     }
 
-    function create($vars, &$errors) {
+    public static function create($vars, &$errors) {
         return self::save(0, $vars, $errors);
     }
 
-    function save($id, $vars, &$errors, $validation = false) {
+    public static function save($id, $vars, &$errors, $validation = false) {
 
         //Cleanup.
         $vars['name'] = Format::striptags(trim($vars['name']));
@@ -263,32 +272,26 @@ class Equipment_Category {
 
         return false;
     }
-    
-    public static function countAll()
-    {
-         return db_count('SELECT count(*) FROM ' . EQUIPMENT_CATEGORY_TABLE . ' cat ');
+
+    public static function countAll() {
+        return db_count('SELECT count(*) FROM ' . EQUIPMENT_CATEGORY_TABLE . ' cat ');
     }
-    
-    public static function getAll()
-    {
+
+    public static function getAll() {
         $categories = array();
         $sql = 'SELECT category_id ' .
                 ' FROM ' . EQUIPMENT_CATEGORY_TABLE;
-        
-        $res=db_query($sql);
-        if($res && ($num=db_num_rows($res)))
-        {
-            while ($row = db_fetch_array($res)) 
-            {
+
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
                 $category = new Equipment_Category($row['category_id']);
                 $categories[] = $category;
             }
         }
-        
+
         return $categories;
-        
     }
-    
 
 }
 
