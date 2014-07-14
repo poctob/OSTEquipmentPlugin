@@ -1,44 +1,23 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        {% block head %}
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-            <title>{% block title %}Application Title{% endblock %}</title>
-            {% block javascripts %}
+{% extends 'layout.html.twig' %}
 
-                <script src="assets/js/jquery-2.1.0.min.js"></script>
-                <script src="assets/js/jquery-ui/js/jquery-ui-1.10.4.js"></script>
-                <script src="assets/js/primeui/production/primeui-1.0-min.js"></script> 
-
-                <script src="assets/js/equipment_categories.js"></script>
-            {% endblock %}
-            {% block stylesheets %}
-                <link href="assets/js/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.css" rel="stylesheet" />
-                <link href="assets/js/primeui/themes/cupertino/theme.css" rel="stylesheet" />
-                <link href="assets/js/primeui/production/primeui-1.0-min.css" rel="stylesheet" />
-            {% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        <div id="container">
+{% block head %}
+    {% block javascripts %}
+         {{ parent() }}
+        <script src="assets/js/jquery-2.1.0.min.js"></script>
+        <script src="assets/js/jquery-ui/js/jquery-ui-1.10.4.js"></script>
+        <script src="assets/js/primeui/production/primeui-1.0-min.js"></script> 
+        <script src="assets/js/equipment_categories.js"></script>
+    {% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+        <link href="assets/js/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.css" rel="stylesheet" />
+        <link href="assets/js/primeui/themes/cupertino/theme.css" rel="stylesheet" />
+        <link href="assets/js/primeui/production/primeui-1.0-min.css" rel="stylesheet" />
+    {% endblock %}
+{% endblock %}
 
 
-            <div style="width:700;padding-top:5px; float:left;">
-                <h2>
-                    {% block pagetitle %}
-                        Equipment Categories
-                    {% endblock %}
-                </h2>
-            </div>
+{% block pagetitle %}
+    Equipment Categories
+{% endblock %}
 
-            <div id="content">
-                {% block body %}               
-                {% endblock %}
-            </div>
-
-            <div id="footer">
-            {% block footer %}{% endblock %}
-        </div>
-    </div>
-</body>
-</html>

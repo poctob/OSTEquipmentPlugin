@@ -1,0 +1,62 @@
+body {
+    background:#eee;
+    font-family:arial, helvetica, sans-serif;
+    font-size:10pt;
+    color:#000;
+    margin:0;
+    padding:0;
+}
+
+#container {
+    width:960px;
+    margin:0 auto 20px auto;
+}
+
+#header {
+    height:76px;
+    background:url(../images/header-bg.png) top left repeat-x;
+    border-left:1px solid #aaa;
+    border-right:1px solid #aaa;
+}
+
+#header p {
+    display:block;
+    width:430px;
+    float:right;
+    margin:10px;
+    background:#eee;
+    border:1px solid #ccc;
+    padding:8px;
+    text-align:center;
+}
+
+div#header a {
+    color:#E65524;
+}
+
+#logo {
+    display:block;
+    float:left;
+    width:190px;
+    height:76px;
+    text-decoration:none;
+    outline:none;
+    text-indent:-9999px;
+    background:url(assets/images/ost-logo.png) top left no-repeat;
+}
+
+#content {
+    clear:both;
+    border:1px solid #aaa;
+    border-top:none;
+    border-bottom:3px solid #bbb;
+    padding:10px 10px 20px 10px;
+    background:#fff;
+}
+
+#footer {
+    clear:both;
+    padding:10px;
+    text-align:center;
+    font-size:9pt;
+}

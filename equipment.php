@@ -16,6 +16,7 @@ require_once(INCLUDE_DIR . 'class.signal.php');
 require_once(INCLUDE_DIR . 'class.app.php');
 require_once(INCLUDE_DIR . 'class.dispatcher.php');
 require_once(INCLUDE_DIR . 'class.dynamic_forms.php');
+require_once(INCLUDE_DIR . 'class.osticket.php');
 
 require_once('config.php');
 
@@ -24,6 +25,8 @@ define('EQUIPMENT_CATEGORY_TABLE',TABLE_PREFIX.'equipment_category');
 define('EQUIPMENT_STATUS_TABLE',TABLE_PREFIX.'equipment_status');
 define('EQUIPMENT_TICKET_TABLE',TABLE_PREFIX.'equipment_ticket');
 define('EQUIPMENT_TICKET_VIEW',TABLE_PREFIX.'EquipmentTicketView');
+
+define('OST_WEB_ROOT', osTicket::get_root_path(__DIR__));
 
 define('OST_ROOT',INCLUDE_DIR.'../');
 

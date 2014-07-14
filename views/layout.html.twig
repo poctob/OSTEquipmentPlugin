@@ -7,22 +7,52 @@
 
         {% endblock %}
         {% block stylesheets %}
-            <link href="{{ constant('ROOT_PATH') }}scp/css/scp.css" rel="stylesheet" />
+            <link href="assets/css/equipment.css" rel="stylesheet" />
         {% endblock %}
     </head>
     <body>
-        <div id="content">
-            {% block body %}
-                <div style="width:700;padding-top:5px; float:left;">
-                    <h2>Equipment Categories</h2>
+        <div id="container">
+
+            <div id="header">
+                {% block header %}
+                    <a href="{{ constant('OST_WEB_ROOT') }}scp/index.php" class="no-pjax" id="logo">Back to osTicket</a>
+
+                    {% if staff is defined %}
+                        <p id="info">Welcome, <strong>{{ staff.firstName }}</strong>
+
+                            {% if staff.isadmin %}
+                                | <a href="{{ constant('OST_WEB_ROOT') }}scp/admin.php" class="no-pjax">Admin Panel</a>
+                            {% endif %}
+
+                            | <a href="{{ constant('OST_WEB_ROOT') }}scp/profile.php">My Preferences</a>
+
+                            {% if linktoken is defined %}
+                                | <a href="{{ constant('OST_WEB_ROOT') }}scp/logout.php?auth={{ linktoken }}" class="no-pjax">Log Out</a>
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                {% endblock %}
+            </div>
+
+
+            <div id="content">
+
+                <h2>
+                    {% block pagetitle %}
+                        Equipment Categories
+                    {% endblock %}
+                </h2>
+                {% block body %}               
+                {% endblock %}
+
+
+                <div id="footer">
+                    {% block footer %}
+
+                        Copyright © 2014&nbsp;XpressTek&nbsp;All Rights Reserved.
+
+                    {% endblock %}
                 </div>
-                <div style="float:right;text-align:right;padding-top:5px;padding-right:5px;">
-                    <b><a href="add" class="Icon newCategory">Add New Category</a></b></div>
-                <div class="clear"></div>
-            {% endblock %}
-        </div>
-        <div id="footer">
-        {% block footer %}{% endblock %}
-    </div>
-</body>
+            </div>
+    </body>
 </html>

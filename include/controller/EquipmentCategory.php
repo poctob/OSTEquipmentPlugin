@@ -14,14 +14,12 @@
 require_once ('Controller.php');
 require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment_category.php');
 
+
 class EquipmentCategory extends Controller {
 
-    //put your code here
-
     public function listAction($errors = array()) {
-     //   $categories = Equipment_Category::getAll();
+      
         $this->render('categories_list.html.twig', array(
-          //  'categories' => $categories,
             'erros' => $errors
         ));
     }
@@ -40,14 +38,10 @@ class EquipmentCategory extends Controller {
             $category = new Equipment_Category();
             $title = 'New Equipment Catgory';
         }
-        global $ost;
-        $tocken = $ost->getCSRF();
-      
+
         $this->render('categories_view.html.twig', array(
             'category' => $category,
-            'title' => $title,
-            'tocken'=> $tocken->getToken(),
-            'tocken_name' => $tocken->getTokenName()
+            'title' => $title
         ));
     }
 
