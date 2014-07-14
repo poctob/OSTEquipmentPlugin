@@ -1,56 +1,35 @@
+<?php
 
-    <?php
 
-    /*
-     * To change this license header, choose License Headers in Project Properties.
-     * To change this template file, choose Tools | Templates
-     * and open the template in the editor.
-     */
+class MediaController {
 
-    /**
-     * Description of MediaController
-     *
-     * @author alex
-     */
-    require 'Controller.php';
+    public function defaultAction($request_path) {
 
-    class MediaController extends Controller {
+        $file = EQUIPMENT_ASSETS_DIR . $request_path;
 
-        public function defaultAction($request_path) {
 
-            $file = EQUIPMENT_ASSETS_DIR . $request_path;
-            
+        if (file_exists($file)) {
 
-            if (file_exists($file)) {
-
-                if($this->endsWith($file, '.js'))
-                {
-                    header('Content-type: text/javascript');
-                }
-                
-                else if($this->endsWith($file, '.css'))
-                {
-                    header('Content-type: text/css');
-                }
-                
-                else if($this->endsWith($file, '.png'))
-                {
-                    header('Content-type: image/png');
-                }
-                readfile($file);
-            } else {
-                echo 'File does not exist';
+            if ($this->endsWith($file, '.js')) {
+                header('Content-type: text/javascript');
+            } else if ($this->endsWith($file, '.css')) {
+                header('Content-type: text/css');
+            } else if ($this->endsWith($file, '.png')) {              
+                header('Content-type: image/png');
             }
+            echo file_get_contents($file);
+        } else {
+            echo 'File does not exist';
         }
-
-        public function endsWith($haystack, $needle) {
-            $length = strlen($needle);
-            if ($length == 0) {
-                return true;
-            }
-
-            return (substr($haystack, -$length) === $needle);
-        }
-
     }
-    
+
+    public function endsWith($haystack, $needle) {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
+    }
+
+}
