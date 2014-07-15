@@ -1,5 +1,8 @@
 {% extends 'layout_categories.html.twig' %}
-
+{% block javascripts %}
+    {{ parent() }}
+    <script src="assets/js/equipment_categories.js"></script>
+{% endblock %}
 {% block title %}
     Equipment Categories
 {% endblock %}
@@ -7,7 +10,7 @@
 {% block body %}
     {{ parent() }} 
     <div id="categoriesDataTable"></div> 
-    
+
     <div id="actionButtons">
         <button id="categoryAdd" type="button">New</button>                 
         <button id="categoryEdit" type="button">View/Edit</button>

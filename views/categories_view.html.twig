@@ -1,4 +1,8 @@
 {% extends 'layout_categories.html.twig' %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="assets/js/equipment_categories_view.js"></script>
+{% endblock %}
 
 {% block title %}
     Equipment Category
@@ -11,74 +15,73 @@
 {% block body %}
     {{ parent() }}
 
-    <form action="../save" method="post" id="save">        
-        <table class="form_table" width="940" border="0" cellspacing="0" cellpadding="2">
+    <div id="itemEditPanel" style="margin-bottom:20px" title="Edit Category"> 
+        <form action="../save" method="post" id="saveForm" id="classForm">   
             <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
-             <input type="hidden" name="id" value="{{category.id}}" />
-            <thead>
-                <tr>
-                    <th colspan="2">
-            <h4>{{ title }}</h4>
-            </th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th colspan="2">
-                        <em>Category information: Public categories are published if it has published equipment.</em>
-                    </th>
-                </tr>
-                <tr>
-                    <td width="180" class="required">Category Type:</td>
+            <input type="hidden" name="id" value="{{category.id}}" />
+            <script>selectedItem={{category.id}};</script>
+            <em>Category information: Public categories are published if it has published equipment.</em>
+            <br>
+            Category Type:
+            <table class="radio_table">  
+                <tr>  
                     <td>
                         <input type="radio" name="ispublic" value="1" 
                                {% if category.ispublic == 1 %}
                                    checked="checked"
                                {% endif %}
                                >
-                        <b>Public</b> (publish)
-                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <strong>Public</strong> (published)
+                    </td>  
+                    <td>
                         <input type="radio" name="ispublic" value="0" 
                                {% if category.ispublic == 0 %}
                                    checked="checked"
                                {% endif %}
                                >
                         Private (internal)
+                    </td>  
+                </tr>
+            </table>
 
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan=2>
-                        <div style="padding-top:3px;"><b>Category Name</b>:&nbsp;<span class="faded">Short descriptive name.</span></div>
-                        <input type="text" size="70" name="name" value="{{ category.name }}">
-                        <br>
-                        <div style="padding-top:5px;">
-                            <b>Category Description</b>:&nbsp;<span class="faded">Summary of the category.</span>
-                            &nbsp;
-                        </div>
-                        <textarea class="richtext redactor editor" name="description" cols="21" rows="12" style="width:98%;">
-                            {{ category.description }}</textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <th colspan="2">
-                        <em>Internal Notes&nbsp;</em>
-                    </th>
-                </tr>
-                <tr>
-                    <td colspan=2>
-                        <textarea name="notes" cols="21" rows="8" style="width: 80%;">
-                            {{ category.notes }}
-                        </textarea>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <p style="padding-left:225px;">
-            <input type="submit" name="submit" value="Save">
-            <input type="reset"  name="reset"  value="Reset">
-            <input type="button" name="cancel" value="Cancel" onclick='window.location.href = "../list"'>
-        </p>
-    </form>
+            <div style="padding-top:3px;"><b>Category Name (required)</b>:&nbsp;<span class="faded">Short descriptive name.</span></div>
+            <input id="category_name" type="text" size="70" name="name" value="{{ category.name }}" required/>
+            <br>
+            <div style="padding-top:5px;">
+                <b>Category Description</b>:&nbsp;<span class="faded">Summary of the category.</span>
+                &nbsp;
+            </div>
+
+            <textarea id="category_description" name="description" cols="21" rows="5" style="width:98%;">
+                {{ category.description }}
+            </textarea>
+
+            <div style="padding-top:5px;">
+                <b>Internal Notes</b>
+            </div>
+
+            <textarea id="category_notes" name="notes" cols="21" rows="5" style="width: 98%;">
+                {{ category.notes }}
+            </textarea>
+
+            <p style="padding-left:225px;">               
+                <button id="saveButton" type="submit">Save</button>  
+                <button id="resetButton" type="button">Reset</button>  
+                <button id="cancelButton" type="button">Cancel</button>                  
+            </p>
+        </form>
+    </div>
+
+    <div id="itemsPanel" title="Category Equipment Items"> 
+    </div>
+
+    <div id="openTicketsPanel" class="ticketPanel" title="Open Tickets for Category"> 
+        <div id="openTicketsDataTable"></div> 
+    </div>
+
+    <div id="closedTicketsPanel" class="ticketPanel" title="Closed Tickets for Category"> 
+        <div id="closedTicketsDataTable"></div> 
+    </div>
+
 {% endblock %}
 

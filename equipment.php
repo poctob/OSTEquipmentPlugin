@@ -81,14 +81,23 @@ class EquipmentPlugin extends Plugin {
                 url_get('^list$', 'listAction'),
                 url_get('^listJson$', 'listJsonAction'),
                 url_get('^view/(?P<id>\d+)$', 'viewAction'),
+                url_get('^openTicketsJson/(?P<category_id>\d+)$', 'openTicketsJsonAction'),
+                url_get('^closedTicketsJson/(?P<category_id>\d+)$', 'closedTicketsJsonAction'),
+                url_get('^categoryItemsJson/(?P<category_id>\d+)$', 'categoryItemsJsonAction'),
                 url_post('^save', 'saveAction')));
         
-        $reditect_url=url('^/equipment.*assets/',patterns(               
+        $media_url=url('^/equipment.*assets/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/MediaController.php:MediaController',                
                 url_get('^(?P<url>.*)$', 'defaultAction')))
                 ;
         
-        $object->append($reditect_url);
+        $redirect_url=url('^/equipment.*ostroot/',patterns(               
+                EQUIPMENT_INCLUDE_DIR.'controller/MediaController.php:MediaController',                
+                url_get('^(?P<url>.*)$', 'redirectAction')))
+                ;
+        
+        $object->append($media_url);
+        $object->append($redirect_url);
         $object->append($categories_url);
         
     }

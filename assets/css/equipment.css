@@ -60,3 +60,12 @@ div#header a {
     text-align:center;
     font-size:9pt;
 }
+
+table.radio_table td{
+    padding-right: 50px;
+}
+
+.ticketPanel{
+    margin-bottom: 20px;
+    font-size: 8pt !important;
+}

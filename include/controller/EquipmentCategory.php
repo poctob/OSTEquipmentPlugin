@@ -14,21 +14,74 @@
 require_once ('Controller.php');
 require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment_category.php');
 
-
 class EquipmentCategory extends Controller {
 
     public function listAction($errors = array()) {
-      
+
         $this->render('categories_list.html.twig', array(
             'erros' => $errors
         ));
     }
-    
+
     public function listJsonAction($errors = array()) {
         $categories = Equipment_Category::getAll();
         echo json_encode($categories);
     }
 
+    public function openTicketsJsonAction($category_id) {
+        $tickets = $this->ticketsAction('open', $category_id);
+        echo json_encode($tickets);
+    }
+
+    public function closedTicketsJsonAction($category_id) {
+        $tickets = $this->ticketsAction('closed', $category_id);
+        echo json_encode($tickets);
+    }
+    
+    public function categoryItemsJsonAction($category_id) {
+        $equipment = Equipment_Category::getEquipment($category_id);
+        $items = array();
+        
+        foreach($equipment as $item)
+        {
+            $item_data =  array (
+                'id' => $item->getId(),
+                'name' => $item->getName(),
+                'status' => $item->getStatus(),
+                'published' => $item->isPublished()?'Yes':'No',
+                'active' => $item->isActive()?'Yes':'No'                
+            );
+            $items[] = $item_data;
+        }
+        echo json_encode($items);
+    }
+
+    private function ticketsAction($type, $category_id) {
+        $ticket_id = Equipment_Category::getTicketList($type, $category_id);
+        $tickets = array();
+        foreach ($ticket_id as $id) {
+            $ticket = Ticket::lookup($id);
+            if (isset($ticket)) {
+                $ts_open = strtotime($ticket->getCreateDate());
+                $ts_closed = strtotime($ticket->getCloseDate());
+                
+                $ticket_data = array(
+                    'id' => $ticket->getId(),
+                    'number' => $ticket->getNumber(),
+                    'create_date' => Format::db_datetime($ticket->getCreateDate()),
+                    'subject' => $ticket->getSubject(),
+                    'name' => $ticket->getName()->getFull(),
+                    'priority' => $ticket->getPriority(),
+                    'close_date' => Format::db_datetime($ticket->getCloseDate()),
+                    'closed_by' => $ticket->getStaff()->getUserName(),
+                    'elapsed' => Format::elapsedTime($ts_closed - $ts_open)
+                );
+
+                $tickets[] = $ticket_data;
+            }
+        }
+        return $tickets;
+    }
 
     public function viewAction($id) {
         if ($id > 0) {
@@ -49,11 +102,11 @@ class EquipmentCategory extends Controller {
         header('Content-type: text/javascript');
         include OST_ROOT . 'scp/' . $url;
     }
-    
+
     public function saveAction() {
         $errors = array();
         Equipment_Category::save($_POST['id'], $_POST, $errors);
-        $this->listAction($errors);        
+        $this->listAction($errors);
     }
 
 }

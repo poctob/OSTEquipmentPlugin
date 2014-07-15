@@ -32,7 +32,7 @@ function applyDataTableUI()
     $('#categoriesDataTable').puidatatable({
         caption: "Equipment Categories",
         paginator: {
-            rows: 5
+            rows: 25
         },
         columns: [
             {field: 'name', headerText: 'Name', sortable: true},

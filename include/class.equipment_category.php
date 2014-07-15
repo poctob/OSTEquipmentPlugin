@@ -14,6 +14,8 @@
   vim: expandtab sw=4 ts=4 sts=4:
  * ******************************************************************** */
 
+require_once('class.equipment.php');
+
 class Equipment_Category {
 
     var $id;
@@ -180,7 +182,7 @@ class Equipment_Category {
         return $count;
     }
 
-    function getTicketList($tickets_status, $category_id) {
+    public static function getTicketList($tickets_status, $category_id) {
         $ticket_ids = array();
         $sql = 'SELECT ticket_id from ' . EQUIPMENT_TICKET_VIEW . ' '
                 . 'where `status`="' . $tickets_status . '"'
@@ -291,6 +293,26 @@ class Equipment_Category {
         }
 
         return $categories;
+    }
+    
+    public static function getEquipment($category_id)
+    {
+        $equipment = array();
+         $sql = ' SELECT equipment.equipment_id '
+                . ' FROM ' . EQUIPMENT_CATEGORY_TABLE . ' cat '
+                . ' LEFT JOIN ' . EQUIPMENT_TABLE . ' equipment ON(equipment.category_id=cat.category_id) '
+                . ' WHERE cat.category_id=' . db_input($category_id)
+                ;
+        $res = db_query($sql);
+        
+         if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $item = new Equipment($row['equipment_id']);
+                $equipment[] = $item;
+            }
+        }
+
+        return $equipment;
     }
 
 }

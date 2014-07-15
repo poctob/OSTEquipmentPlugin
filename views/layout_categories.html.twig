@@ -2,17 +2,11 @@
 
 {% block head %}
     {% block javascripts %}
-         {{ parent() }}
-        <script src="assets/js/jquery-2.1.0.min.js"></script>
-        <script src="assets/js/jquery-ui/js/jquery-ui-1.10.4.js"></script>
-        <script src="assets/js/primeui/production/primeui-1.0-min.js"></script> 
-        <script src="assets/js/equipment_categories.js"></script>
+        {{ parent() }}
+        <script src="assets/js/common.js"></script>        
     {% endblock %}
     {% block stylesheets %}
         {{ parent() }}
-        <link href="assets/js/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.css" rel="stylesheet" />
-        <link href="assets/js/primeui/themes/cupertino/theme.css" rel="stylesheet" />
-        <link href="assets/js/primeui/production/primeui-1.0-min.css" rel="stylesheet" />
     {% endblock %}
 {% endblock %}
 
