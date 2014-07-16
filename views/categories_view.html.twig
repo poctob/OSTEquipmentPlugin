@@ -19,7 +19,7 @@
         <form action="../save" method="post" id="saveForm" id="classForm">   
             <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
             <input type="hidden" name="id" value="{{category.id}}" />
-            <script>selectedItem={{category.id}};</script>
+            <script>selectedItem ={{category.id}} ;</script>
             <em>Category information: Public categories are published if it has published equipment.</em>
             <br>
             Category Type:
@@ -72,7 +72,17 @@
         </form>
     </div>
 
-    <div id="itemsPanel" title="Category Equipment Items"> 
+    <div id="itemsPanel" title="Category Equipment Items" class="margin-bottom: 20px;"> 
+        <div id="itemsDataTable"></div> 
+        <div id="itemActionButtons" style="padding-top:10px;">
+            <button id="itemAdd" type="button">New</button>                 
+            <button id="itemEdit" type="button">View/Edit</button>
+            <button id="itemPublish" type="button">Publish</button>
+            <button id="itemUnpublish" type="button">Unpublish</button>
+            <button id="itemActivate" type="button">Activate</button>
+            <button id="itemDeactivate" type="button">Deactivate</button>
+            <button id="itemDelete" type="button">Delete</button>
+        </div>
     </div>
 
     <div id="openTicketsPanel" class="ticketPanel" title="Open Tickets for Category"> 

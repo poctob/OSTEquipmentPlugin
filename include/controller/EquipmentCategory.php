@@ -37,19 +37,18 @@ class EquipmentCategory extends Controller {
         $tickets = $this->ticketsAction('closed', $category_id);
         echo json_encode($tickets);
     }
-    
+
     public function categoryItemsJsonAction($category_id) {
         $equipment = Equipment_Category::getEquipment($category_id);
         $items = array();
-        
-        foreach($equipment as $item)
-        {
-            $item_data =  array (
+
+        foreach ($equipment as $item) {
+            $item_data = array(
                 'id' => $item->getId(),
                 'name' => $item->getName(),
                 'status' => $item->getStatus(),
-                'published' => $item->isPublished()?'Yes':'No',
-                'active' => $item->isActive()?'Yes':'No'                
+                'published' => $item->isPublished() ? 'Yes' : 'No',
+                'active' => $item->isActive() ? 'Yes' : 'No'
             );
             $items[] = $item_data;
         }
@@ -64,7 +63,7 @@ class EquipmentCategory extends Controller {
             if (isset($ticket)) {
                 $ts_open = strtotime($ticket->getCreateDate());
                 $ts_closed = strtotime($ticket->getCloseDate());
-                
+
                 $ticket_data = array(
                     'id' => $ticket->getId(),
                     'number' => $ticket->getNumber(),
@@ -107,6 +106,14 @@ class EquipmentCategory extends Controller {
         $errors = array();
         Equipment_Category::save($_POST['id'], $_POST, $errors);
         $this->listAction($errors);
+    }
+
+    public function deleteAction() {
+       $category = new Equipment_Category($_POST['category_id']);
+       if(isset($category))
+       {
+           $category->delete();
+       }
     }
 
 }

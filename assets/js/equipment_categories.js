@@ -2,17 +2,17 @@ var selectedItem = 0;
 $(function() {
 
     applyDataTableUI();
-    
-      $('#categoryAdd').puibutton({
+
+    $('#categoryAdd').puibutton({
         icon: 'ui-icon-circle-plus',
         click: function() {
-            window.location.href = 'view/0';        
+            window.location.href = 'view/0';
         }
     });
 
     $('#categoryEdit').puibutton({
         icon: 'ui-icon-pencil',
-       click: function() {
+        click: function() {
             window.location.href = 'view/' + selectedItem;
         }
     });
@@ -20,10 +20,10 @@ $(function() {
     $('#categoryDelete').puibutton({
         icon: 'ui-icon-trash',
         click: function() {
-             $( "#delete-dialog-confirm" ).puidialog('show');           
+            $("#delete-dialog-confirm").puidialog('show');
         }
     });
-    
+
     disableCategoryEditButtons();
 });
 
@@ -39,7 +39,7 @@ function applyDataTableUI()
             {field: 'ispublic', headerText: 'Type', sortable: true},
             {field: 'equipment_count', headerText: 'Equipment', sortable: true},
             {field: 'open_ticket_count', headerText: 'Open Tickets', sortable: true},
-             {field: 'closed_ticket_count', headerText: 'Closed Tickets', sortable: true},
+            {field: 'closed_ticket_count', headerText: 'Closed Tickets', sortable: true},
             {field: 'updated', headerText: 'Last Updated', sortable: true}
         ],
         datasource: function(callback) {
@@ -57,12 +57,10 @@ function applyDataTableUI()
         rowSelect: function(event, data) {
             selectedItem = data.id;
             enableCategoryEditButtons();
-            $('#messages').puigrowl('show', [{severity: 'info', summary: 'Row Selected', detail: (data.id)}]);
         },
         rowUnselect: function(event, data) {
             selectedItem = 0;
             disableCategoryEditButtons();
-            $('#messages').puigrowl('show', [{severity: 'info', summary: 'Row Unselected', detail: (data.id)}]);
         }
     });
 }
@@ -81,4 +79,24 @@ function disableCategoryEditButtons()
 
 }
 
+function deleteAction()
+{
+    $('#delete-dialog-confirm').puidialog('hide');
+    $('input[name="category_id"]').val(selectedItem.toString());
+    $.post('delete', $('#deleteForm').serialize())
+            .done(function()
+            {
+               location.reload();
+            //   $('#categoriesDataTable').puidatatable('unselectAllRows');
+              // $('#categoriesDataTable').puidatatable('reset');
+               
+               $('#messages').puigrowl('show',
+                        [{severity: 'info', summary: 'Success', detail: 'Item deleted!'}]);
+            })
+            .error(function()
+            {
+                $('#messages').puigrowl('show',
+                        [{severity: 'error', summary: 'Error', detail: 'Failed to delete item!'}]);
+            });
+}
 

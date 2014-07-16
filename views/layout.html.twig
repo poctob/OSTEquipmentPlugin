@@ -16,10 +16,12 @@
             <link href="assets/js/primeui/production/primeui-1.0-min.css" rel="stylesheet" />
         {% endblock %}
         <script>
-            var ostroot = {{ constant('OST_WEB_ROOT') }};
+            var ostroot
+            = {{ constant('OST_WEB_ROOT') }};
         </script>
     </head>
     <body>
+
         <div id="container">
 
             <div id="header">
@@ -43,14 +45,18 @@
                 {% endblock %}
             </div>
 
-
+           
             <div id="content">
-
+                
                 <h2>
                     {% block pagetitle %}
                         Equipment Categories
                     {% endblock %}
                 </h2>
+                <div id="delete-dialog-confirm" title="Confirm Dialog">
+                    Are you sure you want to delete this item?
+                </div>
+                <div id="messages"></div>
                 {% block body %}               
                 {% endblock %}
 

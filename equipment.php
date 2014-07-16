@@ -80,11 +80,13 @@ class EquipmentPlugin extends Plugin {
                 EQUIPMENT_INCLUDE_DIR.'controller/EquipmentCategory.php:EquipmentCategory',
                 url_get('^list$', 'listAction'),
                 url_get('^listJson$', 'listJsonAction'),
-                url_get('^view/(?P<id>\d+)$', 'viewAction'),
+                url_get('^view/(?P<id>\d+)$', 'viewAction'),                
                 url_get('^openTicketsJson/(?P<category_id>\d+)$', 'openTicketsJsonAction'),
                 url_get('^closedTicketsJson/(?P<category_id>\d+)$', 'closedTicketsJsonAction'),
                 url_get('^categoryItemsJson/(?P<category_id>\d+)$', 'categoryItemsJsonAction'),
-                url_post('^save', 'saveAction')));
+                url_post('^save', 'saveAction'),
+                url_post('^delete', 'deleteAction')
+                ));
         
         $media_url=url('^/equipment.*assets/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/MediaController.php:MediaController',                
