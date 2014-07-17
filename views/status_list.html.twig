@@ -1,0 +1,27 @@
+{% extends 'layout_categories.html.twig' %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="assets/js/equipment_status.js"></script>
+{% endblock %}
+{% block title %}
+    Equipment Status
+{% endblock %}
+{% block pagetitle %}
+    Equipment Status
+{% endblock %}
+
+{% block body %}
+    {{ parent() }} 
+    <form action="delete" method="post" id="deleteForm" id="classForm">
+        <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+        <input type="hidden" name="status_id" value="" />
+    </form>
+    <div id="statusDataTable"></div> 
+
+    <div id="actionButtons">
+        <button id="statusAdd" type="button">New</button>                 
+        <button id="statusEdit" type="button">View/Edit</button>
+        <button id="statusDelete" type="button">Delete</button>
+    </div>
+{% endblock %}
+

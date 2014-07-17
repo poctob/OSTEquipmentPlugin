@@ -15,6 +15,12 @@ require_once ('Controller.php');
 require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment_status.php');
 
 class EquipmentStatus extends Controller {
+    
+    public function listAction($errors = array()) {
+        $this->render('status_list.html.twig', array(
+            'erros' => $errors
+        ));
+    }
 
     public function viewAction($id) {
         if ($id > 0) {
@@ -47,7 +53,7 @@ class EquipmentStatus extends Controller {
     }
 
     public function listJsonAction($errors = array()) {
-        $status = Equipment_Status::getStatusList();
+        $status = Equipment_Status::getAll();
         echo json_encode($status);
     }
 

@@ -74,3 +74,8 @@ table.radio_table td{
 {
     color: red;
 }
+
+img.status_image_table{
+    width: 25px;
+    height: 25px;
+}

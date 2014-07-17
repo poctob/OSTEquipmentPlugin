@@ -28,6 +28,8 @@ define('EQUIPMENT_TICKET_VIEW',TABLE_PREFIX.'EquipmentTicketView');
 
 define('OST_WEB_ROOT', osTicket::get_root_path(__DIR__));
 
+define('EQUIPMENT_WEB_ROOT',OST_WEB_ROOT.'scp/dispatcher.php/equipment/');
+
 define('OST_ROOT',INCLUDE_DIR.'../');
 
 define('PLUGINS_ROOT',INCLUDE_DIR.'plugins/');
@@ -76,7 +78,7 @@ class EquipmentPlugin extends Plugin {
     static public function callbackDispatch($object, $data)
     {
         
-        $categories_url=url('^/equipment/categories/',patterns(               
+        $categories_url=url('^/equipment.*categories/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/EquipmentCategory.php:EquipmentCategory',
                 url_get('^list$', 'listAction'),
                 url_get('^listJson$', 'listJsonAction'),
@@ -88,7 +90,7 @@ class EquipmentPlugin extends Plugin {
                 url_post('^delete', 'deleteAction')
                 ));
         
-        $item_url=url('^/equipment/item/',patterns(               
+        $item_url=url('^/equipment.*item/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/EquipmentItem.php:EquipmentItem',
                 url_get('^view/(?P<id>\d+)$', 'viewAction'),   
                 url_get('^new/(?P<category_id>\d+)$', 'newAction'),
@@ -96,8 +98,9 @@ class EquipmentPlugin extends Plugin {
                 url_post('^activate', 'activateAction')
                 ));
         
-        $status_url=url('^/equipment/status/',patterns(               
+        $status_url=url('^/equipment.*status/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/EquipmentStatus.php:EquipmentStatus',
+                url_get('^list$', 'listAction'),
                 url_get('^view/(?P<id>\d+)$', 'viewAction'),   
                 url_get('^new/(?P<category_id>\d+)$', 'newAction'),
                 url_get('^listJson$', 'listJsonAction')

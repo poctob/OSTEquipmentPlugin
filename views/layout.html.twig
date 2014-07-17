@@ -16,8 +16,7 @@
             <link href="assets/js/primeui/production/primeui-1.0-min.css" rel="stylesheet" />
         {% endblock %}
         <script>
-            var ostroot
-            = {{ constant('OST_WEB_ROOT') }};
+            var ostroot = "{{ constant('OST_WEB_ROOT') }}";
         </script>
     </head>
     <body>
@@ -26,28 +25,37 @@
 
             <div id="header">
                 {% block header %}
-                    <a href="{{ constant('OST_WEB_ROOT') }}scp/index.php" class="no-pjax" id="logo">Back to osTicket</a>
+                    <div>
+                        <a href="{{ constant('OST_WEB_ROOT') }}scp/index.php" class="no-pjax" id="logo">Back to osTicket</a>
 
-                    {% if staff is defined %}
-                        <p id="info">Welcome, <strong>{{ staff.firstName }}</strong>
+                        {% if staff is defined %}
+                            <p id="info">Welcome, <strong>{{ staff.firstName }}</strong>
 
-                            {% if staff.isadmin %}
-                                | <a href="{{ constant('OST_WEB_ROOT') }}scp/admin.php" class="no-pjax">Admin Panel</a>
-                            {% endif %}
+                                {% if staff.isadmin %}
+                                    | <a href="{{ constant('OST_WEB_ROOT') }}scp/admin.php" class="no-pjax">Admin Panel</a>
+                                {% endif %}
 
-                            | <a href="{{ constant('OST_WEB_ROOT') }}scp/profile.php">My Preferences</a>
+                                | <a href="{{ constant('OST_WEB_ROOT') }}scp/profile.php">My Preferences</a>
 
-                            {% if linktoken is defined %}
-                                | <a href="{{ constant('OST_WEB_ROOT') }}scp/logout.php?auth={{ linktoken }}" class="no-pjax">Log Out</a>
-                            {% endif %}
-                        </p>
-                    {% endif %}
+                                {% if linktoken is defined %}
+                                    | <a href="{{ constant('OST_WEB_ROOT') }}scp/logout.php?auth={{ linktoken }}" class="no-pjax">Log Out</a>
+                                {% endif %}
+                            </p>
+                        {% endif %}
+                    </div>
+
                 {% endblock %}
             </div>
+            <div id="menuBar">
+                <ul id="menuBarList">
+                    <li> <a data-icon="ui-icon-folder-collapsed" href="{{ constant('EQUIPMENT_WEB_ROOT') }}categories/list">Categories</a> </li>
+                    <li> <a data-icon="ui-icon-tag" href="{{ constant('EQUIPMENT_WEB_ROOT') }}status/list">Status</a> </li>
+                </ul>
+            </div>
 
-           
+
             <div id="content">
-                
+
                 <h2>
                     {% block pagetitle %}
                         Equipment Categories

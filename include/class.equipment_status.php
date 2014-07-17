@@ -16,6 +16,12 @@
 class Equipment_Status {
     var $id;
     var $ht;
+    var $name;
+    var $image;
+    var $num_equipment;
+    var $description;
+    var $color;
+    var $baseline;
 
     function Equipment_Status($id) {
         $this->id=0;
@@ -35,6 +41,7 @@ class Equipment_Status {
 
         $this->ht = db_fetch_array($res);
         $this->id = $this->ht['status_id'];
+
 
         return true;
     }
@@ -133,6 +140,22 @@ class Equipment_Status {
                 $status_list[$id]=$name;
 
         return $status_list;
+    }
+    
+        public static function getAll() {
+        $statuses = array();
+        $sql = 'SELECT status_id ' .
+                ' FROM ' . EQUIPMENT_STATUS_TABLE;
+
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $status = new Equipment_Status($row['status_id']);
+                $statuses[] = $status->getHashtable();
+            }
+        }
+
+        return $statuses;
     }
     
      function getBaselineStatus() {
