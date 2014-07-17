@@ -69,3 +69,8 @@ table.radio_table td{
     margin-bottom: 20px;
     font-size: 8pt !important;
 }
+
+.error
+{
+    color: red;
+}

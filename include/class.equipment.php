@@ -67,7 +67,7 @@ class Equipment {
     function getColor() { return $this->ht['Color']; }
     function getImage() { return $this->ht['Image']; }
 
-    function isPublished() { return (!!$this->ht['ispublished'] && !!$this->ht['ispublic']); }
+    function isPublished() { return ($this->ht['ispublished']); }
     function isActive() {return $this->ht['is_active'];}
 
     function getCreateDate() { return $this->ht['created']; }
@@ -83,7 +83,7 @@ class Equipment {
 
 
     /* ------------------> Setter methods <--------------------- */
-    function setPublished($val) { $this->ht['ispublished'] = !!$val; }
+    function setPublished($val) { $this->ht['ispublished'] = $val; }
     function setName($name) { $this->ht['name'] = Format::striptags(trim($name)); }
     function setDescription($text) { $this->ht['description'] = $text; }
     function setSerialNumber($words) { $this->ht['serialnumber'] = $words; }

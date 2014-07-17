@@ -117,7 +117,7 @@ class Equipment_Status {
         return self::save(0, $vars, $errors);
     }
 
-     function getStatusList($non_baseline=false) {
+    public static function getStatusList($non_baseline=false) {
 
         $status_list=array();
         $sql='SELECT status_id, name '

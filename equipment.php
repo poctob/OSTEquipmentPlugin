@@ -88,6 +88,21 @@ class EquipmentPlugin extends Plugin {
                 url_post('^delete', 'deleteAction')
                 ));
         
+        $item_url=url('^/equipment/item/',patterns(               
+                EQUIPMENT_INCLUDE_DIR.'controller/EquipmentItem.php:EquipmentItem',
+                url_get('^view/(?P<id>\d+)$', 'viewAction'),   
+                url_get('^new/(?P<category_id>\d+)$', 'newAction'),
+                url_post('^publish', 'publishAction'),
+                url_post('^activate', 'activateAction')
+                ));
+        
+        $status_url=url('^/equipment/status/',patterns(               
+                EQUIPMENT_INCLUDE_DIR.'controller/EquipmentStatus.php:EquipmentStatus',
+                url_get('^view/(?P<id>\d+)$', 'viewAction'),   
+                url_get('^new/(?P<category_id>\d+)$', 'newAction'),
+                url_get('^listJson$', 'listJsonAction')
+                ));
+        
         $media_url=url('^/equipment.*assets/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/MediaController.php:MediaController',                
                 url_get('^(?P<url>.*)$', 'defaultAction')))
@@ -101,7 +116,8 @@ class EquipmentPlugin extends Plugin {
         $object->append($media_url);
         $object->append($redirect_url);
         $object->append($categories_url);
-        
+        $object->append($item_url);
+        $object->append($status_url);
     }
     /**
      * Creates menu links in the staff backend.

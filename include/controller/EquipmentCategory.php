@@ -85,10 +85,10 @@ class EquipmentCategory extends Controller {
     public function viewAction($id) {
         if ($id > 0) {
             $category = Equipment_Category::lookup($id);
-            $title = 'Edit Equipment Catgory';
+            $title = 'Edit Equipment Category';
         } else {
             $category = new Equipment_Category();
-            $title = 'New Equipment Catgory';
+            $title = 'New Equipment Category';
         }
 
         $this->render('categories_view.html.twig', array(

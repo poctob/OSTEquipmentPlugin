@@ -4,50 +4,13 @@ var currentItem = 0;
 
 $(function() {
 
+    $.getJSON('../../status/listJson', populateStatusDropDown);
 
     $(':radio').puiradiobutton();
-    $('#category_name').puiinputtext();
-    $('#category_description').puiinputtextarea();
-    $('#category_notes').puiinputtextarea();
-
-
-    $('#itemEditPanel').puipanel({
-        toggleable: true
-    });
-
-    $('#itemsPanel').puipanel({
-        toggleable: true
-    });
-
-    $('#openTicketsPanel').puipanel({
-        toggleable: true
-    });
-
-    $('#closedTicketsPanel').puipanel({
-        toggleable: true
-    });
-
-    $('#saveButton').puibutton({
-        icon: 'ui-icon-disk'
-    });
-
-    $('#resetButton').puibutton({
-        icon: 'ui-icon-arrowrefresh-1-w',
-        click: function(event) {
-            resetForm($('#saveForm'));
-        }
-    });
-
-    $('#cancelButton').puibutton({
-        icon: 'ui-icon-circle-close',
-        click: function(event) {
-            window.location.href = "../list";
-        }
-    });
-
-    applyDataTableUI();
-    applyItemButtonUI();
-    disableItemButtons();
+    $('#item_name').puiinputtext();
+    $('#serial_number').puiinputtext();
+    $('#item_description').puiinputtextarea();
+    $('#item_notes').puiinputtextarea();
 
     $("#saveForm").validate();
 });
@@ -78,7 +41,7 @@ function applyItemButtonUI()
     $('#itemUnpublish').puibutton({
         icon: 'ui-icon-document',
         click: function(event) {
-             publishItem(false);
+            publishItem(false);
         }
     });
 
@@ -255,7 +218,7 @@ function disableCategoryEditButtons()
 function activateItem(activate)
 {
     $('input[name="item_id"]').val(currentItem.toString());
-    $('input[name="item_activate"]').val(activate?'1':'0');
+    $('input[name="item_activate"]').val(activate ? '1' : '0');
     $.post('../../item/activate', $('#activateForm').serialize())
             .done(function()
             {
@@ -274,7 +237,7 @@ function activateItem(activate)
 function publishItem(publish)
 {
     $('input[name="item_id"]').val(currentItem.toString());
-    $('input[name="item_publish"]').val(publish?'1':'0');
+    $('input[name="item_publish"]').val(publish ? '1' : '0');
     $.post('../../item/publish', $('#publishForm').serialize())
             .done(function()
             {
@@ -291,6 +254,28 @@ function publishItem(publish)
 }
 
 
+function populateStatusDropDown(data)
+{
+    $('#statusDropDown').puidropdown();
+    for (var key in data)
+    {
+        var status = data[key];
+        $('#statusDropDown').puidropdown
+                ('addOption', status, key);
 
+        if (typeof status_id !== 'undefined')
+        {
+            $('#statusDropDown').puidropdown('selectValue', status_id);
+        }
+    }
+
+    $('#statusDropDown').puidropdown({
+        change: function(event) {
+           // var url = $('#calendarsDropDown').puidropdown('getSelectedValue');
+           // window.location.href = url;
+        }
+    });
+
+}
 
 

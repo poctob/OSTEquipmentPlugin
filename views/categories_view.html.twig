@@ -16,7 +16,7 @@
     {{ parent() }}
 
     <div id="itemEditPanel" style="margin-bottom:20px" title="Edit Category"> 
-        <form action="../save" method="post" id="saveForm" id="classForm">   
+        <form action="../save" method="post" id="saveForm">   
             <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
             <input type="hidden" name="id" value="{{category.id}}" />
             <script>selectedItem ={{category.id}} ;</script>
@@ -83,6 +83,18 @@
             <button id="itemDeactivate" type="button">Deactivate</button>
             <button id="itemDelete" type="button">Delete</button>
         </div>
+
+        <form action="../item/publish" method="post" id="publishForm">   
+            <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+            <input type="hidden" name="item_id" value="" />
+            <input type="hidden" name="item_publish" value="" />
+        </form>
+
+        <form action="../item/activate" method="post" id="activateForm">   
+            <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+            <input type="hidden" name="item_id" value="" />
+            <input type="hidden" name="item_activate" value="" /> 
+        </form>
     </div>
 
     <div id="openTicketsPanel" class="ticketPanel" title="Open Tickets for Category"> 

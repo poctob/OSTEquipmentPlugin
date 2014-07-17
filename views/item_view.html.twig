@@ -1,0 +1,107 @@
+{% extends 'layout_categories.html.twig' %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="assets/js/equipment_item_view.js"></script>
+{% endblock %}
+
+{% block title %}
+    Equipment Item
+{% endblock %}
+
+{% block pagetitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div id="itemEditPanel" style="margin-bottom:20px" title="Edit Item"> 
+        <strong>Category: </strong><a href="../../categories/view/{{ category.id }}">{{ category.name }}</a>
+        <form action="../save" method="post" id="saveForm">   
+            <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+            <input type="hidden" name="category_id" value="{{category.id}}" />
+            <br>
+            Item Type:
+            <table class="radio_table">  
+                <tr>  
+                    <td>
+                        <input type="radio" name="published" value="1" 
+                               {% if equipment.published == 1 %}
+                                   checked="checked"
+                               {% endif %}
+                               >
+                        <strong>Public</strong> (published)
+                    </td>  
+                    <td>
+                        <input type="radio" name="published" value="0" 
+                               {% if equipment.published == 0 %}
+                                   checked="checked"
+                               {% endif %}
+                               >
+                        Private (internal)
+                    </td>  
+                </tr>
+                <tr>  
+                    <td>
+                        <input type="radio" name="active" value="1" 
+                               {% if equipment.active == 1 %}
+                                   checked="checked"
+                               {% endif %}
+                               >
+                        <strong>Active</strong> (published)
+                    </td>  
+                    <td>
+                        <input type="radio" name="active" value="0" 
+                               {% if equipment.active == 0 %}
+                                   checked="checked"
+                               {% endif %}
+                               >
+                        Retired (inactive)
+                    </td>  
+                </tr>
+            </table>
+            <div style="padding-top:5px;"><b> Name (required)</b>:&nbsp;<span class="faded">Short descriptive name.</span></div>
+            <input id="item_name" type="text" size="70" name="name" value="{{ equipment.name }}" required/>
+
+            <div style="padding-top:5px;"><b>Serial Number</b></div>
+            <input id="serial_number" type ="text" size="70" name="serialnumber" value="{{ equipment.serialNumber }}"/>
+            <br>
+            <div style="padding-top:5px;"><b>Status (required)</b></div>
+            <select id="statusDropDown" name="statusSelect" required>
+                <option value="0">---Select Status---</option>
+            </select>
+            {% if status_id is defined %}
+                <script>
+                    var status_id
+                    = {{status_id}};
+                </script>
+            {% endif %}
+
+            <div style="padding-top:5px;">
+                <b>Description</b>:&nbsp;<span class="faded">Description of the item.</span>
+                &nbsp;
+            </div>
+
+            <textarea id="item_description" name="description" cols="21" rows="5" style="width:98%;">
+                {{ item.description }}
+            </textarea>
+
+            <div style="padding-top:5px;">
+                <b>Notes</b>:
+            </div>
+
+            <textarea id="item_notes" name="notes" cols="21" rows="5" style="width:98%;">
+                {{ item.notes }}
+            </textarea>
+
+
+            <p style="padding-left:225px;">               
+                <button id="saveButton" type="submit">Save</button>  
+                <button id="resetButton" type="button">Reset</button>  
+                <button id="cancelButton" type="button">Cancel</button>                  
+            </p>
+        </form>
+    </div>
+
+{% endblock %}
+

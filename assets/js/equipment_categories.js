@@ -86,10 +86,7 @@ function deleteAction()
     $.post('delete', $('#deleteForm').serialize())
             .done(function()
             {
-               location.reload();
-            //   $('#categoriesDataTable').puidatatable('unselectAllRows');
-              // $('#categoriesDataTable').puidatatable('reset');
-               
+               location.reload();              
                $('#messages').puigrowl('show',
                         [{severity: 'info', summary: 'Success', detail: 'Item deleted!'}]);
             })
