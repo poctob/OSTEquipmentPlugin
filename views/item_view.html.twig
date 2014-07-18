@@ -16,25 +16,29 @@
     {{ parent() }}
 
     <div id="itemEditPanel" style="margin-bottom:20px" title="Edit Item"> 
-        <strong>Category: </strong><a href="../../categories/view/{{ category.id }}">{{ category.name }}</a>
-        <form action="../save" method="post" id="saveForm">   
+        <strong>Category: </strong><a href="{{ constant('EQUIPMENT_WEB_ROOT') }}categories/view/{{ item.category.id }}">{{ item.category.name }}</a>
+        <script>
+            var category_id = {{ item.category.id }};
+        </script>
+        <form action="{{ constant('EQUIPMENT_WEB_ROOT') }}item/save" method="post" id="saveForm">   
             <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
-            <input type="hidden" name="category_id" value="{{category.id}}" />
+            <input type="hidden" name="category_id" value="{{item.category.id}}" />            
+            <input type="hidden" name="id" value="{{item.id}}" />
             <br>
             Item Type:
             <table class="radio_table">  
                 <tr>  
                     <td>
-                        <input type="radio" name="published" value="1" 
-                               {% if equipment.published == 1 %}
+                        <input type="radio" name="ispublished" value="1" 
+                               {% if item.published == 1 %}
                                    checked="checked"
                                {% endif %}
                                >
                         <strong>Public</strong> (published)
                     </td>  
                     <td>
-                        <input type="radio" name="published" value="0" 
-                               {% if equipment.published == 0 %}
+                        <input type="radio" name="ispublished" value="0" 
+                               {% if item.published == 0 %}
                                    checked="checked"
                                {% endif %}
                                >
@@ -43,16 +47,16 @@
                 </tr>
                 <tr>  
                     <td>
-                        <input type="radio" name="active" value="1" 
-                               {% if equipment.active == 1 %}
+                        <input type="radio" name="is_active" value="1" 
+                               {% if item.active == 1 %}
                                    checked="checked"
                                {% endif %}
                                >
                         <strong>Active</strong> (published)
                     </td>  
                     <td>
-                        <input type="radio" name="active" value="0" 
-                               {% if equipment.active == 0 %}
+                        <input type="radio" name="is_active" value="0" 
+                               {% if item.active == 0 %}
                                    checked="checked"
                                {% endif %}
                                >
@@ -61,19 +65,19 @@
                 </tr>
             </table>
             <div style="padding-top:5px;"><b> Name (required)</b>:&nbsp;<span class="faded">Short descriptive name.</span></div>
-            <input id="item_name" type="text" size="70" name="name" value="{{ equipment.name }}" required/>
+            <input id="item_name" type="text" size="70" name="name" value="{{ item.name }}" required/>
 
             <div style="padding-top:5px;"><b>Serial Number</b></div>
-            <input id="serial_number" type ="text" size="70" name="serialnumber" value="{{ equipment.serialNumber }}"/>
+            <input id="serial_number" type ="text" size="70" name="serialnumber" value="{{ item.serialNumber }}"/>
             <br>
             <div style="padding-top:5px;"><b>Status (required)</b></div>
-            <select id="statusDropDown" name="statusSelect" required>
+            <select id="statusDropDown" name="status_id" required>
                 <option value="0">---Select Status---</option>
             </select>
-            {% if status_id is defined %}
+            {% if item.status is defined %}
                 <script>
                     var status_id
-                    = {{status_id}};
+                    = {{item.status.id}};
                 </script>
             {% endif %}
 

@@ -81,7 +81,7 @@ function disableStatusEditButtons()
 function deleteAction()
 {
     $('#delete-dialog-confirm').puidialog('hide');
-    $('input[name="status_id"]').val(selectedItem.toString());
+    $('input[name="id"]').val(selectedItem.toString());
     $.post('status/delete', $('#deleteForm').serialize())
             .done(function()
             {

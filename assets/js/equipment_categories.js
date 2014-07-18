@@ -82,18 +82,12 @@ function disableCategoryEditButtons()
 function deleteAction()
 {
     $('#delete-dialog-confirm').puidialog('hide');
-    $('input[name="category_id"]').val(selectedItem.toString());
+    $('input[name="id"]').val(selectedItem.toString());
     $.post('delete', $('#deleteForm').serialize())
             .done(function()
             {
                location.reload();              
-               $('#messages').puigrowl('show',
-                        [{severity: 'info', summary: 'Success', detail: 'Item deleted!'}]);
-            })
-            .error(function()
-            {
-                $('#messages').puigrowl('show',
-                        [{severity: 'error', summary: 'Error', detail: 'Failed to delete item!'}]);
             });
+          
 }
 

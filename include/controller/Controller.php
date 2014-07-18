@@ -8,7 +8,26 @@
 require_once (EQUIPMENT_APP_DIR . 'app.php');
 require_once(INCLUDE_DIR . 'class.staff.php');
 
-class Controller {
+spl_autoload_register('Controller::loadClass');
+
+abstract class Controller {
+
+    public static function loadClass($class) {
+        $path = EQUIPMENT_INCLUDE_DIR . 'class.' . strtolower($class) . '.php';
+        include_once($path);
+        if (class_exists($class, false)) {
+            return new $class();
+        } else {
+            Controller::setFlash('error', 'Class load error!', 'Failed to load ' . $class);
+            return false;
+        }
+    }
+
+    protected abstract function getEntityClassName();
+
+    protected abstract function getListTemplateName();
+
+    protected abstract function getViewTemplateName();
 
     public function render($template, $args = array()) {
         $loader = new Twig_Loader_Filesystem(EQUIPMENT_VIEWS_DIR);
@@ -30,7 +49,7 @@ class Controller {
         echo $twig->render($template, $args);
     }
 
-    protected function setFlash($severity, $summary, $details) {
+    public static function setFlash($severity, $summary, $details) {
         if (!empty($_SESSION['flash'])) {
             unset($_SESSION['flash']);
         }
@@ -44,13 +63,59 @@ class Controller {
         $_SESSION['flash'] = $flash;
     }
 
-    public function redirectImagesAction($url) {
-        $url_l = $url;
-        $im = imagecreatefrompng(EQUIPMENT_ASSETS_DIR . $url_l);
-        header('Content-Type: image/jpeg');
-        imagepng($im);
-        // imagedestroy($im);
-        //  echo EQUIPMENT_ASSETS_DIR.$url;
+    public function listJsonAction() {
+        $entityClass = $this->getEntityClassName();
+        $items = $entityClass::getAll();
+        echo json_encode($items);
+    }
+
+    public function listAction() {
+        $template_name = $this->getListTemplateName();
+        $this->render($template_name);
+    }
+
+    public function viewAction($id) {
+        $entityClass = $this->getEntityClassName();
+        if ($id > 0) {            
+            $item = $entityClass::lookup($id);
+            $title = 'Edit ' . $entityClass;
+        } else {
+            $item = new $entityClass();
+            $title = 'New ' . $entityClass;
+        }
+
+        $template_name = $this->getViewTemplateName();
+        $this->render($template_name, array(
+            'item' => $item,
+            'title' => $title
+        ));
+    }
+
+    public function saveAction() {
+        $errors = array();
+        $entityClass = $this->getEntityClassName();
+        $entityClass::save($_POST['id'], $_POST, $errors);
+        if(isset($errors) && count($errors)>0)
+        {
+            $this::setFlash('error', 'Failed to save item!', print_r($errors));
+        }
+        else
+        {
+            $this::setFlash('info', 'Success!', 'Item Saved');
+        }
+        $this->viewAction($_POST['id']);
+    }
+
+    public function deleteAction() {
+        $entityClass = $this->getEntityClassName();
+        $item = new $entityClass($_POST['id']);
+        if (isset($item) && $item->delete()) {
+            $this::setFlash('info', 'Success!', 'Item Deleted');
+        }
+        else {
+            $this::setFlash('error', '!', 'Failed to delete Item!');
+        }
+        $this->listAction();
     }
 
 }

@@ -95,7 +95,8 @@ class EquipmentPlugin extends Plugin {
                 url_get('^view/(?P<id>\d+)$', 'viewAction'),   
                 url_get('^new/(?P<category_id>\d+)$', 'newAction'),
                 url_post('^publish', 'publishAction'),
-                url_post('^activate', 'activateAction')
+                url_post('^activate', 'activateAction'),
+                url_post('^save', 'saveAction')
                 ));
         
         $status_url=url('^/equipment.*status/',patterns(               
@@ -105,7 +106,8 @@ class EquipmentPlugin extends Plugin {
                 url_get('^new/(?P<category_id>\d+)$', 'newAction'),
                 url_get('^listJson$', 'listJsonAction'),
                 url_get('^getItemsJson/(?P<status_id>\d+)$', 'statusItemsJsonAction'),
-                url_post('^save', 'saveAction')
+                url_post('^save', 'saveAction'),
+                url_post('^delete', 'deleteAction')
                 ));
         
         $media_url=url('^/equipment.*assets/',patterns(               

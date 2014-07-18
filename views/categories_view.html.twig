@@ -19,8 +19,8 @@
     <div id="itemEditPanel" style="margin-bottom:20px" title="Edit Category"> 
         <form action="../save" method="post" id="saveForm">   
             <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
-            <input type="hidden" name="id" value="{{category.id}}" />
-            <script>selectedItem ={{category.id}} ;</script>
+            <input type="hidden" name="id" value="{{item.id}}" />
+            <script>selectedItem ={{item.id}} ;</script>
             <em>Category information: Public categories are published if it has published equipment.</em>
             <br>
             Category Type:
@@ -28,15 +28,15 @@
                 <tr>  
                     <td>
                         <input type="radio" name="ispublic" value="1" 
-                               {% if category.ispublic == 1 %}
-                                   checked="checked"
-                               {% endif %}
-                               >
+                               {% if item.ispublic == 'Public' %}
+                                    checked="checked"
+                               {% endif %}                               
+                               />
                         <strong>Public</strong> (published)
                     </td>  
                     <td>
                         <input type="radio" name="ispublic" value="0" 
-                               {% if category.ispublic == 0 %}
+                               {% if item.ispublic == 'Private' %}
                                    checked="checked"
                                {% endif %}
                                >
@@ -46,7 +46,7 @@
             </table>
 
             <div style="padding-top:3px;"><b>Category Name (required)</b>:&nbsp;<span class="faded">Short descriptive name.</span></div>
-            <input id="category_name" type="text" size="70" name="name" value="{{ category.name }}" required/>
+            <input id="category_name" type="text" size="70" name="name" value="{{ item.name }}" required/>
             <br>
             <div style="padding-top:5px;">
                 <b>Category Description</b>:&nbsp;<span class="faded">Summary of the category.</span>
@@ -54,7 +54,7 @@
             </div>
 
             <textarea id="category_description" name="description" cols="21" rows="5" style="width:98%;">
-                {{ category.description }}
+                {{ item.description }}
             </textarea>
 
             <div style="padding-top:5px;">
@@ -62,7 +62,7 @@
             </div>
 
             <textarea id="category_notes" name="notes" cols="21" rows="5" style="width: 98%;">
-                {{ category.notes }}
+                {{ item.notes }}
             </textarea>
 
             <p style="padding-left:225px;">               
@@ -73,7 +73,7 @@
         </form>
     </div>
 
-    {% if category.id > 0 %}
+    {% if item.id > 0 %}
         {% include "items_list.html.twig" %}
         {% include "open_tickets.html.twig" %}
         {% include "closed_tickets.html.twig" %}

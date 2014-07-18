@@ -12,23 +12,19 @@
  * @author alex
  */
 require_once ('Controller.php');
-require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment.php');
 
 class EquipmentItem extends Controller {
 
-    public function viewAction($id) {
-        if ($id > 0) {
-            $category = Equipment_Category::lookup($id);
-            $title = 'Edit Equipment Catgory';
-        } else {
-            $category = new Equipment_Category();
-            $title = 'New Equipment Catgory';
-        }
+    protected function getEntityClassName() {
+        return 'Equipment';
+    }
 
-        $this->render('categories_view.html.twig', array(
-            'category' => $category,
-            'title' => $title
-        ));
+    protected function getListTemplateName() {
+        return 'categories_list.html.twig';
+    }
+
+    protected function getViewTemplateName() {
+        return 'item_view.html.twig';
     }
 
     public function newAction($category_id) {
@@ -37,7 +33,6 @@ class EquipmentItem extends Controller {
             $title = 'New Equipment Item';
             $equipment = new Equipment(0);
             $this->render('item_view.html.twig', array(
-                'category' => $category,
                 'equipment' => $equipment,
                 'title' => $title
             ));

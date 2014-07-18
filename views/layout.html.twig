@@ -17,6 +17,7 @@
         {% endblock %}
         <script>
             var ostroot = "{{ constant('OST_WEB_ROOT') }}";
+            var eq_root = "{{ constant('EQUIPMENT_WEB_ROOT') }}";
         </script>
     </head>
     <body>
@@ -66,8 +67,7 @@
                 </div>
                 <div id="messages"></div>
 
-                {% if flash is defined %}
-                    flash exitst;
+                {% if flash is defined %}                    
                     <script>
                         flash_severity = "{{ flash.severity }}";
                         flash_summary = "{{ flash.summary }}";

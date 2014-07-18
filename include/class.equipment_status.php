@@ -24,7 +24,7 @@ class Equipment_Status {
     var $color;
     var $baseline;
 
-    function Equipment_Status($id) {
+    function Equipment_Status($id=0) {
         $this->id=0;
         $this->load($id);
     }

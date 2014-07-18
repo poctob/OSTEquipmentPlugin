@@ -12,20 +12,22 @@
  * @author alex
  */
 require_once ('Controller.php');
-require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment_category.php');
 
 class EquipmentCategory extends Controller {
 
-    public function listAction($errors = array()) {
-
-        $this->render('categories_list.html.twig', array(
-            'erros' => $errors
-        ));
+    protected function getEntityClassName()
+    {
+        return 'Equipment_Category';
     }
-
-    public function listJsonAction($errors = array()) {
-        $categories = Equipment_Category::getAll();
-        echo json_encode($categories);
+    
+    protected function getListTemplateName()
+    {
+        return 'categories_list.html.twig';
+    }
+    
+    protected function getViewTemplateName()
+    {
+        return 'categories_view.html.twig';
     }
 
     public function openTicketsJsonAction($category_id) {
@@ -46,7 +48,7 @@ class EquipmentCategory extends Controller {
             $item_data = array(
                 'id' => $item->getId(),
                 'name' => $item->getName(),
-                'status' => $item->getStatus(),
+                'status' => $item->getStatus()->getName(),
                 'published' => $item->isPublished() ? 'Yes' : 'No',
                 'active' => $item->isActive() ? 'Yes' : 'No'
             );
@@ -83,38 +85,4 @@ class EquipmentCategory extends Controller {
         }
         return $tickets;
     }
-
-    public function viewAction($id) {
-        if ($id > 0) {
-            $category = Equipment_Category::lookup($id);
-            $title = 'Edit Equipment Category';
-        } else {
-            $category = new Equipment_Category();
-            $title = 'New Equipment Category';
-        }
-
-        $this->render('categories_view.html.twig', array(
-            'category' => $category,
-            'title' => $title
-        ));
-    }
-
-    public function redirectAction($url) {
-        header('Content-type: text/javascript');
-        include OST_ROOT . 'scp/' . $url;
-    }
-
-    public function saveAction() {
-        $errors = array();
-        Equipment_Category::save($_POST['id'], $_POST, $errors);
-        $this->listAction($errors);
-    }
-
-    public function deleteAction() {
-        $category = new Equipment_Category($_POST['category_id']);
-        if (isset($category)) {
-            $category->delete();
-        }
-    }
-
 }

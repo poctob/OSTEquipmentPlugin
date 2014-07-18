@@ -45,7 +45,12 @@ class Equipment {
 
         $this->ht = db_fetch_array($res);
         $this->ht['id'] = $this->id = $this->ht['equipment_id'];
-        $this->category = null;
+        
+        if($this->getCategoryId())
+            $this->category = Equipment_Category::lookup($this->getCategoryId());
+        
+        if($this->getStatusId())
+            $this->status = Equipment_Status::lookup($this->getStatusId());
 
 
         return true;
@@ -62,8 +67,9 @@ class Equipment {
     function getDescription() { return $this->ht['description']; }
     function getSerialNumber() { return $this->ht['serialnumber']; }
     function getNotes() { return $this->ht['notes']; }
-    function getStatus() { return $this->ht['Status']; }
-    function getStatusID(){ return $this->ht['status_id']; }
+    function getStatus() { return $this->status; }
+    function getStatusName() { return $this->status->name; }
+    function getStatusId(){ return $this->ht['status_id']; }
     function getColor() { return $this->ht['Color']; }
     function getImage() { return $this->ht['Image']; }
 
@@ -75,8 +81,7 @@ class Equipment {
     
     function getCategoryId() { return $this->ht['category_id']; }
     function getCategory() { 
-        if(!$this->category && $this->getCategoryId())
-            $this->category = Equipment_Category::lookup($this->getCategoryId());
+        
 
         return $this->category;
     }
@@ -348,7 +353,7 @@ class Equipment {
         return false;
     }
     
-    function save($id, $vars, &$errors, $validation=false) {
+    public static function save($id, $vars, &$errors, $validation=false) {
 
         //Cleanup.
         $vars['name']=Format::striptags(trim($vars['name']));

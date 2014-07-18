@@ -4,7 +4,7 @@ var currentItem = 0;
 
 $(function() {
 
-    $.getJSON('../../status/listJson', populateStatusDropDown);
+    $.getJSON(eq_root+'status/listJson', populateStatusDropDown);
 
     $(':radio').puiradiobutton();
     $('#item_name').puiinputtext();
@@ -13,133 +13,31 @@ $(function() {
     $('#item_notes').puiinputtextarea();
 
     $("#saveForm").validate();
-});
+    
+     $('#saveButton').puibutton({
+        icon: 'ui-icon-disk'
+    });
 
-function applyItemButtonUI()
-{
-    $('#itemAdd').puibutton({
-        icon: 'ui-icon-circle-plus',
+    $('#resetButton').puibutton({
+        icon: 'ui-icon-arrowrefresh-1-w',
         click: function(event) {
-            window.location.href = "../../item/new/" + selectedItem;
+            resetForm($('#saveForm'));
         }
     });
 
-    $('#itemEdit').puibutton({
-        icon: 'ui-icon-pencil',
-        click: function(event) {
-            window.location.href = "../../item/view/" + currentItem;
-        }
-    });
-
-    $('#itemPublish').puibutton({
-        icon: 'ui-icon-document',
-        click: function(event) {
-            publishItem(true);
-        }
-    });
-
-    $('#itemUnpublish').puibutton({
-        icon: 'ui-icon-document',
-        click: function(event) {
-            publishItem(false);
-        }
-    });
-
-    $('#itemActivate').puibutton({
-        icon: 'ui-icon-lightbulb',
-        click: function(event) {
-            activateItem(true);
-        }
-    });
-
-
-    $('#itemDeactivate').puibutton({
-        icon: 'ui-icon-lightbulb',
-        click: function(event) {
-            activateItem(false);
-        }
-    });
-
-    $('#itemDelete').puibutton({
+    $('#cancelButton').puibutton({
         icon: 'ui-icon-circle-close',
         click: function(event) {
-            window.location.href = "../item/delete/" + currentItem;
+            window.location.href = eq_root+"categories/view/"+category_id;
         }
     });
+});
 
 
-}
-
-function disableItemButtons()
-{
-    $('#itemEdit').puibutton('disable');
-    $('#itemDelete').puibutton('disable');
-    $('#itemPublish').hide();
-    $('#itemActivate').hide();
-    $('#itemUnpublish').hide();
-    $('#itemDeactivate').hide();
-}
-
-function enableItemButtons(published, active)
-{
-    $('#itemEdit').puibutton('enable');
-    $('#itemDelete').puibutton('enable');
-
-    if (published)
-    {
-        $('#itemUnpublish').show()
-    }
-    else
-    {
-        $('#itemPublish').show();
-    }
-
-    if (active)
-    {
-        $('#itemDeactivate').show()
-    }
-    else
-    {
-        $('#itemActivate').show();
-    }
 
 
-}
 function applyDataTableUI()
-{
-    $('#itemsDataTable').puidatatable({
-        caption: "Category Items",
-        paginator: {
-            rows: 20
-        },
-        columns: [
-            {field: 'name', headerText: 'Name', sortable: true},
-            {field: 'status', headerText: 'Status', sortable: true},
-            {field: 'published', headerText: 'Is Published?', sortable: true},
-            {field: 'active', headerText: 'Is Active?', sortable: true}
-        ],
-        datasource: function(callback) {
-            $.ajax({
-                type: "GET",
-                url: '../categoryItemsJson/' + selectedItem,
-                dataType: "json",
-                context: this,
-                success: function(response) {
-                    callback.call(this, response);
-                }
-            });
-        },
-        selectionMode: 'single',
-        rowSelect: function(event, data) {
-            currentItem = data.id;
-            enableItemButtons(data.published === 'Yes', data.active === 'Yes');
-        },
-        rowUnselect: function(event, data) {
-            selectedItem = 0;
-            disableItemButtons();
-        }
-    });
-
+{   
     $('#openTicketsDataTable').puidatatable({
         caption: "Open Tickets",
         paginator: {
@@ -202,57 +100,6 @@ function applyDataTableUI()
     });
 }
 
-function enableCategoryEditButtons()
-{
-    $('#categoryEdit').puibutton('enable');
-    $('#categoryDelete').puibutton('enable');
-
-}
-
-function disableCategoryEditButtons()
-{
-    $('#categoryEdit').puibutton('disable');
-    $('#categoryDelete').puibutton('disable');
-}
-
-function activateItem(activate)
-{
-    $('input[name="item_id"]').val(currentItem.toString());
-    $('input[name="item_activate"]').val(activate ? '1' : '0');
-    $.post('../../item/activate', $('#activateForm').serialize())
-            .done(function()
-            {
-                $('#itemsDataTable').puidatatable('unselectAllRows');
-                location.reload();
-                $('#messages').puigrowl('show',
-                        [{severity: 'info', summary: 'Success', detail: 'Item updated!'}]);
-            })
-            .error(function()
-            {
-                $('#messages').puigrowl('show',
-                        [{severity: 'error', summary: 'Error', detail: 'Failed to update item!'}]);
-            });
-}
-
-function publishItem(publish)
-{
-    $('input[name="item_id"]').val(currentItem.toString());
-    $('input[name="item_publish"]').val(publish ? '1' : '0');
-    $.post('../../item/publish', $('#publishForm').serialize())
-            .done(function()
-            {
-                $('#itemsDataTable').puidatatable('unselectAllRows');
-                location.reload();
-                $('#messages').puigrowl('show',
-                        [{severity: 'info', summary: 'Success', detail: 'Item updated!'}]);
-            })
-            .error(function()
-            {
-                $('#messages').puigrowl('show',
-                        [{severity: 'error', summary: 'Error', detail: 'Failed to update item!'}]);
-            });
-}
-
 
 function populateStatusDropDown(data)
 {
@@ -261,21 +108,13 @@ function populateStatusDropDown(data)
     {
         var status = data[key];
         $('#statusDropDown').puidropdown
-                ('addOption', status, key);
+                ('addOption', status['name'], status['status_id']);
 
         if (typeof status_id !== 'undefined')
         {
             $('#statusDropDown').puidropdown('selectValue', status_id);
         }
     }
-
-    $('#statusDropDown').puidropdown({
-        change: function(event) {
-           // var url = $('#calendarsDropDown').puidropdown('getSelectedValue');
-           // window.location.href = url;
-        }
-    });
-
 }
 
 

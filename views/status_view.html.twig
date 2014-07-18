@@ -19,32 +19,32 @@
     <div id="itemEditPanel" style="margin-bottom:20px" title=" {{ title }}"> 
         <form action="../save" method="post" id="saveForm">   
             <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
-            <input type="hidden" name="id" value="{{status.status_id}}" />
-            <script>selectedItem ={{status.status_id}} ;</script>
-
+            <input type="hidden" name="id" value="{{item.id}}" />
+            <script>selectedItem ={{item.id}} ;</script>
+           
 
             <div style="padding-top:3px;"><b>Status Name (required)</b>:&nbsp;
                 <span class="faded">Short descriptive name.</span>
             </div>
-            <input id="status_name" type="text" size="70" name="name" value="{{ status.name }}" required/>
+            <input id="status_name" type="text" size="70" name="name" value="{{ item.ht.name }}" required/>
             <br>
 
             <div style="padding-top:3px;"><b>Image</b>:&nbsp;
                 <span class="faded">Path to an image to use for this status.</span>
             </div>
-            <input id="status_image" type="text" size="70" name="image" value="{{ status.image }}">                    
+            <input id="status_image" type="text" size="70" name="image" value="{{ item.ht.image }}">                    
             <br>
 
             <div style="padding-top:3px;"><b>Color</b>:&nbsp;
                 <span class="faded">Status color code.</span>
             </div>
-            <input id="status_color" type="text" size="70" name="color" value="{{ status.color }}">                    
+            <input id="status_color" type="text" size="70" name="color" value="{{ item.ht.color }}">                    
             <br>
 
             <div style="padding-top:3px;"><b>Default</b>:&nbsp;
                 <span class="faded">This is the default status</span></div>            
             <input type="checkbox" name="baseline" value="1" 
-                   {% if status.baseline %}
+                   {% if item.ht.baseline %}
                        checked="checked"                 
                    {% endif %}
                    />     
@@ -55,12 +55,9 @@
             </div>
 
             <textarea id="status_description" name="description" cols="21" rows="5" style="width:98%;">
-                {{ status.description }}
+                {{ item.ht.description }}
             </textarea>
 
-            <div style="padding-top:5px;">
-                <b>Internal Notes</b>
-            </div>
 
             <p style="padding-left:225px;">               
                 <button id="saveButton" type="submit">Save</button>  
@@ -69,7 +66,7 @@
             </p>
         </form>
     </div>
-    {% if status.status_id > 0 %}
+    {% if item.id > 0 %}
         {% include "items_list.html.twig" %}
     {% endif %}
 {% endblock %}
