@@ -15,7 +15,7 @@ require_once ('Controller.php');
 require_once(EQUIPMENT_INCLUDE_DIR . 'class.equipment_status.php');
 
 class EquipmentStatus extends Controller {
-    
+
     public function listAction($errors = array()) {
         $this->render('status_list.html.twig', array(
             'erros' => $errors
@@ -24,15 +24,15 @@ class EquipmentStatus extends Controller {
 
     public function viewAction($id) {
         if ($id > 0) {
-            $category = Equipment_Category::lookup($id);
-            $title = 'Edit Equipment Catgory';
+            $status = Equipment_Status::lookup($id);
+            $title = 'Edit Equipment Status';
         } else {
-            $category = new Equipment_Category();
-            $title = 'New Equipment Catgory';
+            $status = new Equipment_Status(0);
+            $title = 'New Equipment Status';
         }
 
-        $this->render('categories_view.html.twig', array(
-            'category' => $category,
+        $this->render('status_view.html.twig', array(
+            'status' => $status->getHashtable(),
             'title' => $title
         ));
     }
@@ -55,6 +55,35 @@ class EquipmentStatus extends Controller {
     public function listJsonAction($errors = array()) {
         $status = Equipment_Status::getAll();
         echo json_encode($status);
+    }
+
+    public function statusItemsJsonAction($status_id) {
+        $equipment = Equipment_Status::getEquipment($status_id);
+        $items = array();
+
+        foreach ($equipment as $item) {
+            $item_data = array(
+                'id' => $item->getId(),
+                'name' => $item->getName(),
+                'status' => $item->getStatus(),
+                'published' => $item->isPublished() ? 'Yes' : 'No',
+                'active' => $item->isActive() ? 'Yes' : 'No'
+            );
+            $items[] = $item_data;
+        }
+        echo json_encode($items);
+    }
+
+    public function saveAction() {
+        $errors = array();
+        Equipment_Status::save($_POST['id'], $_POST, $errors);
+        if (isset($errors) && count($errors) > 0) {
+            $this->setFlash('error', 'Error Saving Item1', print_r($errors));
+        } else {
+            $this->setFlash('info', 'Success', 'Item Updated!');
+        }
+
+        $this->listAction($errors);
     }
 
 }

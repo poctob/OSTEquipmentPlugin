@@ -61,9 +61,6 @@ class EquipmentCategory extends Controller {
         foreach ($ticket_id as $id) {
             $ticket = Ticket::lookup($id);
             if (isset($ticket)) {
-                $ts_open = strtotime($ticket->getCreateDate());
-                $ts_closed = strtotime($ticket->getCloseDate());
-
                 $ticket_data = array(
                     'id' => $ticket->getId(),
                     'number' => $ticket->getNumber(),
@@ -71,10 +68,15 @@ class EquipmentCategory extends Controller {
                     'subject' => $ticket->getSubject(),
                     'name' => $ticket->getName()->getFull(),
                     'priority' => $ticket->getPriority(),
-                    'close_date' => Format::db_datetime($ticket->getCloseDate()),
-                    'closed_by' => $ticket->getStaff()->getUserName(),
-                    'elapsed' => Format::elapsedTime($ts_closed - $ts_open)
                 );
+
+                if ($type == 'closed') {
+                    $ts_open = strtotime($ticket->getCreateDate());
+                    $ts_closed = strtotime($ticket->getCloseDate());
+                    $ticket_data['close_date'] = Format::db_datetime($ticket->getCloseDate());
+                    $ticket_data['closed_by'] = $ticket->getStaff()->getUserName();
+                    $ticket_data['elapsed'] = Format::elapsedTime($ts_closed - $ts_open);
+                }
 
                 $tickets[] = $ticket_data;
             }
@@ -109,11 +111,10 @@ class EquipmentCategory extends Controller {
     }
 
     public function deleteAction() {
-       $category = new Equipment_Category($_POST['category_id']);
-       if(isset($category))
-       {
-           $category->delete();
-       }
+        $category = new Equipment_Category($_POST['category_id']);
+        if (isset($category)) {
+            $category->delete();
+        }
     }
 
 }

@@ -2,6 +2,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="assets/js/equipment_categories_view.js"></script>
+    <script src="assets/js/item_list_view.js"></script>
 {% endblock %}
 
 {% block title %}
@@ -72,38 +73,10 @@
         </form>
     </div>
 
-    <div id="itemsPanel" title="Category Equipment Items" class="margin-bottom: 20px;"> 
-        <div id="itemsDataTable"></div> 
-        <div id="itemActionButtons" style="padding-top:10px;">
-            <button id="itemAdd" type="button">New</button>                 
-            <button id="itemEdit" type="button">View/Edit</button>
-            <button id="itemPublish" type="button">Publish</button>
-            <button id="itemUnpublish" type="button">Unpublish</button>
-            <button id="itemActivate" type="button">Activate</button>
-            <button id="itemDeactivate" type="button">Deactivate</button>
-            <button id="itemDelete" type="button">Delete</button>
-        </div>
-
-        <form action="../item/publish" method="post" id="publishForm">   
-            <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
-            <input type="hidden" name="item_id" value="" />
-            <input type="hidden" name="item_publish" value="" />
-        </form>
-
-        <form action="../item/activate" method="post" id="activateForm">   
-            <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
-            <input type="hidden" name="item_id" value="" />
-            <input type="hidden" name="item_activate" value="" /> 
-        </form>
-    </div>
-
-    <div id="openTicketsPanel" class="ticketPanel" title="Open Tickets for Category"> 
-        <div id="openTicketsDataTable"></div> 
-    </div>
-
-    <div id="closedTicketsPanel" class="ticketPanel" title="Closed Tickets for Category"> 
-        <div id="closedTicketsDataTable"></div> 
-    </div>
-
+    {% if category.id > 0 %}
+        {% include "items_list.html.twig" %}
+        {% include "open_tickets.html.twig" %}
+        {% include "closed_tickets.html.twig" %}
+    {% endif %}
 {% endblock %}
 

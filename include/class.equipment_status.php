@@ -12,6 +12,7 @@
 
     vim: expandtab sw=4 ts=4 sts=4:
 **********************************************************************/
+require_once('class.equipment.php');
 
 class Equipment_Status {
     var $id;
@@ -228,6 +229,26 @@ class Equipment_Status {
         }
 
         return false;
+    }
+    
+    public static function getEquipment($status_id)
+    {
+        $equipment = array();
+         $sql = ' SELECT equipment.equipment_id '
+                . ' FROM ' . EQUIPMENT_STATUS_TABLE . ' status '
+                . ' LEFT JOIN ' . EQUIPMENT_TABLE . ' equipment ON(equipment.status_id=status.status_id) '
+                . ' WHERE status.status_id=' . db_input($status_id)
+                ;
+        $res = db_query($sql);
+        
+         if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $item = new Equipment($row['equipment_id']);
+                $equipment[] = $item;
+            }
+        }
+
+        return $equipment;
     }
 }
 ?>

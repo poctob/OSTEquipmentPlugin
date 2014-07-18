@@ -85,7 +85,7 @@ class EquipmentPlugin extends Plugin {
                 url_get('^view/(?P<id>\d+)$', 'viewAction'),                
                 url_get('^openTicketsJson/(?P<category_id>\d+)$', 'openTicketsJsonAction'),
                 url_get('^closedTicketsJson/(?P<category_id>\d+)$', 'closedTicketsJsonAction'),
-                url_get('^categoryItemsJson/(?P<category_id>\d+)$', 'categoryItemsJsonAction'),
+                url_get('^getItemsJson/(?P<category_id>\d+)$', 'categoryItemsJsonAction'),
                 url_post('^save', 'saveAction'),
                 url_post('^delete', 'deleteAction')
                 ));
@@ -103,7 +103,9 @@ class EquipmentPlugin extends Plugin {
                 url_get('^list$', 'listAction'),
                 url_get('^view/(?P<id>\d+)$', 'viewAction'),   
                 url_get('^new/(?P<category_id>\d+)$', 'newAction'),
-                url_get('^listJson$', 'listJsonAction')
+                url_get('^listJson$', 'listJsonAction'),
+                url_get('^getItemsJson/(?P<status_id>\d+)$', 'statusItemsJsonAction'),
+                url_post('^save', 'saveAction')
                 ));
         
         $media_url=url('^/equipment.*assets/',patterns(               

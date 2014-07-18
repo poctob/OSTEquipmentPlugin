@@ -22,8 +22,26 @@ class Controller {
         $args['linktoken'] = $ost->getLinkToken();
         $args['tocken'] = $tocken->getToken();
         $args['tocken_name'] = $tocken->getTokenName();
+        if (!empty($_SESSION['flash'])) {
+            $args['flash'] = $_SESSION['flash'];
+            unset($_SESSION['flash']);
+        }
 
         echo $twig->render($template, $args);
+    }
+
+    protected function setFlash($severity, $summary, $details) {
+        if (!empty($_SESSION['flash'])) {
+            unset($_SESSION['flash']);
+        }
+
+        $flash = array(
+            'severity' => $severity,
+            'summary' => $summary,
+            'details' => $details
+        );
+
+        $_SESSION['flash'] = $flash;
     }
 
     public function redirectImagesAction($url) {

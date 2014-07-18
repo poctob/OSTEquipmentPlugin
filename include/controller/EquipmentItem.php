@@ -41,36 +41,47 @@ class EquipmentItem extends Controller {
                 'equipment' => $equipment,
                 'title' => $title
             ));
-        } 
-        else
-        {
+        } else {
             echo 'Unable to create new item, invalid category specified!';
         }
     }
 
     public function publishAction() {
         $id = $_POST['item_id'];
+        $result = false;
         if (isset($id)) {
             $equipment = new Equipment($id);
             $publish = $_POST['item_publish'];
             if ($publish) {
-                $equipment->publish();
+                $result = $equipment->publish();
             } else {
-                $equipment->unpublish();
+                $result = $equipment->unpublish();
             }
+        }
+        if ($result) {
+            $this->setFlash('info', 'Success', 'Item Updated!');
+        } else {
+            $this->setFlash('error', 'Error', 'Failed to Update Item!');
         }
     }
 
     public function activateAction() {
         $id = $_POST['item_id'];
+        $result = false;
         if (isset($id)) {
             $equipment = new Equipment($id);
             $activate = $_POST['item_activate'];
             if ($activate) {
-                $equipment->activate();
+                $result = $equipment->activate();
             } else {
-                $equipment->retire();
+                $result = $equipment->retire();
             }
+        }
+
+        if ($result) {
+            $this->setFlash('info', 'Success', 'Item Updated!');
+        } else {
+            $this->setFlash('error', 'Error', 'Failed to Update Item!');
         }
     }
 
