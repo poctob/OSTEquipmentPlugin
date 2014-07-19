@@ -36,7 +36,8 @@ class EquipmentStatus extends Controller {
                 $item_data = array(
                     'id' => $item->getId(),
                     'name' => $item->getName(),
-                    'status' => $item->getStatus(),
+                    'category' => $item->getCategory()->getName(),
+                    'status' => $item->getStatus()->getName(),
                     'published' => $item->isPublished() ? 'Yes' : 'No',
                     'active' => $item->isActive() ? 'Yes' : 'No'
                 );

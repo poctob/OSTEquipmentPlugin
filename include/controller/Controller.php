@@ -28,6 +28,11 @@ abstract class Controller {
     protected abstract function getListTemplateName();
 
     protected abstract function getViewTemplateName();
+    
+    protected function defaultAction()
+    {
+        $this->viewAction($_POST['id']);
+    }
 
     public function render($template, $args = array()) {
         $loader = new Twig_Loader_Filesystem(EQUIPMENT_VIEWS_DIR);
@@ -74,9 +79,9 @@ abstract class Controller {
         $this->render($template_name);
     }
 
-    public function viewAction($id) {
+    public function viewAction($id, $args=array()) {
         $entityClass = $this->getEntityClassName();
-        if ($id > 0) {            
+        if (isset($id) && $id > 0) {            
             $item = $entityClass::lookup($id);
             $title = 'Edit ' . $entityClass;
         } else {
@@ -85,10 +90,9 @@ abstract class Controller {
         }
 
         $template_name = $this->getViewTemplateName();
-        $this->render($template_name, array(
-            'item' => $item,
-            'title' => $title
-        ));
+        $args['item'] = $item;
+        $args['title'] = $title;
+        $this->render($template_name, $args);
     }
 
     public function saveAction() {
@@ -103,7 +107,7 @@ abstract class Controller {
         {
             $this::setFlash('info', 'Success!', 'Item Saved');
         }
-        $this->viewAction($_POST['id']);
+        $this->defaultAction();
     }
 
     public function deleteAction() {

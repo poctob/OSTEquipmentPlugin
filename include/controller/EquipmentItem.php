@@ -27,17 +27,20 @@ class EquipmentItem extends Controller {
         return 'item_view.html.twig';
     }
 
+    protected function defaultAction() {
+        $this->newAction($_POST['category_id']);
+    }
+
     public function newAction($category_id) {
+        $viewargs = array();
         if ($category_id > 0) {
             $category = Equipment_Category::lookup($category_id);
-            $title = 'New Equipment Item';
-            $equipment = new Equipment(0);
-            $this->render('item_view.html.twig', array(
-                'equipment' => $equipment,
-                'title' => $title
-            ));
+            $viewargs['category'] = $category;
+            $this->viewAction(0, $viewargs);
         } else {
-            echo 'Unable to create new item, invalid category specified!';
+            $this->setFlash
+                    ('error', 'Unable to create new item!', 'invalid category specified!');
+            $this->viewAction(0);
         }
     }
 
@@ -72,7 +75,6 @@ class EquipmentItem extends Controller {
                 $result = $equipment->retire();
             }
         }
-
         if ($result) {
             $this->setFlash('info', 'Success', 'Item Updated!');
         } else {

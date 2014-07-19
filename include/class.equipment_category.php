@@ -58,9 +58,9 @@ class Equipment_Category {
         $this->open_ticket_count = $this->countOpenTickets($this->id);
         $this->closed_ticket_count = $this->countClosedTickets($this->id);
         $this->name = $this->ht['name'];
-        $this->ispublic = $this->ht['ispublic']?'Public':'Private';
+        $this->ispublic = $this->ht['ispublic'] ? 'Public' : 'Private';
         $this->updated = $this->ht['updated'];
-        
+
         return true;
     }
 
@@ -184,14 +184,15 @@ class Equipment_Category {
 
     public static function getTicketList($tickets_status, $category_id) {
         $ticket_ids = array();
-        $sql = 'SELECT ticket_id from ' . EQUIPMENT_TICKET_VIEW . ' '
+        $sql = 'SELECT ticket_id, equipment_id from ' . EQUIPMENT_TICKET_VIEW . ' '
                 . 'where `status`="' . $tickets_status . '"'
                 . ' AND category_id=' . $category_id;
-
-
-        if (($res = db_query($sql)) && db_num_rows($res)) {
-            while (list($id) = db_fetch_row($res))
-                $ticket_ids[] = $id;
+        
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $ticket_ids[] = $row;
+            }
         }
 
         return $ticket_ids;
@@ -294,18 +295,17 @@ class Equipment_Category {
 
         return $categories;
     }
-    
-    public static function getEquipment($category_id)
-    {
+
+    public static function getEquipment($category_id) {
         $equipment = array();
-         $sql = ' SELECT equipment.equipment_id '
+        $sql = ' SELECT equipment.equipment_id '
                 . ' FROM ' . EQUIPMENT_CATEGORY_TABLE . ' cat '
                 . ' LEFT JOIN ' . EQUIPMENT_TABLE . ' equipment ON(equipment.category_id=cat.category_id) '
                 . ' WHERE cat.category_id=' . db_input($category_id)
-                ;
+        ;
         $res = db_query($sql);
-        
-         if ($res && ($num = db_num_rows($res))) {
+
+        if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
                 $item = new Equipment($row['equipment_id']);
                 $equipment[] = $item;

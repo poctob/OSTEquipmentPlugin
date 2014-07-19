@@ -24,7 +24,7 @@ class Equipment {
     var $category;
     var $status;
 
-    function Equipment($id) {
+    function Equipment($id = 0) {
         $this->id=0;
         $this->ht = array();
         $this->load($id);

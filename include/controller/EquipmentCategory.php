@@ -48,6 +48,7 @@ class EquipmentCategory extends Controller {
             $item_data = array(
                 'id' => $item->getId(),
                 'name' => $item->getName(),
+                'category' => $item->getCategory()->getName(),
                 'status' => $item->getStatus()->getName(),
                 'published' => $item->isPublished() ? 'Yes' : 'No',
                 'active' => $item->isActive() ? 'Yes' : 'No'
@@ -61,11 +62,13 @@ class EquipmentCategory extends Controller {
         $ticket_id = Equipment_Category::getTicketList($type, $category_id);
         $tickets = array();
         foreach ($ticket_id as $id) {
-            $ticket = Ticket::lookup($id);
-            if (isset($ticket)) {
+            $ticket = Ticket::lookup($id['ticket_id']);
+            $equipment = new Equipment($id['equipment_id']);
+            if (isset($ticket) && isset($equipment)) {
                 $ticket_data = array(
                     'id' => $ticket->getId(),
                     'number' => $ticket->getNumber(),
+                    'equipment' => $equipment->getName(),
                     'create_date' => Format::db_datetime($ticket->getCreateDate()),
                     'subject' => $ticket->getSubject(),
                     'name' => $ticket->getName()->getFull(),

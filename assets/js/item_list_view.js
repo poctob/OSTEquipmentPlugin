@@ -109,6 +109,7 @@ function applyItemsTableUI()
         },
         columns: [
             {field: 'name', headerText: 'Name', sortable: true},
+            {field: 'category', headerText: 'Category', sortable: true},
             {field: 'status', headerText: 'Status', sortable: true},
             {field: 'published', headerText: 'Is Published?', sortable: true},
             {field: 'active', headerText: 'Is Active?', sortable: true}

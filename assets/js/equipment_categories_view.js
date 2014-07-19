@@ -53,6 +53,7 @@ function applyDataTableUI()
         },
         columns: [
             {field: 'number', headerText: 'Number', sortable: true},
+            {field: 'equipment', headerText: 'Equipment', sortable: true},
             {field: 'create_date', headerText: 'Created On', sortable: true},
             {field: 'subject', headerText: 'Subject', sortable: true},
             {field: 'name', headerText: 'Created By', sortable: true},
