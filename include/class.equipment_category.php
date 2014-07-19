@@ -174,7 +174,7 @@ class Equipment_Category {
      * @param type Category Id
      * @return int
      */
-    function countOpenTickets($id) {
+    public static function countOpenTickets($id) {
         $sql = 'SELECT COUNT(ticket_id) FROM ' . EQUIPMENT_TICKET_VIEW . ' '
                 . 'WHERE category_id=' . db_input($id) . ' '
                 . 'AND status="open"';

@@ -79,7 +79,7 @@ abstract class Controller {
         $this->render($template_name);
     }
 
-    public function viewAction($id, $args=array()) {
+    public function viewAction($id=0, $args=array()) {
         $entityClass = $this->getEntityClassName();
         if (isset($id) && $id > 0) {            
             $item = $entityClass::lookup($id);

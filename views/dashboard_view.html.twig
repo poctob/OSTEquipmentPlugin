@@ -1,0 +1,51 @@
+{% extends 'layout_categories.html.twig' %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="assets/js/dashboard_view.js"></script>
+{% endblock %}
+
+{% block title %}
+    Equipment Dashboard
+{% endblock %}
+
+{% block pagetitle %}
+    Equipment Dashboard
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div id="totalEquipment" style="margin-bottom:20px" title="Equipment">
+        Total Asset Count: {{ item.equipment|length}}
+    </div>
+    
+    <div id="totalCategories" style="margin-bottom:20px" title="Categories">
+        Total Categories Count: {{ item.categories|length}}
+        <hr />
+        {% for category in item.categories %}
+            <strong>{{ category.name }}</strong>
+            <ul>
+                <li>Items: {{ category.items }}</li>
+                <li>Open tickets: {{ category.tickets }}</li>
+            </ul>
+            <br/>
+        {% endfor %}
+    </div>
+    
+    <div id="totalStatus" style="margin-bottom:20px" title="Status">
+        Total Status Count: {{ item.status|length}}  
+         <hr />
+        {% for status in item.status %}
+            <strong>{{ status.name }}</strong>
+            <ul>
+                <li>Items: {{ status.items }}</li>
+            </ul>
+            <br/>
+        {% endfor %}
+    </div>
+    
+     <div id="totalTickets" style="margin-bottom:20px" title="Tickets">
+        Total Open Ticket Count: {{ item.tickets }} 
+    </div>
+{% endblock %}
+

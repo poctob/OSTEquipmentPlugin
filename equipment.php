@@ -117,6 +117,11 @@ class EquipmentPlugin extends Plugin {
                 url_get('^(?P<url>.*)$', 'defaultAction')))
                 ;
         
+        $dashboard_url=url('^/equipment.*dashboard/',patterns(               
+                EQUIPMENT_INCLUDE_DIR.'controller/Dashboard.php:Dashboard',                
+                url_get('.*', 'viewAction')))
+                ;
+        
         $redirect_url=url('^/equipment.*ostroot/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/MediaController.php:MediaController',                
                 url_get('^(?P<url>.*)$', 'redirectAction')))
@@ -124,6 +129,7 @@ class EquipmentPlugin extends Plugin {
         
         $object->append($media_url);
         $object->append($redirect_url);
+        $object->append($dashboard_url);
         $object->append($categories_url);
         $object->append($item_url);
         $object->append($status_url);
@@ -134,14 +140,8 @@ class EquipmentPlugin extends Plugin {
     function createStaffMenu() {
 
         Application::registerStaffApp('Equipment', 
-                'dispatcher.php/equipment/items/view', 
-                array(iconclass => 'equipment'));
-        Application::registerStaffApp('Equipment Categories', 
-                'dispatcher.php/equipment/categories/list', 
+                'dispatcher.php/equipment/dashboard/', 
                 array(iconclass => 'faq-categories'));
-        Application::registerStaffApp('Equipment Status', 
-                'equipment_status.php', 
-                array(iconclass => 'equipment_status'));
     }
 
     /**

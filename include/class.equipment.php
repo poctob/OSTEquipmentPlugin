@@ -494,7 +494,22 @@ class Equipment {
 
         return false;
     }
+    
+    public static function getAll() {
+        $items = array();
+        $sql = 'SELECT equipment_id ' .
+                ' FROM ' . EQUIPMENT_TABLE;
+
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $item = new Equipment($row['equipment_id']);
+                $items[] = $item->getHashtable();
+            }
+        }
+
+        return $items;
+    }
 
 }
-
 ?>

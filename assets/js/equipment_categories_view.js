@@ -33,7 +33,7 @@ $(function() {
     $('#cancelButton').puibutton({
         icon: 'ui-icon-circle-close',
         click: function(event) {
-            window.location.href = "../list";
+            window.location.href = eq_root+"dashboard/";
         }
     });
 

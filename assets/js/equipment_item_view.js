@@ -28,7 +28,7 @@ $(function() {
     $('#cancelButton').puibutton({
         icon: 'ui-icon-circle-close',
         click: function(event) {
-            window.location.href = eq_root+"categories/view/"+category_id;
+            window.location.href = eq_root+"dashboard/";
         }
     });
     

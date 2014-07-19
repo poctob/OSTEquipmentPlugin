@@ -143,7 +143,7 @@ class Equipment_Status {
         return $status_list;
     }
     
-        public static function getAll() {
+    public static function getAll() {
         $statuses = array();
         $sql = 'SELECT status_id ' .
                 ' FROM ' . EQUIPMENT_STATUS_TABLE;
@@ -230,6 +230,7 @@ class Equipment_Status {
 
         return false;
     }
+    
     
     public static function getEquipment($status_id)
     {
