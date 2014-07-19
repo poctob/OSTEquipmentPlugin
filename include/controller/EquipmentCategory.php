@@ -47,6 +47,7 @@ class EquipmentCategory extends Controller {
         foreach ($equipment as $item) {
             $item_data = array(
                 'id' => $item->getId(),
+                'asset_id' => $item->getAssetId(),
                 'name' => $item->getName(),
                 'category' => $item->getCategory()->getName(),
                 'status' => $item->getStatus()->getName(),

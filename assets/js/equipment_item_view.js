@@ -7,8 +7,8 @@ $(function() {
     $.getJSON(eq_root+'status/listJson', populateStatusDropDown);
 
     $(':radio').puiradiobutton();
-    $('#item_name').puiinputtext();
-    $('#serial_number').puiinputtext();
+    $('#asset_id').puiinputtext();
+    $('#item_name').puiinputtext();    
     $('#item_description').puiinputtextarea();
     $('#item_notes').puiinputtextarea();
 
@@ -31,6 +31,8 @@ $(function() {
             window.location.href = eq_root+"categories/view/"+category_id;
         }
     });
+    
+    applyDataTableUI();
 });
 
 

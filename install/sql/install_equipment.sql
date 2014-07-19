@@ -1,19 +1,18 @@
-
 CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment` (
   `equipment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `category_id` int(10) unsigned NOT NULL DEFAULT '0',
   `status_id` int(10) unsigned NOT NULL DEFAULT '0',
   `ispublished` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(255) NOT NULL,
+  `asset_id` varchar(255) NOT NULL,
   `description` text,
-  `serialnumber` tinytext,
   `notes` text,
   `created` date NOT NULL,
   `updated` date NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`equipment_id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8$
+  UNIQUE KEY `asset_id_UNIQUE` (`asset_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_category` (
   `category_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -79,7 +78,7 @@ BEGIN
 			'Equipment',
 			0,0,0,
 			'equipment',			
-			1,			
+			3,			
 			NOW(),
 			NOW());	
 
@@ -102,7 +101,28 @@ BEGIN
 			'status',			
 			2,			
 			NOW(),
-			NOW());					
+			NOW());	
+
+                INSERT INTO `%TABLE_PREFIX%form_field`
+			(`form_id`,
+			`type`,
+			`label`,
+			`required`,
+			`private`,
+			`edit_mask`,
+			`name`,
+			`sort`,
+			`created`,
+			`updated`)
+			VALUES
+			(@form_id,
+			('text'),
+			'Asset ID',
+			0,0,0,
+			'asset_id',			
+			1,			
+			NOW(),
+			NOW());							
 	END IF;
 END$
 
@@ -126,7 +146,7 @@ BEGIN
 	SET @pk=NEW.equipment_id;
 	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment');
 	INSERT INTO `%TABLE_PREFIX%list_items` (list_id, `value`, `properties`)
-	VALUES (@list_pk, NEW.name, CONCAT('',@pk)); 
+	VALUES (@list_pk, CONCAT(NEW.name,' Asset_ID:', NEW.asset_id), CONCAT('',@pk));  
 END$
 
 
@@ -145,11 +165,11 @@ BEGIN
 							   WHERE list_id = @list_pk AND properties=CONCAT('',@pk));
 
 		IF (@list_item_pkid IS NOT NULL) AND (@list_item_pkid>0) THEN
-			UPDATE `%TABLE_PREFIX%list_items` SET `value`= NEW.name 
+			UPDATE `%TABLE_PREFIX%list_items` SET `value`= CONCAT(NEW.name,' Asset_ID:', NEW.asset_id) 
 			WHERE `properties`= CONCAT('',@pk) AND list_id=@list_pk;
 		ELSE
 			INSERT INTO `%TABLE_PREFIX%list_items` (list_id, `value`, `properties`)
-			VALUES (@list_pk, NEW.name, CONCAT('',@pk));			
+			VALUES (@list_pk, CONCAT(NEW.name,' Asset_ID:', NEW.asset_id), CONCAT('',@pk));			
 		END IF;
 	END IF; 
 END$
@@ -191,7 +211,6 @@ select `%TABLE_PREFIX%form`.`title` AS `title`,
 `%TABLE_PREFIX%form_field`.`id` AS `field_id`,
 `%TABLE_PREFIX%form_field`.`label` AS `field_label`,
 `%TABLE_PREFIX%form_entry_values`.`value` AS `value`,
-`%TABLE_PREFIX%equipment`.`equipment_id` AS `equipment_id`,
 `%TABLE_PREFIX%equipment_status`.`status_id` AS `status_id` 
 from ((((`%TABLE_PREFIX%form_field` 
 left join 
@@ -200,10 +219,8 @@ on(((`%TABLE_PREFIX%form_field`.`id` = `%TABLE_PREFIX%form_entry_values`.`field_
 (`%TABLE_PREFIX%form_entry`.`id` = `%TABLE_PREFIX%form_entry_values`.`entry_id`)))) 
 left join `%TABLE_PREFIX%form` 
 on((`%TABLE_PREFIX%form`.`id` = `%TABLE_PREFIX%form_field`.`form_id`))) 
-left join `%TABLE_PREFIX%equipment` 
-on((`%TABLE_PREFIX%form_entry_values`.`value` = `%TABLE_PREFIX%equipment`.`name`))) 
 left join `%TABLE_PREFIX%equipment_status` 
-on((`%TABLE_PREFIX%form_entry_values`.`value` = `%TABLE_PREFIX%equipment_status`.`name`))) 
+on((`%TABLE_PREFIX%form_entry_values`.`value` = `%TABLE_PREFIX%equipment_status`.`name`)))) 
 where ((`%TABLE_PREFIX%form`.`title` = 'Equipment') and 
 (`%TABLE_PREFIX%form`.`id` = `%TABLE_PREFIX%form_entry`.`form_id`) and 
 (`%TABLE_PREFIX%form_entry`.`object_type` = 'T'))$
@@ -244,8 +261,18 @@ BEGIN
 		
 		SET @status_id = (SELECT status_id FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
 						ticket_id= NEW.ticket_id AND field_label='Status' LIMIT 1);
-		SET @equipment_id = (SELECT equipment_id FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
+                
+                SET @asset_id = (SELECT value FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
+							ticket_id= NEW.ticket_id AND field_label='Asset ID' LIMIT 1);
+		IF( @asset_id IS NULL) THEN
+			SET @asset_id_str = (SELECT value FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
 							ticket_id= NEW.ticket_id AND field_label='Equipment' LIMIT 1);
+			SET @asset_id = (SELECT SUBSTRING_INDEX(@asset_id_str, 'Asset_ID:', -1));
+		END IF;
+
+		
+		SET @equipment_id = (SELECT equipment_id FROM `%TABLE_PREFIX%equipment` WHERE 
+							asset_id= @asset_id);	
 
 		IF ((@status_id IS NOT NULL) AND 
 			(@status_id >0)) AND 
@@ -258,4 +285,4 @@ BEGIN
 		END IF;
 	
 	END IF;
-END$
+END$			

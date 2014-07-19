@@ -26,7 +26,7 @@
             {% else %}
                 <strong>Category: </strong><a href="{{ constant('EQUIPMENT_WEB_ROOT') }}categories/view/{{ category.id }}">{{ category.name }}</a>
                 <script>
-                        var category_id = {{ category.id }};</script>
+                            var category_id = {{ category.id }};</script>
                 <form action="{{ constant('EQUIPMENT_WEB_ROOT') }}item/save" method="post" id="saveForm">   
                     <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
                     <input type="hidden" name="category_id" value="{{category.id}}" />   
@@ -72,20 +72,20 @@
                         </td>  
                     </tr>
                 </table>
-                <div style="padding-top:5px;"><b> Name (required)</b>:&nbsp;<span class="faded">Short descriptive name.</span></div>
-                <input id="item_name" type="text" size="70" name="name" value="{{ item.name }}" required/>
-
-                <div style="padding-top:5px;"><b>Serial Number</b></div>
-                <input id="serial_number" type ="text" size="70" name="serialnumber" value="{{ item.serialNumber }}"/>
+                <div style="padding-top:5px;"><b>Asset Id (required)</b></div>
+                <input id="asset_id" type ="text" size="70" name="asset_id" value="{{ item.asset_id }}" required/>
                 <br>
+                <div style="padding-top:5px;"><b> Name </b>:&nbsp;<span class="faded">Short descriptive name.</span></div>
+                <input id="item_name" type="text" size="70" name="name" value="{{ item.name }}"/>
+
+
                 <div style="padding-top:5px;"><b>Status (required)</b></div>
                 <select id="statusDropDown" name="status_id" required>
                     <option value="0">---Select Status---</option>
                 </select>
                 {% if item.status is defined %}
                     <script>
-                                var status_id = {{item.status.id}};
-                    </script>
+                                var status_id = {{item.status.id}};                    </script>
                 {% endif %}
 
                 <div style="padding-top:5px;">
@@ -113,6 +113,14 @@
                 </p>
             </form>
     </div>
+
+    {% if item.id > 0 %}
+        <script>
+                    selectedItem = {{ item.id }};
+        </script>
+        {% include "open_tickets.html.twig" %}
+        {% include "closed_tickets.html.twig" %}
+    {% endif %}            
 
 {% endblock %}
 

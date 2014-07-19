@@ -96,7 +96,9 @@ class EquipmentPlugin extends Plugin {
                 url_get('^new/(?P<category_id>\d+)$', 'newAction'),
                 url_post('^publish', 'publishAction'),
                 url_post('^activate', 'activateAction'),
-                url_post('^save', 'saveAction')
+                url_post('^save', 'saveAction'),
+                url_get('^openTicketsJson/(?P<item_id>\d+)$', 'openTicketsJsonAction'),
+                url_get('^closedTicketsJson/(?P<item_id>\d+)$', 'closedTicketsJsonAction')
                 ));
         
         $status_url=url('^/equipment.*status/',patterns(               

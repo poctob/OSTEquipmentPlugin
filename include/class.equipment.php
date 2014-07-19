@@ -1,17 +1,18 @@
 <?php
-/*********************************************************************
-    class.equipment.php
 
-    Backend support for equipmnet, creates, edits, deletes.
+/* * *******************************************************************
+  class.equipment.php
 
-    Copyright (c)  2006-2013 XpressTek
-    http://www.xpresstek.net
+  Backend support for equipmnet, creates, edits, deletes.
 
-    Released under the GNU General Public License WITHOUT ANY WARRANTY.
-    See LICENSE.TXT for details.
+  Copyright (c)  2006-2013 XpressTek
+  http://www.xpresstek.net
 
-    vim: expandtab sw=4 ts=4 sts=4:
-**********************************************************************/
+  Released under the GNU General Public License WITHOUT ANY WARRANTY.
+  See LICENSE.TXT for details.
+
+  vim: expandtab sw=4 ts=4 sts=4:
+ * ******************************************************************** */
 require_once('class.file.php');
 require_once('class.equipment_category.php');
 require_once('class.equipment_status.php');
@@ -19,37 +20,38 @@ require_once('class.equipment_status.php');
 class Equipment {
 
     var $id;
+    var $asset_id;
     var $ht;
-
     var $category;
     var $status;
 
     function Equipment($id = 0) {
-        $this->id=0;
+        $this->id = 0;
         $this->ht = array();
         $this->load($id);
     }
 
     function load($id) {
 
-        $sql='SELECT equipment.*,cat.ispublic, status.name as Status, 
+        $sql = 'SELECT equipment.*,cat.ispublic, status.name as Status, 
             status.image as Image, status.color as Color '
-            .' FROM '.EQUIPMENT_TABLE.' equipment '
-            .' LEFT JOIN '.EQUIPMENT_CATEGORY_TABLE.' cat ON(cat.category_id=equipment.category_id) '
-            .' LEFT JOIN '.EQUIPMENT_STATUS_TABLE.' status ON(equipment.status_id=status.status_id) '
-            .' WHERE equipment.equipment_id='.db_input($id)
-            .' GROUP BY equipment.equipment_id';
+                . ' FROM ' . EQUIPMENT_TABLE . ' equipment '
+                . ' LEFT JOIN ' . EQUIPMENT_CATEGORY_TABLE . ' cat ON(cat.category_id=equipment.category_id) '
+                . ' LEFT JOIN ' . EQUIPMENT_STATUS_TABLE . ' status ON(equipment.status_id=status.status_id) '
+                . ' WHERE equipment.equipment_id=' . db_input($id)
+                . ' GROUP BY equipment.equipment_id';
 
-        if (!($res=db_query($sql)) || !db_num_rows($res)) 
+        if (!($res = db_query($sql)) || !db_num_rows($res))
             return false;
 
         $this->ht = db_fetch_array($res);
         $this->ht['id'] = $this->id = $this->ht['equipment_id'];
-        
-        if($this->getCategoryId())
+        $this->asset_id = $this->ht['asset_id'];
+
+        if ($this->getCategoryId())
             $this->category = Equipment_Category::lookup($this->getCategoryId());
-        
-        if($this->getStatusId())
+
+        if ($this->getStatusId())
             $this->status = Equipment_Status::lookup($this->getStatusId());
 
 
@@ -61,54 +63,128 @@ class Equipment {
     }
 
     /* ------------------> Getter methods <--------------------- */
-    function getId() { return $this->id; }
-    function getHashtable() { return $this->ht; }
-    function getName() { return $this->ht['name']; }
-    function getDescription() { return $this->ht['description']; }
-    function getSerialNumber() { return $this->ht['serialnumber']; }
-    function getNotes() { return $this->ht['notes']; }
-    function getStatus() { return $this->status; }
-    function getStatusName() { return $this->status->name; }
-    function getStatusId(){ return $this->ht['status_id']; }
-    function getColor() { return $this->ht['Color']; }
-    function getImage() { return $this->ht['Image']; }
 
-    function isPublished() { return ($this->ht['ispublished']); }
-    function isActive() {return $this->ht['is_active'];}
+    function getId() {
+        return $this->id;
+    }
 
-    function getCreateDate() { return $this->ht['created']; }
-    function getUpdateDate() { return $this->ht['updated']; }
-    
-    function getCategoryId() { return $this->ht['category_id']; }
-    function getCategory() { 
-        
+    function getAssetId() {
+        return $this->asset_id;
+    }
+
+    function getHashtable() {
+        return $this->ht;
+    }
+
+    function getName() {
+        return $this->ht['name'];
+    }
+
+    function getDescription() {
+        return $this->ht['description'];
+    }
+
+    function getNotes() {
+        return $this->ht['notes'];
+    }
+
+    function getStatus() {
+        return $this->status;
+    }
+
+    function getStatusName() {
+        return $this->status->name;
+    }
+
+    function getStatusId() {
+        return $this->ht['status_id'];
+    }
+
+    function getColor() {
+        return $this->ht['Color'];
+    }
+
+    function getImage() {
+        return $this->ht['Image'];
+    }
+
+    function isPublished() {
+        return ($this->ht['ispublished']);
+    }
+
+    function isActive() {
+        return $this->ht['is_active'];
+    }
+
+    function getCreateDate() {
+        return $this->ht['created'];
+    }
+
+    function getUpdateDate() {
+        return $this->ht['updated'];
+    }
+
+    function getCategoryId() {
+        return $this->ht['category_id'];
+    }
+
+    function getCategory() {
+
 
         return $this->category;
     }
 
-
     /* ------------------> Setter methods <--------------------- */
-    function setPublished($val) { $this->ht['ispublished'] = $val; }
-    function setName($name) { $this->ht['name'] = Format::striptags(trim($name)); }
-    function setDescription($text) { $this->ht['description'] = $text; }
-    function setSerialNumber($words) { $this->ht['serialnumber'] = $words; }
-    function setNotes($text) { $this->ht['notes'] = $text; }
-    function setStatus($status) { $this->ht['Status'] = $status; }
-    function setStatusID($status_id) { $this->ht['status_id'] = $status_id; }
+
+    function setPublished($val) {
+        $this->ht['ispublished'] = $val;
+    }
+
+    function setName($name) {
+        $this->ht['name'] = Format::striptags(trim($name));
+    }
+
+    function setDescription($text) {
+        $this->ht['description'] = $text;
+    }
+
+    function setAssetId($val) {
+        $this->ht['asset_id'] = $val;
+        $this->asset_id = $val;
+    }
+
+    function setNotes($text) {
+        $this->ht['notes'] = $text;
+    }
+
+    function setStatus($status) {
+        $this->ht['Status'] = $status;
+    }
+
+    function setStatusID($status_id) {
+        $this->ht['status_id'] = $status_id;
+    }
 
     /* For ->attach() and ->detach(), use $this->attachments() */
-    function attach($file) { return $this->_attachments->add($file); }
-    function detach($file) { return $this->_attachments->remove($file); }
-    function setActive($val) { $this->ht['is_active'] = $val; }
-    
-    function activate()
-    {
+
+    function attach($file) {
+        return $this->_attachments->add($file);
+    }
+
+    function detach($file) {
+        return $this->_attachments->remove($file);
+    }
+
+    function setActive($val) {
+        $this->ht['is_active'] = $val;
+    }
+
+    function activate() {
         $this->setActive(1);
         return $this->apply();
     }
-    
-     function retire()
-    {
+
+    function retire() {
         $this->setActive(0);
         return $this->apply();
     }
@@ -126,25 +202,26 @@ class Equipment {
     }
 
     /* Same as update - but mainly called after one or more setters are changed. */
+
     function apply() {
         //XXX: set errors and add ->getErrors() & ->getError()
         return $this->update($this->ht, $errors);               # nolint
     }
 
-    function getEquipment($publishedOnly=false) {
+    function getEquipment($publishedOnly = false) {
 
-        $equipment=array();
-        $sql='SELECT equipment_id, name '
-            .' FROM '.EQUIPMENT_TABLE
-            .' WHERE is_active=1';
+        $equipment = array();
+        $sql = 'SELECT equipment_id, name, asset_id '
+                . ' FROM ' . EQUIPMENT_TABLE
+                . ' WHERE is_active=1';
 
-        if($publishedOnly)
+        if ($publishedOnly)
             $sql.=' AND ispublished=1';
 
         $sql.=' ORDER BY name';
-        if(($res=db_query($sql)) && db_num_rows($res))
-            while(list($id, $name)=db_fetch_row($res))
-                $equipment[$id]=$name;
+        if (($res = db_query($sql)) && db_num_rows($res))
+            while (list($id, $name) = db_fetch_row($res))
+                $equipment[$id] = $name;
 
         return $equipment;
     }
@@ -152,37 +229,39 @@ class Equipment {
     function getPublishedEquipment() {
         return self::getEquipment(true);
     }
-    
-    function getOpenTickets($id)
-    {
-           $ticket_ids=array();
-           $sql='SELECT et.ticket_id'
-            .' FROM '.EQUIPMENT_TICKET_TABLE.' et '
-            .' LEFT JOIN '.TICKET_TABLE.' ticket ON(et.ticket_id=ticket.ticket_id) '    
-            .' WHERE et.equipment_id='.db_input($id)
-            .' AND ticket.status=\'open\'';
-        if(($res=db_query($sql)) && db_num_rows($res))
-            while(list($id)=db_fetch_row($res))
-                $ticket_ids[]=$id;
 
-            return $ticket_ids; 
-    }
-    
-     function getClosedTickets($id)
-    {
-           $ticket_ids=array();
-           $sql='SELECT et.ticket_id'
-            .' FROM '.EQUIPMENT_TICKET_TABLE.' et '
-            .' LEFT JOIN '.TICKET_TABLE.' ticket ON(et.ticket_id=ticket.ticket_id) '    
-            .' WHERE et.equipment_id='.db_input($id)
-            .' AND ticket.status=\'closed\'';
-        if(($res=db_query($sql)) && db_num_rows($res))
-            while(list($id)=db_fetch_row($res))
-                $ticket_ids[]=$id;
+    public static function getOpenTickets($id) {
+        $ticket_ids = array();
+        $sql = 'SELECT et.ticket_id'
+                . ' FROM ' . EQUIPMENT_TICKET_TABLE . ' et '
+                . ' LEFT JOIN ' . TICKET_TABLE . ' ticket ON(et.ticket_id=ticket.ticket_id) '
+                . ' WHERE et.equipment_id=' . db_input($id)
+                . ' AND ticket.status=\'open\'';
+        if (($res = db_query($sql)) && db_num_rows($res))
+            while (list($id) = db_fetch_row($res))
+                $ticket_ids[] = $id;
 
-            return $ticket_ids; 
+        return $ticket_ids;
     }
-    
+
+    public static function getClosedTickets($id) {
+        $ticket_ids = array();
+        $sql = 'SELECT et.ticket_id'
+                . ' FROM ' . EQUIPMENT_TICKET_TABLE . ' et '
+                . ' LEFT JOIN ' . TICKET_TABLE . ' ticket ON(et.ticket_id=ticket.ticket_id) '
+                . ' WHERE et.equipment_id=' . db_input($id)
+                . ' AND ticket.status=\'closed\'';
+        if (($res = db_query($sql)) && db_num_rows($res))
+            while (list($id) = db_fetch_row($res))
+                $ticket_ids[] = $id;
+
+        return $ticket_ids;
+    }
+
+    public static function getTicketList($type, $id) {
+        return $type == 'open' ? self::getOpenTickets($id) : self::getClosedTickets($id);
+    }
+
     /**
      * Assigns a ticket to the equipment.
      * First we check if this ticket has any equipment already assigned to it,
@@ -193,24 +272,23 @@ class Equipment {
      * @return boolean if operation is succes, True.  False if somethign goes
      * wrong
      */
-    function assignTicket($ticket_id){
-        
+    function assignTicket($ticket_id) {
+
         self::onCloseTicket($ticket_id, $this->getId(), true);
         self::deleteByTicket($ticket_id);
-        
-        $sql='equipment_id='.db_input($this->getId())
-            .', ticket_id='.db_input($ticket_id);
-            
-        $sql='INSERT INTO '.EQUIPMENT_TICKET_TABLE.' SET '.$sql.',created=NOW()';
-        
-         if(!db_query($sql) || !db_affected_rows())
-         {
+
+        $sql = 'equipment_id=' . db_input($this->getId())
+                . ', ticket_id=' . db_input($ticket_id);
+
+        $sql = 'INSERT INTO ' . EQUIPMENT_TICKET_TABLE . ' SET ' . $sql . ',created=NOW()';
+
+        if (!db_query($sql) || !db_affected_rows()) {
             return false;
-         }
-         
-         return true;
+        }
+
+        return true;
     }
-    
+
     /**
      * This function is overruning its original scope, but it seems logical
      * to put that functionality there.  
@@ -227,185 +305,196 @@ class Equipment {
      * associated with this equipment, the equipment status will be reset.
      * @return void
      */
-    function onCloseTicket($ticket_id, $eq_id=0, $force=false)
-    {
-        
-        $eq=self::findByTicket($ticket_id);        
-        if($eq)
-        {     
-            if($eq->getId()==$eq_id)
-            {
+    function onCloseTicket($ticket_id, $eq_id = 0, $force = false) {
+
+        $eq = self::findByTicket($ticket_id);
+        if ($eq) {
+            if ($eq->getId() == $eq_id) {
                 return;
             }
-                
-            $open_tickets=self::getOpenTickets($eq->getId());
-            
-            $do_close = (count($open_tickets)==0);
-            if(!$do_close)
-            {
-                $do_close=$force && 
-                        count($open_tickets)==1 && 
-                        $open_tickets[0]==$ticket_id;
+
+            $open_tickets = self::getOpenTickets($eq->getId());
+
+            $do_close = (count($open_tickets) == 0);
+            if (!$do_close) {
+                $do_close = $force &&
+                        count($open_tickets) == 1 &&
+                        $open_tickets[0] == $ticket_id;
             }
-            if($do_close)
-            {
-                $b_status=Equipment_Status::getBaselineStatus();
-       
-                if($b_status)
-                {
+            if ($do_close) {
+                $b_status = Equipment_Status::getBaselineStatus();
+
+                if ($b_status) {
                     $eq->setStatusID($b_status->getId());
                     $eq->apply();
-                }                                
+                }
             }
         }
     }
 
     function update($vars, &$errors) {
-        if(!$this->save($this->getId(), $vars, $errors))
-            return false;                         
+        if (!$this->save($this->getId(), $vars, $errors))
+            return false;
 
         $this->reload();
 
         return true;
-    } 
+    }
 
     function delete() {
-       
-        $sql='UPDATE '.EQUIPMENT_TABLE
-            .' SET is_active=0'
-            .' WHERE equipment_id='.db_input($this->getId())
-            .' LIMIT 1';
-        if(!db_query($sql) || !db_affected_rows())
+
+        $sql = 'UPDATE ' . EQUIPMENT_TABLE
+                . ' SET is_active=0'
+                . ' WHERE equipment_id=' . db_input($this->getId())
+                . ' LIMIT 1';
+        if (!db_query($sql) || !db_affected_rows())
             return false;
-        
+
         return true;
     }
 
     /* ------------------> Static methods <--------------------- */
-   
+
     function add($vars, &$errors) {
-        if(!($id=self::create($vars, $errors)))
+        if (!($id = self::create($vars, $errors)))
             return false;
 
-        if(($equipment=self::lookup($id))) {
+        if (($equipment = self::lookup($id))) {
             $equipment->reload();
         }
-            
+
         return $equipment;
     }
 
-    function create($vars, &$errors) {   
+    function create($vars, &$errors) {
         return self::save(0, $vars, $errors);
     }
 
-    function lookup($id) {
-        return ($id && is_numeric($id) && ($obj= new Equipment($id)) && $obj->getId()==$id)? $obj : null;
+    public static function lookup($id) {
+        return ($id && is_numeric($id) &&
+                ($obj = new Equipment($id)) && $obj->getId() == $id) ? $obj : null;
     }
 
     function countPublishedEquipment() {
-        $sql='SELECT count(equipment.equipment_id) '
-            .' FROM '.EQUIPMENT_TABLE.' equipment '
-            .' INNER JOIN '.EQUIPMENT_CATEGORY_TABLE.' cat ON(cat.category_id=equipment.category_id AND cat.ispublic=1) '
-            .' WHERE equipment.ispublished=1';
+        $sql = 'SELECT count(equipment.equipment_id) '
+                . ' FROM ' . EQUIPMENT_TABLE . ' equipment '
+                . ' INNER JOIN ' . EQUIPMENT_CATEGORY_TABLE . ' cat ON(cat.category_id=equipment.category_id AND cat.ispublic=1) '
+                . ' WHERE equipment.ispublished=1';
 
         return db_result(db_query($sql));
     }
 
-    function findIdByName($name) {
-        $sql='SELECT equipment_id FROM '.EQUIPMENT_TABLE
-            .' WHERE name='.db_input($name);
+    public static function findIdByName($name) {
+        $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TABLE
+                . ' WHERE name=' . db_input($name);
 
-        list($id) =db_fetch_row(db_query($sql));
+        list($id) = db_fetch_row(db_query($sql));
 
         return $id;
     }
 
-    function findByName($name) {
+    public static function findIdByAssetId($asset_id) {
+        $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TABLE
+                . ' WHERE asset_id=' . db_input($asset_id);
 
-        if(($id=self::findIdByName($name)))
+        list($id) = db_fetch_row(db_query($sql));
+
+        return $id;
+    }
+
+    public static function findByName($name) {
+
+        if (($id = self::findIdByName($name)))
             return self::lookup($id);
 
         return false;
     }
-    
-    function findIdByTicket($ticket)
-    {
-        $sql='SELECT equipment_id FROM '.EQUIPMENT_TICKET_TABLE
-            .' WHERE ticket_id='.db_input($ticket);
-        
-        list($id) =db_fetch_row(db_query($sql));
+
+    public static function findByAssetId($asset_id) {
+
+        if (($id = self::findIdByAssetId($asset_id)))
+            return self::lookup($id);
+
+        return false;
+    }
+
+    function findIdByTicket($ticket) {
+        $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TICKET_TABLE
+                . ' WHERE ticket_id=' . db_input($ticket);
+
+        list($id) = db_fetch_row(db_query($sql));
 
         return $id;
-    }    
-    
-    function deleteByTicket($ticket)
-    {
-        $sql='DELETE FROM '.EQUIPMENT_TICKET_TABLE
-                .' WHERE ticket_id='.db_input($ticket);
+    }
+
+    function deleteByTicket($ticket) {
+        $sql = 'DELETE FROM ' . EQUIPMENT_TICKET_TABLE
+                . ' WHERE ticket_id=' . db_input($ticket);
         return db_query($sql);
     }
-    
+
     function findByTicket($ticket) {
 
-        if(($id=self::findIdByTicket($ticket)))
+        if (($id = self::findIdByTicket($ticket)))
             return self::lookup($id);
 
         return false;
     }
-    
-    public static function save($id, $vars, &$errors, $validation=false) {
+
+    public static function save($id, $vars, &$errors, $validation = false) {
 
         //Cleanup.
-        $vars['name']=Format::striptags(trim($vars['name']));
-     
+        $vars['name'] = Format::striptags(trim($vars['name']));
+
         //validate
-        if($id && $id!=$vars['id'])
+        if ($id && $id != $vars['id'])
             $errors['err'] = 'Internal error. Try again';
 
-        if(!$vars['name'])
-            $errors['name'] = 'Name required';
-        elseif(($qid=self::findIdByName($vars['name'])) && $qid!=$id)
-        {
-            $errors['name'] = 'Name already exists';
+        if (!$vars['asset_id'])
+            $errors['asset_id'] = 'Asset ID is required';
+        elseif (($qid = self::findIdByAssetId($vars['asset_id'])) && $qid != $id) {
+            $errors['asset_id'] = 'Asset ID already exists';
         }
 
-        if(!$vars['category_id'] || !($category=Equipment_Category::lookup($vars['category_id'])))
+        if (!$vars['category_id'] || !($category = Equipment_Category::lookup($vars['category_id'])))
             $errors['category_id'] = 'Category is required';
-        
-        if(!$vars['status_id'] || !($status=Equipment_Status::lookup($vars['status_id'])))
+
+        if (!$vars['status_id'] || !($status = Equipment_Status::lookup($vars['status_id'])))
             $errors['status_id'] = 'Status is required';
 
-    //        print_r ($errors);
+        //        print_r ($errors);
 
-        if($errors || $validation) return (!$errors);
+        if ($errors || $validation)
+            return (!$errors);
 
         //save
-        $sql=' updated=NOW() '
-            .', name='.db_input($vars['name'])
-            .', description='.db_input(Format::safe_html($vars['description']))
-            .', status_id='.db_input(Format::safe_html($vars['status_id']))
-            .', serialnumber='.db_input(Format::safe_html($vars['serialnumber']))
-            .', category_id='.db_input($vars['category_id'])
-            .', ispublished='.db_input(isset($vars['ispublished'])?$vars['ispublished']:0)
-            .', is_active='.db_input(isset($vars['is_active'])?$vars['is_active']:1)
-            .', notes='.db_input($vars['notes']);
+        $sql = ' updated=NOW() '
+                . ', name=' . db_input($vars['name'])
+                . ', description=' . db_input(Format::safe_html($vars['description']))
+                . ', status_id=' . db_input(Format::safe_html($vars['status_id']))
+                . ', category_id=' . db_input($vars['category_id'])
+                . ', ispublished=' . db_input(isset($vars['ispublished']) ? $vars['ispublished'] : 0)
+                . ', is_active=' . db_input(isset($vars['is_active']) ? $vars['is_active'] : 1)
+                . ', notes=' . db_input($vars['notes'])
+                . ', asset_id=' . db_input($vars['asset_id']);
 
-        if($id) {
-            $sql='UPDATE '.EQUIPMENT_TABLE.' SET '.$sql.' WHERE equipment_id='.db_input($id);
-            if(db_query($sql))
+        if ($id) {
+            $sql = 'UPDATE ' . EQUIPMENT_TABLE . ' SET ' . $sql . ' WHERE equipment_id=' . db_input($id);
+            if (db_query($sql))
                 return true;
-           
-            $errors['err']='Unable to update Equipment.';
 
+            $errors['err'] = 'Unable to update Equipment.';
         } else {
-            $sql='INSERT INTO '.EQUIPMENT_TABLE.' SET '.$sql.',created=NOW()';
-            if(db_query($sql) && ($id=db_insert_id()))
+            $sql = 'INSERT INTO ' . EQUIPMENT_TABLE . ' SET ' . $sql . ',created=NOW()';
+            if (db_query($sql) && ($id = db_insert_id()))
                 return $id;
 
-            $errors['err']='Unable to create Equipmnet. Internal error';
+            $errors['err'] = 'Unable to create Equipmnet. Internal error';
         }
 
         return false;
     }
+
 }
+
 ?>

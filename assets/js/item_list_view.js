@@ -1,4 +1,3 @@
-
 $(function() {
 
     $('#itemsPanel').puipanel({
@@ -108,6 +107,7 @@ function applyItemsTableUI()
             rows: 20
         },
         columns: [
+            {field: 'asset_id', headerText: 'Asset ID', sortable: true},
             {field: 'name', headerText: 'Name', sortable: true},
             {field: 'category', headerText: 'Category', sortable: true},
             {field: 'status', headerText: 'Status', sortable: true},
