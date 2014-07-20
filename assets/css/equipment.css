@@ -79,3 +79,7 @@ img.status_image_table{
     width: 25px;
     height: 25px;
 }
+
+#dynamic-form-body td{
+    padding: 5px;
+}

@@ -16,6 +16,7 @@
 require_once('class.file.php');
 require_once('class.equipment_category.php');
 require_once('class.equipment_status.php');
+require_once(INCLUDE_DIR . 'class.dynamic_forms.php');
 
 class Equipment {
 
@@ -462,8 +463,6 @@ class Equipment {
         if (!$vars['status_id'] || !($status = Equipment_Status::lookup($vars['status_id'])))
             $errors['status_id'] = 'Status is required';
 
-        //        print_r ($errors);
-
         if ($errors || $validation)
             return (!$errors);
 
@@ -480,21 +479,27 @@ class Equipment {
 
         if ($id) {
             $sql = 'UPDATE ' . EQUIPMENT_TABLE . ' SET ' . $sql . ' WHERE equipment_id=' . db_input($id);
-            if (db_query($sql))
-                return true;
-
-            $errors['err'] = 'Unable to update Equipment.';
+            if (!db_query($sql)) {
+                $errors['err'] = 'Unable to update Equipment.';
+            }
         } else {
             $sql = 'INSERT INTO ' . EQUIPMENT_TABLE . ' SET ' . $sql . ',created=NOW()';
-            if (db_query($sql) && ($id = db_insert_id()))
-                return $id;
-
-            $errors['err'] = 'Unable to create Equipmnet. Internal error';
+            if (!db_query($sql) || !($id = db_insert_id())) {
+                $errors['err'] = 'Unable to create Equipmnet. Internal error';
+            }
         }
 
-        return false;
+        if (isset($errors) && count($errors) > 0) {
+            return false;
+        }
+
+        if (isset($vars['form_id'])) {
+            self::saveDynamicData($vars['form_id'], $id, $vars);
+        }
+
+        return true;
     }
-    
+
     public static function getAll() {
         $items = array();
         $sql = 'SELECT equipment_id ' .
@@ -511,5 +516,28 @@ class Equipment {
         return $items;
     }
 
+    public static function saveDynamicData($form_id, $id, $data) {
+        if ($id > 0) {
+            $form = DynamicForm::lookup($form_id);
+
+            $form_entry = $form->instanciate();
+            $form_entry->set('object_type', 'G');
+            $form_entry->setObjectId($id);
+            foreach ($form_entry->getFields() as $f) {
+                if (isset($data[$f->get('name')])) {
+                    $form_entry->setAnswer($f->get('name'), $data[$f->get('name')]);
+                }
+            }
+            $form_entry->save();
+        }
+    }
+
+    public static function getDynamicData($id) {
+        return DynamicFormEntry::objects()
+                        ->filter(array('object_id' => $id, 
+                            'object_type' => 'G'));
+    }
+
 }
+
 ?>

@@ -12,6 +12,7 @@
  * @author alex
  */
 require_once ('Controller.php');
+require_once(INCLUDE_DIR . 'class.dynamic_forms.php');
 
 class EquipmentItem extends Controller {
 
@@ -27,9 +28,9 @@ class EquipmentItem extends Controller {
         return 'item_view.html.twig';
     }
 
-  /*  protected function defaultAction() {
-        $this->newAction($_POST['category_id']);
-    }*/
+    /*  protected function defaultAction() {
+      $this->newAction($_POST['category_id']);
+      } */
 
     public function newAction($category_id) {
         $viewargs = array();
@@ -42,6 +43,22 @@ class EquipmentItem extends Controller {
                     ('error', 'Unable to create new item!', 'invalid category specified!');
             $this->viewAction(0);
         }
+    }
+
+    public function getDynamicForm($id = 0) {
+        $form_id = EquipmentPlugin::getCustomForm();
+        $form = DynamicForm::lookup($form_id);
+        if($id > 0)
+        {
+            $data = Equipment::getDynamicData($id);
+            $one = $data->one();
+            if( isset($one))
+            {
+                $one->getSaved();
+                return $one->getForm()->render(true);
+            }
+        }
+        return $form->getForm()->render(true);
     }
 
     public function publishAction() {
@@ -81,7 +98,7 @@ class EquipmentItem extends Controller {
             $this->setFlash('error', 'Error', 'Failed to Update Item!');
         }
     }
-    
+
     public function openTicketsJsonAction($item_id) {
         $tickets = $this->ticketsAction('open', $item_id);
         echo json_encode($tickets);
@@ -91,7 +108,7 @@ class EquipmentItem extends Controller {
         $tickets = $this->ticketsAction('closed', $item_id);
         echo json_encode($tickets);
     }
-    
+
     private function ticketsAction($type, $item_id) {
         $ticket_id = Equipment::getTicketList($type, $item_id);
         $tickets = array();
@@ -122,5 +139,4 @@ class EquipmentItem extends Controller {
         }
         return $tickets;
     }
-
 }

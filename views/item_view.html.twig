@@ -2,6 +2,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="assets/js/equipment_item_view.js"></script>
+    <script src="assets/js/dynamic_form.js"></script>
 {% endblock %}
 
 {% block title %}
@@ -9,7 +10,7 @@
 {% endblock %}
 
 {% block pagetitle %}
-    {{ title }}
+     Equipment Item
 {% endblock %}
 
 {% block body %}
@@ -19,7 +20,9 @@
         {% if item.category is defined and item.category.id > 0 %}
             <strong>Category: </strong><a href="{{ constant('EQUIPMENT_WEB_ROOT') }}categories/view/{{ item.category.id }}">{{ item.category.name }}</a>
             <script>
-                var category_id = {{ item.category.id }};</script>
+                var category_id = {{ item.category.id }};
+                 selected_item = {{ item.id }};
+            </script>
             <form action="{{ constant('EQUIPMENT_WEB_ROOT') }}item/save" method="post" id="saveForm">   
                 <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
                 <input type="hidden" name="category_id" value="{{item.category.id}}" />   
@@ -83,10 +86,11 @@
                 <select id="statusDropDown" name="status_id" required>
                     <option value="0">---Select Status---</option>
                 </select>
-                {% if item.status is defined %}
+                {% if item.status is defined and item.status.id is defined %}
                     <script>
-                                var status_id = {{item.status.id}};                    </script>
-                {% endif %}
+                                var status_id = {{ item.status.id }};
+                     </script>
+                    {% endif %}
 
                 <div style="padding-top:5px;">
                     <b>Description</b>:&nbsp;<span class="faded">Description of the item.</span>
@@ -104,7 +108,8 @@
                 <textarea id="item_notes" name="notes" cols="21" rows="5" style="width:98%;">
                     {{ item.notes }}
                 </textarea>
-
+                
+                    {% include 'dynamic_form.html.twig' %}
 
                 <p style="padding-left:225px;">               
                     <button id="saveButton" type="submit">Save</button>  

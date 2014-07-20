@@ -4,17 +4,19 @@ var currentItem = 0;
 
 $(function() {
 
-    $.getJSON(eq_root+'status/listJson', populateStatusDropDown);
+    $.getJSON(eq_root + 'status/listJson', populateStatusDropDown);
 
+    
+            
     $(':radio').puiradiobutton();
     $('#asset_id').puiinputtext();
-    $('#item_name').puiinputtext();    
+    $('#item_name').puiinputtext();
     $('#item_description').puiinputtextarea();
     $('#item_notes').puiinputtextarea();
 
     $("#saveForm").validate();
-    
-     $('#saveButton').puibutton({
+
+    $('#saveButton').puibutton({
         icon: 'ui-icon-disk'
     });
 
@@ -28,10 +30,10 @@ $(function() {
     $('#cancelButton').puibutton({
         icon: 'ui-icon-circle-close',
         click: function(event) {
-            window.location.href = eq_root+"dashboard/";
+            window.location.href = eq_root + "dashboard/";
         }
     });
-    
+
     applyDataTableUI();
 });
 
@@ -39,7 +41,7 @@ $(function() {
 
 
 function applyDataTableUI()
-{   
+{
     $('#openTicketsDataTable').puidatatable({
         caption: "Open Tickets",
         paginator: {
@@ -55,7 +57,7 @@ function applyDataTableUI()
         datasource: function(callback) {
             $.ajax({
                 type: "GET",
-                url: '../openTicketsJson/' + selectedItem,
+                url: eq_root+'item/openTicketsJson/' + selectedItem,
                 dataType: "json",
                 context: this,
                 success: function(response) {
@@ -87,7 +89,7 @@ function applyDataTableUI()
         datasource: function(callback) {
             $.ajax({
                 type: "GET",
-                url: '../closedTicketsJson/' + selectedItem,
+                url: eq_root+'item/closedTicketsJson/' + selectedItem,
                 dataType: "json",
                 context: this,
                 success: function(response) {
@@ -117,6 +119,11 @@ function populateStatusDropDown(data)
             $('#statusDropDown').puidropdown('selectValue', status_id);
         }
     }
+}
+
+function populateDynamicForm(data)
+{
+    $("#dynamic-form-body").replaceWith("data");
 }
 
 

@@ -70,9 +70,7 @@ class EquipmentPlugin extends Plugin {
     {
         $ep = new EquipmentPlugin();
         $config = $ep->getConfig();
-        $form_id = $config->get('equipment_custom_form');
-        $form = DynamicForm::lookup($form_id);
-        return $form;
+        return $config->get('equipment_custom_form');
     }
 
     static public function callbackDispatch($object, $data)
@@ -98,7 +96,8 @@ class EquipmentPlugin extends Plugin {
                 url_post('^activate', 'activateAction'),
                 url_post('^save', 'saveAction'),
                 url_get('^openTicketsJson/(?P<item_id>\d+)$', 'openTicketsJsonAction'),
-                url_get('^closedTicketsJson/(?P<item_id>\d+)$', 'closedTicketsJsonAction')
+                url_get('^closedTicketsJson/(?P<item_id>\d+)$', 'closedTicketsJsonAction'),
+                url_get('^getDynamicForm/(?P<id>\d+)$', 'getDynamicForm')
                 ));
         
         $status_url=url('^/equipment.*status/',patterns(               
