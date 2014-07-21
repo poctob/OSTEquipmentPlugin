@@ -77,18 +77,6 @@ class Equipment {
         return $this->ht;
     }
 
-    function getName() {
-        return $this->ht['name'];
-    }
-
-    function getDescription() {
-        return $this->ht['description'];
-    }
-
-    function getNotes() {
-        return $this->ht['notes'];
-    }
-
     function getStatus() {
         return $this->status;
     }
@@ -141,21 +129,9 @@ class Equipment {
         $this->ht['ispublished'] = $val;
     }
 
-    function setName($name) {
-        $this->ht['name'] = Format::striptags(trim($name));
-    }
-
-    function setDescription($text) {
-        $this->ht['description'] = $text;
-    }
-
     function setAssetId($val) {
         $this->ht['asset_id'] = $val;
         $this->asset_id = $val;
-    }
-
-    function setNotes($text) {
-        $this->ht['notes'] = $text;
     }
 
     function setStatus($status) {
@@ -212,17 +188,17 @@ class Equipment {
     function getEquipment($publishedOnly = false) {
 
         $equipment = array();
-        $sql = 'SELECT equipment_id, name, asset_id '
+        $sql = 'SELECT equipment_id, asset_id '
                 . ' FROM ' . EQUIPMENT_TABLE
                 . ' WHERE is_active=1';
 
         if ($publishedOnly)
             $sql.=' AND ispublished=1';
 
-        $sql.=' ORDER BY name';
+        $sql.=' ORDER BY asset_id';
         if (($res = db_query($sql)) && db_num_rows($res))
-            while (list($id, $name) = db_fetch_row($res))
-                $equipment[$id] = $name;
+            while (list($id, $asset_id) = db_fetch_row($res))
+                $equipment[$id] = $asset_id;
 
         return $equipment;
     }
@@ -343,15 +319,18 @@ class Equipment {
     }
 
     function delete() {
+        $sql = 'DELETE FROM ' . EQUIPMENT_TICKET_TABLE
+                . ' WHERE equipment_id=' . db_input($this->id);
+        $success =  db_query($sql);
+        
+        if($success)
+        {
 
-        $sql = 'UPDATE ' . EQUIPMENT_TABLE
-                . ' SET is_active=0'
-                . ' WHERE equipment_id=' . db_input($this->getId())
-                . ' LIMIT 1';
-        if (!db_query($sql) || !db_affected_rows())
-            return false;
-
-        return true;
+            $sql = 'DELETE FROM ' . EQUIPMENT_TABLE
+                    . ' WHERE equipment_id=' . db_input($this->id);
+            $success =  db_query($sql);
+        }
+        return $success;
     }
 
     /* ------------------> Static methods <--------------------- */
@@ -385,15 +364,6 @@ class Equipment {
         return db_result(db_query($sql));
     }
 
-    public static function findIdByName($name) {
-        $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TABLE
-                . ' WHERE name=' . db_input($name);
-
-        list($id) = db_fetch_row(db_query($sql));
-
-        return $id;
-    }
-
     public static function findIdByAssetId($asset_id) {
         $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TABLE
                 . ' WHERE asset_id=' . db_input($asset_id);
@@ -401,14 +371,6 @@ class Equipment {
         list($id) = db_fetch_row(db_query($sql));
 
         return $id;
-    }
-
-    public static function findByName($name) {
-
-        if (($id = self::findIdByName($name)))
-            return self::lookup($id);
-
-        return false;
     }
 
     public static function findByAssetId($asset_id) {
@@ -444,9 +406,6 @@ class Equipment {
 
     public static function save($id, $vars, &$errors, $validation = false) {
 
-        //Cleanup.
-        $vars['name'] = Format::striptags(trim($vars['name']));
-
         //validate
         if ($id && $id != $vars['id'])
             $errors['err'] = 'Internal error. Try again';
@@ -468,13 +427,10 @@ class Equipment {
 
         //save
         $sql = ' updated=NOW() '
-                . ', name=' . db_input($vars['name'])
-                . ', description=' . db_input(Format::safe_html($vars['description']))
                 . ', status_id=' . db_input(Format::safe_html($vars['status_id']))
                 . ', category_id=' . db_input($vars['category_id'])
                 . ', ispublished=' . db_input(isset($vars['ispublished']) ? $vars['ispublished'] : 0)
                 . ', is_active=' . db_input(isset($vars['is_active']) ? $vars['is_active'] : 1)
-                . ', notes=' . db_input($vars['notes'])
                 . ', asset_id=' . db_input($vars['asset_id']);
 
         if ($id) {
@@ -520,22 +476,25 @@ class Equipment {
         if ($id > 0) {
             $form = DynamicForm::lookup($form_id);
 
-            $form_entry = $form->instanciate();
-            $form_entry->set('object_type', 'G');
-            $form_entry->setObjectId($id);
-            foreach ($form_entry->getFields() as $f) {
-                if (isset($data[$f->get('name')])) {
-                    $form_entry->setAnswer($f->get('name'), $data[$f->get('name')]);
+            if(isset($form))
+            {
+                $form_entry = $form->instanciate();
+                $form_entry->set('object_type', 'E');
+                $form_entry->setObjectId($id);
+                foreach ($form_entry->getFields() as $f) {
+                    if (isset($data[$f->get('name')])) {
+                        $form_entry->setAnswer($f->get('name'), $data[$f->get('name')]);
+                    }
                 }
+                $form_entry->save();
             }
-            $form_entry->save();
         }
     }
 
     public static function getDynamicData($id) {
         return DynamicFormEntry::objects()
-                        ->filter(array('object_id' => $id, 
-                            'object_type' => 'G'));
+                        ->filter(array('object_id' => $id,
+                            'object_type' => 'E'));
     }
 
 }

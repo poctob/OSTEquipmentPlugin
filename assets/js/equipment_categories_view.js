@@ -62,7 +62,7 @@ function applyDataTableUI()
         datasource: function(callback) {
             $.ajax({
                 type: "GET",
-                url: '../openTicketsJson/' + selectedItem,
+                url: eq_root+'/categories/openTicketsJson/' + selectedCategory,
                 dataType: "json",
                 context: this,
                 success: function(response) {
@@ -94,7 +94,7 @@ function applyDataTableUI()
         datasource: function(callback) {
             $.ajax({
                 type: "GET",
-                url: '../closedTicketsJson/' + selectedItem,
+                url: eq_root+'/categories/closedTicketsJson/' + selectedCategory,
                 dataType: "json",
                 context: this,
                 success: function(response) {

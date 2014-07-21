@@ -31,7 +31,7 @@ abstract class Controller {
     
     protected function defaultAction()
     {
-        $this->viewAction($_POST['id']);
+        $this->listAction();
     }
 
     public function render($template, $args = array()) {
@@ -98,7 +98,6 @@ abstract class Controller {
     public function saveAction() {
         $errors = array();
         $form_id = EquipmentPlugin::getCustomForm();
-        echo  $form_id;
         $_POST['form_id'] = $form_id;
         $entityClass = $this->getEntityClassName();
         $entityClass::save($_POST['id'], $_POST, $errors);

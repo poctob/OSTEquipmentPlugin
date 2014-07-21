@@ -1,7 +1,7 @@
 {% block items_list %}
     <div id="itemsPanel" title="Equipment Items" class="margin-bottom: 20px;"> 
         <div id="itemsDataTable"></div> 
-        <div id="itemActionButtons" style="padding-top:10px;">
+        <div id="itemActionButtons" style="padding-top:10px;">            
             <button id="itemAdd" type="button">New</button>                 
             <button id="itemEdit" type="button">View/Edit</button>
             <button id="itemPublish" type="button">Publish</button>
@@ -21,6 +21,11 @@
             <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
             <input type="hidden" name="item_id" value="" />
             <input type="hidden" name="item_activate" value="" /> 
+        </form>
+
+        <form action="../item/delete" method="post" id="deleteForm" id="classForm">
+            <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+            <input type="hidden" name="id" value="" />
         </form>
     </div>
 {% endblock %}

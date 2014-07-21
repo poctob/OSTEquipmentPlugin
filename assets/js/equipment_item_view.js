@@ -10,9 +10,6 @@ $(function() {
             
     $(':radio').puiradiobutton();
     $('#asset_id').puiinputtext();
-    $('#item_name').puiinputtext();
-    $('#item_description').puiinputtextarea();
-    $('#item_notes').puiinputtextarea();
 
     $("#saveForm").validate();
 

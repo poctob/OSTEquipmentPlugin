@@ -14,14 +14,14 @@ function applyItemButtonUI()
     $('#itemAdd').puibutton({
         icon: 'ui-icon-circle-plus',
         click: function(event) {
-            window.location.href = "../../item/new/" + selectedItem;
+            window.location.href = "../../item/new/" + selectedCategory;
         }
     });
 
     $('#itemEdit').puibutton({
         icon: 'ui-icon-pencil',
         click: function(event) {
-            window.location.href = "../../item/view/" + currentItem;
+            window.location.href = "../../item/view/" + selectedItem;
         }
     });
 
@@ -55,9 +55,9 @@ function applyItemButtonUI()
     });
 
     $('#itemDelete').puibutton({
-        icon: 'ui-icon-circle-close',
-        click: function(event) {
-            window.location.href = "../../item/delete/" + currentItem;
+        icon: 'ui-icon-trash',
+        click: function() {
+            $("#delete-dialog-confirm").puidialog('show');
         }
     });
 
@@ -66,6 +66,11 @@ function applyItemButtonUI()
 
 function disableItemButtons()
 {
+    if(typeof canadditem === 'undefined' || canadditem==false)
+    {
+        $('#itemAdd').puibutton('disable');
+    }
+    $('#itemEdit').puibutton('disable');
     $('#itemEdit').puibutton('disable');
     $('#itemDelete').puibutton('disable');
     $('#itemPublish').hide();
@@ -108,7 +113,6 @@ function applyItemsTableUI()
         },
         columns: [
             {field: 'asset_id', headerText: 'Asset ID', sortable: true},
-            {field: 'name', headerText: 'Name', sortable: true},
             {field: 'category', headerText: 'Category', sortable: true},
             {field: 'status', headerText: 'Status', sortable: true},
             {field: 'published', headerText: 'Is Published?', sortable: true},
@@ -117,7 +121,7 @@ function applyItemsTableUI()
         datasource: function(callback) {
             $.ajax({
                 type: "GET",
-                url: '../getItemsJson/' + selectedItem,
+                url: '../getItemsJson/' + selectedCategory,
                 dataType: "json",
                 context: this,
                 success: function(response) {
@@ -127,7 +131,7 @@ function applyItemsTableUI()
         },
         selectionMode: 'single',
         rowSelect: function(event, data) {
-            currentItem = data.id;
+            selectedItem = data.id;
             enableItemButtons(data.published === 'Yes', data.active === 'Yes');
         },
         rowUnselect: function(event, data) {
@@ -171,6 +175,18 @@ function publishItem(publish)
             });
 }
 
+
+function deleteAction()
+{
+    $('#delete-dialog-confirm').puidialog('hide');
+    $('input[name="id"]').val(selectedItem.toString());
+    $.post('../../item/delete', $('#deleteForm').serialize())
+            .done(function()
+            {
+               location.reload();              
+            });
+          
+}
 
 
 

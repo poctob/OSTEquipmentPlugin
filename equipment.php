@@ -20,6 +20,8 @@ require_once(INCLUDE_DIR . 'class.osticket.php');
 
 require_once('config.php');
 
+define('EQUIPMENT_PLUGIN_VERSION','0.2');
+
 define('EQUIPMENT_TABLE',TABLE_PREFIX.'equipment');
 define('EQUIPMENT_CATEGORY_TABLE',TABLE_PREFIX.'equipment_category');
 define('EQUIPMENT_STATUS_TABLE',TABLE_PREFIX.'equipment_status');
@@ -53,6 +55,10 @@ class EquipmentPlugin extends Plugin {
         if ($this->firstRun()) {
             $this->configureFirstRun();
         }
+        
+        if ($this->needUpgrade()) {
+            $this->configureUpgrade();
+        }
 
         $config = $this->getConfig();
 
@@ -68,9 +74,15 @@ class EquipmentPlugin extends Plugin {
     
     public static function getCustomForm()
     {
-        $ep = new EquipmentPlugin();
-        $config = $ep->getConfig();
-        return $config->get('equipment_custom_form');
+        $sql='SELECT id FROM '.PLUGIN_TABLE.' WHERE name=\'Equipment Manager\'';
+        $res = db_query($sql);
+        if ( isset($res))
+        {
+            $ht = db_fetch_array($res);
+            $config = new EquipmentConfig($ht['id']);
+            return $config->get('equipment_custom_form');
+        }
+        return false;                
     }
 
     static public function callbackDispatch($object, $data)
@@ -97,7 +109,8 @@ class EquipmentPlugin extends Plugin {
                 url_post('^save', 'saveAction'),
                 url_get('^openTicketsJson/(?P<item_id>\d+)$', 'openTicketsJsonAction'),
                 url_get('^closedTicketsJson/(?P<item_id>\d+)$', 'closedTicketsJsonAction'),
-                url_get('^getDynamicForm/(?P<id>\d+)$', 'getDynamicForm')
+                url_get('^getDynamicForm/(?P<id>\d+)$', 'getDynamicForm'),
+                url_post('^delete', 'deleteAction')
                 ));
         
         $status_url=url('^/equipment.*status/',patterns(               
@@ -161,6 +174,35 @@ class EquipmentPlugin extends Plugin {
         $sql='SHOW TABLES LIKE \''.EQUIPMENT_TABLE.'\'';  
         $res=db_query($sql);
         return  (db_num_rows($res)==0);                
+    }
+    
+    function needUpgrade()
+    {
+        $sql='SELECT version FROM '.PLUGIN_TABLE.' WHERE name=\'Equipment Manager\'';
+        
+        if (!($res = db_query($sql)))
+        {
+            return true;
+        }
+        else
+        {
+            $ht = db_fetch_array($res);
+            if(floatval($ht['version']) < floatval(EQUIPMENT_PLUGIN_VERSION))
+            {
+                return true;
+            }
+        }
+        return false;        
+    }
+    
+    function configureUpgrade() {
+        
+       $installer = new EquipmentInstaller();
+       if(!$installer->upgrade())
+       {
+           echo "Upgrade configuration error.  "
+            . "Unable to upgrade database tables!";
+       }
     }
 
     /**

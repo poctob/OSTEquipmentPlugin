@@ -39,7 +39,7 @@ function applyDataTableUI()
             {field: 'color', headerText: 'Color', sortable: true},
             {field: 'image', headerText: 'Image', sortable: true, content: getImage},
             {field: 'equipments', headerText: 'Equipment', sortable: true},
-            {field: 'baseline', headerText: 'Is Baseline?', sortable: true, content: boolToString}
+            {field: 'baseline', headerText: 'Is Default?', sortable: true, content: boolToString}
         ],
         datasource: function(callback) {
             $.ajax({

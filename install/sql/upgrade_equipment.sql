@@ -1,53 +1,8 @@
-CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment` (
-  `equipment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `category_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `status_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `ispublished` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `asset_id` varchar(255) NOT NULL,
-  `created` date NOT NULL,
-  `updated` date NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT '1'
-  PRIMARY KEY (`equipment_id`),
-  UNIQUE KEY `asset_id_UNIQUE` (`asset_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8$
-
-CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_category` (
-  `category_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `ispublic` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(125) DEFAULT NULL,
-  `description` text NOT NULL,
-  `notes` tinytext NOT NULL,
-  `created` date NOT NULL,
-  `updated` date NOT NULL,
-  PRIMARY KEY (`category_id`),
-  KEY `ispublic` (`ispublic`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8$
-
-CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_status` (
-  `status_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(125) DEFAULT NULL,
-  `description` text NOT NULL,
-  `image` text,
-  `color` varchar(45) DEFAULT NULL,
-  `baseline` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`status_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8$
-
-CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket` (
-  `equipment_id` int(11) NOT NULL,
-  `ticket_id` int(11) NOT NULL,
-  `created` date NOT NULL,
-  PRIMARY KEY (`equipment_id`,`ticket_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8$
-
-INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
-VALUES ('equipment_status',NOW(),'internal equipment plugin list, do not modify',NOW())$ 
-
-INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
-VALUES ('equipment',NOW(),'internal equipment plugin list, do not modify',NOW())$ 
-
-INSERT INTO `%TABLE_PREFIX%form` (`type`, `deletable`,`title`, `notes`, `created`, `updated`)
-VALUES ('G',0,'Equipment','Equipment internal form',NOW(),NOW())$ 
+ALTER TABLE `%TABLE_PREFIX%equipment` 
+ADD COLUMN `asset_id` VARCHAR(255) NOT NULL,
+ADD UNIQUE KEY `asset_id_UNIQUE` (`asset_id`),
+CHANGE COLUMN `name` `name` VARCHAR(255) NULL ,
+DROP INDEX `name`$
 
 DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%CreateEquipmentFormFields`$
 
@@ -123,18 +78,40 @@ BEGIN
 	END IF;
 END$
 
-call `%TABLE_PREFIX%CreateEquipmentFormFields`$
+DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%UpgradeEquipmentFormFields`$
 
-
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_ADEL`$
-
-CREATE TRIGGER `%TABLE_PREFIX%equipment_ADEL` AFTER DELETE ON `%TABLE_PREFIX%equipment` FOR EACH ROW
+CREATE PROCEDURE `%TABLE_PREFIX%UpgradeEquipmentFormFields`()
 BEGIN
-	SET @pk=OLD.equipment_id;
-	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment');
-	DELETE FROM `%TABLE_PREFIX%list_items` WHERE list_id = @list_pk AND properties=CONCAT('',@pk); 
+	SET @form_id = (SELECT id FROM `%TABLE_PREFIX%form` WHERE title='Equipment');
+	SET @status_list_id = (SELECT id FROM `%TABLE_PREFIX%list` WHERE `name`='equipment_status');
+	SET @equipment_list_id = (SELECT id FROM `%TABLE_PREFIX%list` WHERE `name`='equipment');
+
+	IF (@form_id IS NOT NULL) AND (@status_list_id IS NOT NULL) AND (@equipment_list_id IS NOT NULL) then			
+
+                INSERT INTO `%TABLE_PREFIX%form_field`
+			(`form_id`,
+			`type`,
+			`label`,
+			`required`,
+			`private`,
+			`edit_mask`,
+			`name`,
+			`sort`,
+			`created`,
+			`updated`)
+			VALUES
+			(@form_id,
+			('text'),
+			'Asset ID',
+			0,0,0,
+			'asset_id',			
+			1,			
+			NOW(),
+			NOW());							
+	END IF;
 END$
 
+call `%TABLE_PREFIX%UpgradeEquipmentFormFields`$
 
 DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_AINS`$
 
@@ -169,34 +146,6 @@ BEGIN
 			VALUES (@list_pk, CONCAT(' Asset_ID:', NEW.asset_id), CONCAT('',@pk));			
 		END IF;
 	END IF; 
-END$
-
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_AINS`$
-
-CREATE TRIGGER `%TABLE_PREFIX%equipment_status_AINS` AFTER INSERT ON `%TABLE_PREFIX%equipment_status` FOR EACH ROW
-BEGIN
-	SET @pk=NEW.status_id;
-	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment_status');
-	INSERT INTO `%TABLE_PREFIX%list_items` (list_id, `value`, `properties`) 
-	VALUES (@list_pk, NEW.name, CONCAT('',@pk));
-END$
-
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_AUPD`$
-
-CREATE TRIGGER `%TABLE_PREFIX%equipment_status_AUPD` AFTER UPDATE ON `%TABLE_PREFIX%equipment_status` FOR EACH ROW
-BEGIN
-	SET @pk=NEW.status_id;
-	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment_status'); 
-	UPDATE `%TABLE_PREFIX%list_items` SET `value`= NEW.name WHERE `properties`= CONCAT('',@pk) AND list_id=@list_pk;
-END$
-
-DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_ADEL`$
-
-CREATE TRIGGER `%TABLE_PREFIX%equipment_status_ADEL` AFTER DELETE ON `%TABLE_PREFIX%equipment_status` FOR EACH ROW
-BEGIN
-	SET @pk=OLD.status_id; 
-	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment_status');
-	DELETE FROM `%TABLE_PREFIX%list_items` WHERE list_id = @list_pk AND properties=CONCAT('',@pk);
 END$
 
 DROP VIEW IF EXISTS `%TABLE_PREFIX%EquipmentFormView`$
@@ -284,4 +233,4 @@ BEGIN
 	END IF;
 END$	
 
-UPDATE `%TABLE_PREFIX%plugin` SET version='0.1' WHERE name = 'Equipment Manager'$
+UPDATE `%TABLE_PREFIX%plugin` SET version='0.2' WHERE name = 'Equipment Manager'$

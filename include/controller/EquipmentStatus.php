@@ -35,8 +35,7 @@ class EquipmentStatus extends Controller {
             if ($item->getId() > 0) {
                 $item_data = array(
                     'id' => $item->getId(),
-                    'asset_id' => $item->asset_id(),
-                    'name' => $item->getName(),
+                    'asset_id' => $item->getAssetId(),
                     'category' => $item->getCategory()->getName(),
                     'status' => $item->getStatus()->getName(),
                     'published' => $item->isPublished() ? 'Yes' : 'No',

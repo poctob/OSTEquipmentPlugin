@@ -22,8 +22,18 @@ class EquipmentInstaller extends SetupWizard {
      */
     function install() {
             
-         $schemaFile =EQUIPMENT_PLUGIN_ROOT.'install/sql/install_equipment.sql'; //DB dump.	
-        
+         $schemaFile =EQUIPMENT_PLUGIN_ROOT.'install/sql/install_equipment.sql'; //DB dump.	        
+         return $this->runJob($schemaFile);
+    }
+    
+    function upgrade() {
+            
+         $schemaFile =EQUIPMENT_PLUGIN_ROOT.'install/sql/upgrade_equipment.sql'; //DB dump.	        
+         return $this->runJob($schemaFile);
+    }
+    
+    private function runJob($schemaFile)
+    {                 
         //Last minute checks.
         if(!file_exists($schemaFile))
 	{
@@ -47,33 +57,10 @@ class EquipmentInstaller extends SetupWizard {
       return true;
     }
     
-    
-    
      function remove() {
             
          $schemaFile =EQUIPMENT_PLUGIN_ROOT.'install/sql/remove_equipment.sql'; //DB dump.	
-        
-        //Last minute checks.
-        if(!file_exists($schemaFile))
-	{
-	    echo '<br />';
-	    var_dump($schemaFile);
-	    echo '<br />';    
-            echo 'File Access Error - please make sure your download is the latest (#1)';  
-            echo '<br />'; 
-	    $this->error='File Access Error!';   
-            return false;
-	    
-	}	
-        elseif(!$this->load_sql_file($schemaFile,TABLE_PREFIX, true, true))
-	{
-            echo '<br />';
-            echo 'Error parsing SQL schema! Get help from developers (#4)';          
-	    echo '<br />';       
-            return false;
-	}
-
-      return true;
+         return $this->runJob($schemaFile);
     }
     
      /**

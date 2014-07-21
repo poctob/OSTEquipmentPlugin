@@ -28,10 +28,6 @@ class EquipmentItem extends Controller {
         return 'item_view.html.twig';
     }
 
-    /*  protected function defaultAction() {
-      $this->newAction($_POST['category_id']);
-      } */
-
     public function newAction($category_id) {
         $viewargs = array();
         if ($category_id > 0) {
@@ -44,21 +40,34 @@ class EquipmentItem extends Controller {
             $this->viewAction(0);
         }
     }
+    
+    protected function defaultAction()
+    {
+        $category = Equipment_Category::lookup($_POST['category_id']);
+        $viewargs['category'] = $category;
+        $this->viewAction($_POST['id'], $viewargs);
+    }
 
     public function getDynamicForm($id = 0) {
         $form_id = EquipmentPlugin::getCustomForm();
-        $form = DynamicForm::lookup($form_id);
-        if($id > 0)
+        if(isset($form_id))
         {
-            $data = Equipment::getDynamicData($id);
-            $one = $data->one();
-            if( isset($one))
+            $form = DynamicForm::lookup($form_id);
+            if($id > 0)
             {
-                $one->getSaved();
-                return $one->getForm()->render(true);
+                $data = Equipment::getDynamicData($id);
+                $one = $data->one();
+                if( isset($one))
+                {
+                    $one->getSaved();
+                    return $one->getForm()->render(true);
+                }
+            }
+            if(isset($form))
+            {
+                return $form->getForm()->render(true);
             }
         }
-        return $form->getForm()->render(true);
     }
 
     public function publishAction() {
@@ -119,7 +128,7 @@ class EquipmentItem extends Controller {
                 $ticket_data = array(
                     'id' => $ticket->getId(),
                     'number' => $ticket->getNumber(),
-                    'equipment' => $equipment->getName(),
+                    'equipment' => $equipment->getAssetId(),
                     'create_date' => Format::db_datetime($ticket->getCreateDate()),
                     'subject' => $ticket->getSubject(),
                     'name' => $ticket->getName()->getFull(),

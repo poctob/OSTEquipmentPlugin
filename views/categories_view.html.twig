@@ -20,7 +20,7 @@
         <form action="../save" method="post" id="saveForm">   
             <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
             <input type="hidden" name="id" value="{{item.id}}" />
-            <script>selectedItem ={{item.id}} ;</script>
+            <script>selectedCategory ={{item.id}} ;</script>
             <em>Category information: Public categories are published if it has published equipment.</em>
             <br>
             Category Type:
@@ -74,6 +74,7 @@
     </div>
 
     {% if item.id > 0 %}
+        <script>canadditem=true;</script>
         {% include "items_list.html.twig" %}
         {% include "open_tickets.html.twig" %}
         {% include "closed_tickets.html.twig" %}
