@@ -143,7 +143,7 @@ function applyItemsTableUI()
 
 function activateItem(activate)
 {
-    $('input[name="item_id"]').val(currentItem.toString());
+    $('input[name="item_id"]').val(selectedItem.toString());
     $('input[name="item_activate"]').val(activate?'1':'0');
     $.post('../../item/activate', $('#activateForm').serialize())
             .done(function()
@@ -160,7 +160,7 @@ function activateItem(activate)
 
 function publishItem(publish)
 {
-    $('input[name="item_id"]').val(currentItem.toString());
+    $('input[name="item_id"]').val(selectedItem.toString());
     $('input[name="item_publish"]').val(publish?'1':'0');
     $.post('../../item/publish', $('#publishForm').serialize())
             .done(function()
