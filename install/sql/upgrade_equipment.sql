@@ -1,9 +1,3 @@
-ALTER TABLE `%TABLE_PREFIX%equipment` 
-ADD COLUMN `asset_id` VARCHAR(255) NOT NULL,
-ADD UNIQUE KEY `asset_id_UNIQUE` (`asset_id`),
-CHANGE COLUMN `name` `name` VARCHAR(255) NULL ,
-DROP INDEX `name`$
-
 DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%CreateEquipmentFormFields`$
 
 CREATE PROCEDURE `%TABLE_PREFIX%CreateEquipmentFormFields`()

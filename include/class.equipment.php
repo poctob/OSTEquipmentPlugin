@@ -478,15 +478,24 @@ class Equipment {
 
             if(isset($form))
             {
-                $form_entry = $form->instanciate();
-                $form_entry->set('object_type', 'E');
-                $form_entry->setObjectId($id);
-                foreach ($form_entry->getFields() as $f) {
+                $form_entry = self::getDynamicData($id);
+                $one = $form_entry->one();
+                if( isset($one))
+                {
+                    $one->getSaved();
+                }
+                else
+                {
+                    $one = $form->instanciate();
+                    $one->set('object_type', 'E');
+                    $one->setObjectId($id);
+                }
+                foreach ($one->getFields() as $f) {
                     if (isset($data[$f->get('name')])) {
-                        $form_entry->setAnswer($f->get('name'), $data[$f->get('name')]);
+                        $one->setAnswer($f->get('name'), $data[$f->get('name')]);
                     }
                 }
-                $form_entry->save();
+                $one->save();
             }
         }
     }

@@ -93,8 +93,8 @@ class EquipmentPlugin extends Plugin {
                 url_get('^list$', 'listAction'),
                 url_get('^listJson$', 'listJsonAction'),
                 url_get('^view/(?P<id>\d+)$', 'viewAction'),                
-                url_get('^openTicketsJson/(?P<category_id>\d+)$', 'openTicketsJsonAction'),
-                url_get('^closedTicketsJson/(?P<category_id>\d+)$', 'closedTicketsJsonAction'),
+                url_get('^openTicketsJson/(?P<item_id>\d+)$', 'openTicketsJsonAction'),
+                url_get('^closedTicketsJson/(?P<item_id>\d+)$', 'closedTicketsJsonAction'),
                 url_get('^getItemsJson/(?P<category_id>\d+)$', 'categoryItemsJsonAction'),
                 url_post('^save', 'saveAction'),
                 url_post('^delete', 'deleteAction')

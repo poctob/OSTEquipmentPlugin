@@ -28,9 +28,8 @@ abstract class Controller {
     protected abstract function getListTemplateName();
 
     protected abstract function getViewTemplateName();
-    
-    protected function defaultAction()
-    {
+
+    protected function defaultAction() {
         $this->listAction();
     }
 
@@ -79,9 +78,9 @@ abstract class Controller {
         $this->render($template_name);
     }
 
-    public function viewAction($id=0, $args=array()) {
+    public function viewAction($id = 0, $args = array()) {
         $entityClass = $this->getEntityClassName();
-        if (isset($id) && $id > 0) {            
+        if (isset($id) && $id > 0) {
             $item = $entityClass::lookup($id);
             $title = 'Edit ' . $entityClass;
         } else {
@@ -101,12 +100,9 @@ abstract class Controller {
         $_POST['form_id'] = $form_id;
         $entityClass = $this->getEntityClassName();
         $entityClass::save($_POST['id'], $_POST, $errors);
-        if(isset($errors) && count($errors)>0)
-        {
+        if (isset($errors) && count($errors) > 0) {
             $this::setFlash('error', 'Failed to save item!', print_r($errors));
-        }
-        else
-        {
+        } else {
             $this::setFlash('info', 'Success!', 'Item Saved');
         }
         $this->defaultAction();
@@ -117,11 +113,76 @@ abstract class Controller {
         $item = new $entityClass($_POST['id']);
         if (isset($item) && $item->delete()) {
             $this::setFlash('info', 'Success!', 'Item Deleted');
-        }
-        else {
+        } else {
             $this::setFlash('error', '!', 'Failed to delete Item!');
         }
         $this->listAction();
+    }
+
+    public function openTicketsJsonAction($item_id) {
+        $entityClass = $this->getEntityClassName();
+        $ticket_id = $entityClass::getTicketList('open', $item_id);
+        $tickets = $this->ticketsAction('open', $ticket_id);
+        echo json_encode($tickets);
+    }
+
+    public function closedTicketsJsonAction($item_id) {
+        $entityClass = $this->getEntityClassName();
+        $ticket_id = $entityClass::getTicketList('closed', $item_id);
+        $tickets = $this->ticketsAction('closed', $ticket_id);
+        echo json_encode($tickets);
+    }
+
+    protected function ticketsAction($type, $ticket_id) {
+        $tickets = array();
+        foreach ($ticket_id as $id) {
+            $ticket = Ticket::lookup($id['ticket_id']);
+            $equipment = new Equipment($id['equipment_id']);
+            if (isset($ticket) && isset($equipment)) {
+                $ticket_data = array(
+                    'id' => $ticket->getId(),
+                    'number' => $ticket->getNumber(),
+                    'equipment' => $equipment->getAssetId(),
+                    'create_date' => Format::db_datetime($ticket->getCreateDate()),
+                    'subject' => $ticket->getSubject(),
+                    'name' => $ticket->getName()->getFull(),
+                    'priority' => $ticket->getPriority(),
+                );
+
+                if ($type == 'closed') {
+                    $ts_open = strtotime($ticket->getCreateDate());
+                    $ts_closed = strtotime($ticket->getCloseDate());
+                    $ticket_data['close_date'] = Format::db_datetime($ticket->getCloseDate());
+                    $ticket_data['closed_by'] = $ticket->getStaff()->getUserName();
+                    $ticket_data['elapsed'] = $this->elapsedTime($ts_closed - $ts_open);
+                }
+
+                $tickets[] = $ticket_data;
+            }
+        }
+        return $tickets;
+    }
+
+    private function elapsedTime($sec) {
+
+        if (!$sec || !is_numeric($sec))
+        {
+            return "";
+        }
+
+        $days = floor($sec / 86400);
+        $rem = $sec % 86400;
+        $hrs = floor( $rem / 3600);
+        $rem = $rem % 3600;
+        $mins = round ($rem / 60);
+        
+        if ($days > 0)
+            $tstring = $days . 'd, ';
+        if ($hrs > 0)
+            $tstring = $tstring . $hrs . 'h, ';
+        $tstring = $tstring . $mins . 'm';
+
+        return $tstring;
     }
 
 }
