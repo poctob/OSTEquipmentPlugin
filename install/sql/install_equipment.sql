@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment` (
   `asset_id` varchar(255) NOT NULL,
   `created` date NOT NULL,
   `updated` date NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT '1'
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`equipment_id`),
   UNIQUE KEY `asset_id_UNIQUE` (`asset_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8$
@@ -284,4 +284,4 @@ BEGIN
 	END IF;
 END$	
 
-UPDATE `%TABLE_PREFIX%plugin` SET version='0.1' WHERE name = 'Equipment Manager'$
+UPDATE `%TABLE_PREFIX%plugin` SET version='0.2' WHERE name = 'Equipment Manager'$
