@@ -40,6 +40,17 @@ CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket` (
   PRIMARY KEY (`equipment_id`,`ticket_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8$
 
+CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket_recurring` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `equipment_id` int(11) NOT NULL,
+  `last_opened` datetime DEFAULT NULL,
+  `next_date` datetime DEFAULT NULL,
+  `interval` double NOT NULL,
+  `ticket_id` int(11) NOT NULL,
+  `active` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
 VALUES ('equipment_status',NOW(),'internal equipment plugin list, do not modify',NOW())$ 
 

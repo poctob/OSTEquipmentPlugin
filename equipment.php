@@ -26,6 +26,7 @@ define('EQUIPMENT_TABLE',TABLE_PREFIX.'equipment');
 define('EQUIPMENT_CATEGORY_TABLE',TABLE_PREFIX.'equipment_category');
 define('EQUIPMENT_STATUS_TABLE',TABLE_PREFIX.'equipment_status');
 define('EQUIPMENT_TICKET_TABLE',TABLE_PREFIX.'equipment_ticket');
+define('EQUIPMENT_TICKET_RECURRING__TABLE',TABLE_PREFIX.'equipment_ticket_recurring');
 define('EQUIPMENT_TICKET_VIEW',TABLE_PREFIX.'EquipmentTicketView');
 
 define('OST_WEB_ROOT', osTicket::get_root_path(__DIR__));
@@ -124,6 +125,19 @@ class EquipmentPlugin extends Plugin {
                 url_post('^delete', 'deleteAction')
                 ));
         
+         $recurring_url=url('^/equipment.*recurring/',patterns(               
+                EQUIPMENT_INCLUDE_DIR.'controller/TicketRecurring.php:TicketRecurring',
+                url_get('^list$', 'listAction'),
+                url_get('^view/(?P<id>\d+)$', 'viewAction'), 
+                url_get('^viewByTicket/(?P<id>\d+)$', 'viewByTicketAction'), 
+                url_get('^addByTicket/(?P<id>\d+)$', 'addByTicketAction'),
+                url_get('^new/(?P<category_id>\d+)$', 'newAction'),
+                url_get('^listJson$', 'listJsonAction'),
+                url_get('^getItemsJson/(?P<status_id>\d+)$', 'statusItemsJsonAction'),
+                url_post('^save/(?P<id>\d+)$', 'saveAction'),
+                url_post('^delete', 'deleteAction')
+                ));
+        
         $media_url=url('^/equipment.*assets/',patterns(               
                 EQUIPMENT_INCLUDE_DIR.'controller/MediaController.php:MediaController',                
                 url_get('^(?P<url>.*)$', 'defaultAction')))
@@ -145,6 +159,7 @@ class EquipmentPlugin extends Plugin {
         $object->append($categories_url);
         $object->append($item_url);
         $object->append($status_url);
+        $object->append($recurring_url);
     }
     /**
      * Creates menu links in the staff backend.
