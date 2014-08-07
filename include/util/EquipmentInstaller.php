@@ -1,5 +1,5 @@
 <?php
-
+namespace util;
 /* * *******************************************************************
   class.equipment_install.php
 

@@ -1,0 +1,39 @@
+{% extends 'layout.html.twig' %}
+{% block head %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="assets/js/common.js"></script>    
+        <script src="assets/js/dataTable.js"></script>  
+    {% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}
+
+
+{% block pagetitle %}
+    {{ title }}
+{% endblock %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }} 
+    <script>
+        dt_columns = {{ dt_columns|json_encode|raw }};
+        dt_caption = "{{ title }}";
+    </script>
+    <form action="delete" method="post" id="deleteForm" id="classForm">
+        <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+        <input type="hidden" name="id" value="" />
+    </form>
+    <div id="dataTable"></div> 
+
+    <div id="actionButtons">
+        <button id="itemAdd" type="button">New</button>                 
+        <button id="itemEdit" type="button">View/Edit</button>
+        <button id="itemDelete" type="button">Delete</button>
+    </div>
+{% endblock %}

@@ -11,16 +11,27 @@
  *
  * @author alex
  */
-require_once ('Controller.php');
+
+namespace controller;
 
 class TicketRecurring extends Controller {
 
     protected function getEntityClassName() {
-        return 'Ticket_Recurring';
+        return 'model\TicketRecurring';
     }
 
-    protected function getListTemplateName() {
-        return 'recurring_list.html.twig';
+    protected function getListColumns() {
+        return array(
+            array('field' => 'equipment', 'headerText' => 'Equipment', 'sortable' => 'true'),
+            array('field' => 'ticket', 'headerText' => 'Ticket', 'sortable' => 'true'),
+            array('field' => 'last_opened', 'headerText' => 'Last Ocurrence', 'sortable' => 'true'),
+            array('field' => 'interval', 'headerText' => 'Interval', 'sortable' => 'true'),
+            array('field' => 'active', 'headerText' => 'Is Active?', 'sortable' => 'true')
+        );
+    }
+
+    protected function getTitle() {
+        return 'Recurring Tickets';
     }
 
     protected function getViewTemplateName() {
@@ -47,7 +58,8 @@ class TicketRecurring extends Controller {
         }
 
         $template_name = $this->getViewTemplateName();
-        $this->render($template_name, $args);
+        $this->render($template_name,
+                $args);
     }
 
     public function addByTicketAction($id = 0) {
@@ -79,36 +91,37 @@ class TicketRecurring extends Controller {
         $args['title'] = $title;
 
         $template_name = $this->getAddTemplateName();
-        $this->render($template_name, $args);
+        $this->render($template_name,
+                $args);
     }
-    
+
     public function saveAction($id = 0) {
         $class = $this->getEntityClassName();
         $item = new $class($id);
-        if(isset($item))
-        {
+        if (isset($item)) {
             $item->setTicket_id($_POST['ticket_id']);
             $item->setEquipment_id($_POST['equipment_id']);
             $date = strtotime($_POST['next_date']);
-            $db_date = date( 'Y-m-d H:i:s', $date );
+            $db_date = date('Y-m-d H:i:s',
+                    $date);
             $item->setNext_date($db_date);
-            
-            $active=$_POST['active']=='on'?1:0;
+
+            $active = $_POST['active'] == 'on' ? 1 : 0;
             $item->setActive($active);
-            
+
             $interval = $_POST['interval'];
             $multiplier = $_POST['interval_multiplier'];
-            
-            $item->setInterval(intval($interval)*intval($multiplier));
-            
-            if($item->save())
-            {
-                $this::setFlash('info', 'Success!', 'Item Saved');
-            }
-            else
-            {
-                 $this::setFlash('error', 'Failed to save item!', 
-                         print_r($item->getErrors()));
+
+            $item->setInterval(intval($interval) * intval($multiplier));
+
+            if ($item->save()) {
+                $this::setFlash('info',
+                        'Success!',
+                        'Item Saved');
+            } else {
+                $this::setFlash('error',
+                        'Failed to save item!',
+                        print_r($item->getErrors()));
             }
         }
         $this->defaultAction();

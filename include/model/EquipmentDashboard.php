@@ -13,37 +13,35 @@
 
   vim: expandtab sw=4 ts=4 sts=4:
  * ******************************************************************** */
-require_once('class.equipment.php');
-require_once('class.equipment_category.php');
-require_once('class.equipment_status.php');
+namespace model;
 
-class Equipment_Dashboard {
+class EquipmentDashboard {
 
     private $equipment;
     private $categories;
     private $status;
     private $tickets;
 
-    public function Equipment_Dashboard() {
+    public function __construct() {
         $this->equipment = Equipment::getAll();
         $this->categories = array();
-        $cats = Equipment_Category::getAll();
+        $cats = EquipmentCategory::getAll();
 
         foreach ($cats as $cat) {
             $cats_data = array();
             $cats_data['name'] = $cat->getName();
-            $cats_data['items'] = $cat->getNumEquipment();
-            $cats_data['tickets'] = Equipment_Category::countOpenTickets($cat->getId());
+            $cats_data['items'] = $cat->countEquipment();
+            $cats_data['tickets'] = $cat->countOpenTickets();
 
             $this->categories[] = $cats_data;
         }
 
         $this->status = array();
-        $stats = Equipment_Status::getAll();
+        $stats = EquipmentStatus::getAll();
         foreach ($stats as $stat) {
             $stat_data = array();
-            $stat_data['name'] = $stat['name'];
-            $stat_data['items'] = $stat['equipments'];
+            $stat_data['name'] = $stat->getName();
+            $stat_data['items'] = $stat->countEquipment();
             
             $this->status[] = $stat_data;
         }

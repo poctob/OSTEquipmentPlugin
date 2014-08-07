@@ -1,44 +1,53 @@
 <?php
 
+namespace controller;
+
 /**
  * Description of Controller
  *
  * @author Alex Pavlunenko <alexp at xpresstek.net>
  */
-require_once (EQUIPMENT_APP_DIR . 'app.php');
 require_once(INCLUDE_DIR . 'class.staff.php');
-
-spl_autoload_register('Controller::loadClass');
 
 abstract class Controller {
 
-    public static function loadClass($class) {
-        $path = EQUIPMENT_INCLUDE_DIR . 'class.' . strtolower($class) . '.php';
-        include_once($path);
-        if (class_exists($class, false)) {
-            return new $class();
-        } else {
-            Controller::setFlash('error', 'Class load error!', 'Failed to load ' . $class);
-            return false;
+    public static function loadClass($className) {
+
+        $className = ltrim($className, '\\');
+        $fileName = '';
+        $namespace = '';
+        if ($lastNsPos = strrpos($className, '\\')) {
+            $namespace = substr($className, 0, $lastNsPos);
+            $className = substr($className, $lastNsPos + 1);
+            $fileName = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
         }
+        $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+
+        require $fileName;
     }
 
     protected abstract function getEntityClassName();
 
-    protected abstract function getListTemplateName();
+     protected function getListTemplateName() {
+        return 'listTemplate.html.twig';
+    }
 
     protected abstract function getViewTemplateName();
+    
+    protected abstract function getListColumns();
 
+    protected abstract function getTitle();
+    
     protected function defaultAction() {
         $this->listAction();
     }
 
     public function render($template, $args = array()) {
-        $loader = new Twig_Loader_Filesystem(EQUIPMENT_VIEWS_DIR);
-        $twig = new Twig_Environment($loader);
+        $loader = new \Twig_Loader_Filesystem(EQUIPMENT_VIEWS_DIR);
+        $twig = new \Twig_Environment($loader);
 
         global $ost;
-        $staff = StaffAuthenticationBackend::getUser();
+        $staff = \StaffAuthenticationBackend::getUser();
         $tocken = $ost->getCSRF();
 
         $args['staff'] = $staff;
@@ -68,14 +77,24 @@ abstract class Controller {
     }
 
     public function listJsonAction() {
+        $properties = array();
         $entityClass = $this->getEntityClassName();
         $items = $entityClass::getAll();
-        echo json_encode($items);
+        
+        foreach($items as $item)
+        {
+            $properties[]=$item->getJsonProperties();
+        }
+        echo json_encode($properties);
     }
 
     public function listAction() {
+        $args = array();
+        $args['title'] =$this->getTitle();
+        $args['dt_columns'] =$this->getListColumns();
+        
         $template_name = $this->getListTemplateName();
-        $this->render($template_name);
+        $this->render($template_name, $args);
     }
 
     public function viewAction($id = 0, $args = array()) {
@@ -165,17 +184,16 @@ abstract class Controller {
 
     private function elapsedTime($sec) {
 
-        if (!$sec || !is_numeric($sec))
-        {
+        if (!$sec || !is_numeric($sec)) {
             return "";
         }
 
         $days = floor($sec / 86400);
         $rem = $sec % 86400;
-        $hrs = floor( $rem / 3600);
+        $hrs = floor($rem / 3600);
         $rem = $rem % 3600;
-        $mins = round ($rem / 60);
-        
+        $mins = round($rem / 60);
+
         if ($days > 0)
             $tstring = $days . 'd, ';
         if ($hrs > 0)

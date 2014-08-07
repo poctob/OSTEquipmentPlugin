@@ -11,16 +11,12 @@
  *
  * @author alex
  */
-require_once ('Controller.php');
+namespace controller;
 
 class EquipmentStatus extends Controller {
 
     protected function getEntityClassName() {
-        return 'Equipment_Status';
-    }
-
-    protected function getListTemplateName() {
-        return 'status_list.html.twig';
+        return 'model\EquipmentStatus';
     }
 
     protected function getViewTemplateName() {
@@ -45,6 +41,20 @@ class EquipmentStatus extends Controller {
             }
         }
         echo json_encode($items);
+    }
+
+    protected function getListColumns() {
+        return array(
+            array('field' => 'name', 'headerText' => 'Name', 'sortable' => 'true'),
+            array('field' => 'color', 'headerText' => 'Color', 'sortable' => 'true'),
+            array('field' => 'image', 'headerText' => 'Image', 'sortable' => 'true'),
+            array('field' => 'equipments', 'headerText' => 'Equipment', 'sortable' => 'true'),
+            array('field' => 'baseline', 'headerText' => 'Is Default?', 'sortable' => 'true')
+        );
+    }
+
+    protected function getTitle() {
+        return 'Equipment Status';
     }
 
 }

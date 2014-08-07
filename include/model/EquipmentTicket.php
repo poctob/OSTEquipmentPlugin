@@ -1,42 +1,36 @@
 <?php
-
+namespace model;
 /**
  * Entity class for equipment recurring ticket.
  *
  * @author Alex Pavlunenko 
  */
-class Ticket_Recurring {
+class Equipment_Ticket {
 
-    private $id;
     private $equipment_id;
     private $ticket_id;
-    private $last_opened;
-    private $interval;
-    private $active;
-    private $errors;
+    private $created;
 
     /**
      * Default constructor
      */
-    public function Ticket_Recurring($id = 0) {
-        $this->id = 0;
+    public function Equipment_Ticket($t_id = 0, $e_id = 0) {
         $this->equipment_id = 0;
         $this->ticket_id = 0;
-        $this->last_opened = null;
-        $this->next_date = null;
-        $this->interval = 0;
-        $this->active = 0;
-        $this->errors = array();
+        $this->created = null;
 
-        if ($id > 0) {
-            $this->load($id);
+
+
+        if ($t_id > 0 && $e_id > 0) {
+            $this->load($t_id, $e_id);
         }
     }
 
     public function delete() {
 
-        $sql = 'DELETE FROM ' . EQUIPMENT_TICKET_RECURRING__TABLE
-                . ' WHERE id=' . db_input($this->id)
+        $sql = 'DELETE FROM ' . EQUIPMENT_TICKET_TABLE
+                . ' WHERE equipment_id=' . db_input($this->equipment_id)
+                . ' AND ticket_id=' . db_input($this->ticket_id)
                 . ' LIMIT 1';
         if (db_query($sql) && ($num = db_affected_rows())) {
             return $num;
@@ -56,22 +50,18 @@ class Ticket_Recurring {
 
         $sql = 'equipment_id=' . db_input($this->equipment_id) .
                 ',ticket_id=' . db_input($this->ticket_id) .
-                ',last_opened=' . db_input($this->last_opened) .
-                ',next_date=' . db_input($this->next_date) .
-                ',`interval`=' . db_input($this->interval) .
-                ',active=' . db_input($this->active);
+                ',$created=' . db_input($this->$created);
 
-        if ($this->id > 0) {
-            $sql = 'UPDATE ' . EQUIPMENT_TICKET_RECURRING__TABLE .
-                    ' SET ' . $sql . ' WHERE id=' . db_input($this->id);
+        if ($this->ticket_id > 0 && $this->equipment_id) {
+            $sql = 'UPDATE '
+                    . EQUIPMENT_TICKET_TABLE . ' SET ' . $sql
+                    . ' WHERE equipment_id=' . db_input($this->equipment_id)
+                    . ' AND ticket_id=' . db_input($this->ticket_id);
             $retval = db_query($sql);
         } else {
-            $sql = 'INSERT INTO ' . EQUIPMENT_TICKET_RECURRING__TABLE .
+            $sql = 'INSERT INTO ' . EQUIPMENT_TICKET_TABLE .
                     ' SET ' . $sql;
             $retval = db_query($sql);
-            if ($retval) {
-                $this->id = db_insert_id();
-            }
         }
         if (!$retval) {
             $this->errors[] = 'Error saving item!';
@@ -93,19 +83,14 @@ class Ticket_Recurring {
             $this->errors[] = 'Invalid Ticket ID!';
             return $retval;
         }
-
-        $retval = isset($this->interval) && $this->interval > 0;
-        if (!$retval) {
-            $this->errors[] = 'Invalid Inverval!';
-            return $retval;
-        }
         return $retval;
     }
 
-    private function load($id) {
+    private function load($t_id, $e_id) {
         $sql = ' SELECT * '
-                . ' FROM ' . EQUIPMENT_TICKET_RECURRING__TABLE
-                . ' WHERE id=' . db_input($id);
+                . ' FROM ' . EQUIPMENT_TICKET_TABLE
+                . ' WHERE ticket_id=' . db_input($t_id)
+                . ' AND equipment_id=' . db_input($e_id);
 
         if (!($res = db_query($sql)) || !db_num_rows($res)) {
             $this->errors[] = 'Error loading item!';
@@ -127,10 +112,6 @@ class Ticket_Recurring {
 
     /*     * ****************************************************************** */
     /* Setters and Getters */
-
-    public function getId() {
-        return $this->id;
-    }
 
     public function getEquipment_id() {
         return $this->equipment_id;
@@ -156,16 +137,8 @@ class Ticket_Recurring {
         return null;
     }
 
-    public function getLast_opened() {
-        return $this->last_opened;
-    }
-
-    public function getNext_date() {
-        return $this->next_date;
-    }
-
-    public function setId($id) {
-        $this->id = $id;
+    public function getCreated() {
+        return $this->created;
     }
 
     public function setEquipment_id($equipment_id) {
@@ -176,53 +149,25 @@ class Ticket_Recurring {
         $this->ticket_id = $ticket_id;
     }
 
-    public function setLast_opened($last_opened) {
-        $this->last_opened = $last_opened;
+    public function setCreated($created) {
+        $this->created = $created;
     }
 
-    public function setNext_date($next_date) {
-        $this->next_date = $next_date;
-    }
-
-    public function getInterval() {
-        return $this->interval;
-    }
-
-    public function setInterval($interval) {
-        $this->interval = $interval;
-    }
-
-    public function getActive() {
-        return $this->active;
-    }
-
-    public function setActive($active) {
-        $this->active = $active;
-    }
-
-    public function getErrors() {
-        return $this->errors;
-    }
-
-    /* End Setters and Getters */
+        /* End Setters and Getters */
     /*     * ****************************************************************** */
 
     /*     * ****************************************************************** */
     /* Static Methods */
 
-    public static function getById($id) {
-        return new Ticket_Recurring($id);
-    }
-
     public static function getAll() {
         $items = array();
-        $sql = 'SELECT id ' .
-                ' FROM ' . EQUIPMENT_TICKET_RECURRING__TABLE;
+        $sql = 'SELECT * ' .
+                ' FROM ' . EQUIPMENT_TICKET_TABLE;
 
         $res = db_query($sql);
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
-                $item = new Ticket_Recurring($row['id']);
+                $item = new Equipment_Ticket($row['ticket_id'], $row['equipment_id']);
                 $items[] = $item;
             }
         }
@@ -230,17 +175,15 @@ class Ticket_Recurring {
         return $items;
     }
     
-    public static function findByEquipmentId($id)
-    {
+     public static function getAllEquipment() {
         $items = array();
-        $sql = 'SELECT id ' .
-                ' FROM ' . EQUIPMENT_TICKET_RECURRING__TABLE .
-                ' WHERE equipment_id='.db_input($id);
+        $sql = 'SELECT * ' .
+                ' FROM ' . EQUIPMENT_TICKET_TABLE;
 
         $res = db_query($sql);
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
-                $item = new Ticket_Recurring($row['id']);
+                $item = new Equipment($row['equipment_id']);
                 $items[] = $item;
             }
         }
@@ -248,17 +191,49 @@ class Ticket_Recurring {
         return $items;
     }
     
-    public static function findByTicketId($id)
-    {
+      public static function getAllTickets() {
         $items = array();
-        $sql = 'SELECT id ' .
-                ' FROM ' . EQUIPMENT_TICKET_RECURRING__TABLE .
-                ' WHERE ticket_id='.db_input($id);
+        $sql = 'SELECT * ' .
+                ' FROM ' . EQUIPMENT_TICKET_TABLE;
 
         $res = db_query($sql);
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
-                $item = new Ticket_Recurring($row['id']);
+                $item = Ticket::lookup($row['ticket_id']);
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    public static function findByEquipmentId($id) {
+        $items = array();
+        $sql = 'SELECT * ' .
+                ' FROM ' . EQUIPMENT_TICKET_TABLE .
+                ' WHERE equipment_id=' . db_input($id);
+
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $item = new Equipment_Ticket($row['ticket_id'], $row['equipment_id']);
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    public static function findByTicketId($id) {
+        $items = array();
+        $sql = 'SELECT * ' .
+                ' FROM ' . EQUIPMENT_TICKET_TABLE .
+                ' WHERE ticket_id=' . db_input($id);
+
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $item = new Equipment_Ticket($row['ticket_id'], $row['equipment_id']);
                 $items[] = $item;
             }
         }
