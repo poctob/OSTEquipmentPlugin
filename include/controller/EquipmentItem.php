@@ -11,17 +11,29 @@
  *
  * @author alex
  */
-require_once ('Controller.php');
+
+namespace controller;
+
 require_once(INCLUDE_DIR . 'class.dynamic_forms.php');
 
 class EquipmentItem extends Controller {
 
     protected function getEntityClassName() {
-        return 'Equipment';
+        return 'model\Equipment';
     }
 
-    protected function getListTemplateName() {
-        return 'categories_list.html.twig';
+    protected function getListColumns() {
+        return array(
+            array('field' => 'asset_id', 'headerText' => 'Asset ID', 'sortable' => 'true'),
+            array('field' => 'category', 'headerText' => 'Category', 'sortable' => 'true'),
+            array('field' => 'status', 'headerText' => 'Status', 'sortable' => 'true'),
+            array('field' => 'ispublished', 'headerText' => 'Is Published', 'sortable' => 'true'),
+            array('field' => 'is_active', 'headerText' => 'Is Active?', 'sortable' => 'true')
+        );
+    }
+
+    protected function getTitle() {
+        return 'Equipment Items';
     }
 
     protected function getViewTemplateName() {
@@ -33,38 +45,37 @@ class EquipmentItem extends Controller {
         if ($category_id > 0) {
             $category = Equipment_Category::lookup($category_id);
             $viewargs['category'] = $category;
-            $this->viewAction(0, $viewargs);
+            $this->viewAction(0,
+                    $viewargs);
         } else {
             $this->setFlash
-                    ('error', 'Unable to create new item!', 'invalid category specified!');
+                    ('error',
+                    'Unable to create new item!',
+                    'invalid category specified!');
             $this->viewAction(0);
         }
     }
-    
-    protected function defaultAction()
-    {
+
+    protected function defaultAction() {
         $category = Equipment_Category::lookup($_POST['category_id']);
         $viewargs['category'] = $category;
-        $this->viewAction($_POST['id'], $viewargs);
+        $this->viewAction($_POST['id'],
+                $viewargs);
     }
 
     public function getDynamicForm($id = 0) {
         $form_id = EquipmentPlugin::getCustomForm();
-        if(isset($form_id))
-        {
+        if (isset($form_id)) {
             $form = DynamicForm::lookup($form_id);
-            if($id > 0)
-            {
+            if ($id > 0) {
                 $data = Equipment::getDynamicData($id);
                 $one = $data->one();
-                if( isset($one))
-                {
+                if (isset($one)) {
                     $one->getSaved();
                     return $one->getForm()->render(true);
                 }
             }
-            if(isset($form))
-            {
+            if (isset($form)) {
                 return $form->getForm()->render(true);
             }
         }
@@ -83,9 +94,13 @@ class EquipmentItem extends Controller {
             }
         }
         if ($result) {
-            $this->setFlash('info', 'Success', 'Item Updated!');
+            $this->setFlash('info',
+                    'Success',
+                    'Item Updated!');
         } else {
-            $this->setFlash('error', 'Error', 'Failed to Update Item!');
+            $this->setFlash('error',
+                    'Error',
+                    'Failed to Update Item!');
         }
     }
 
@@ -102,9 +117,14 @@ class EquipmentItem extends Controller {
             }
         }
         if ($result) {
-            $this->setFlash('info', 'Success', 'Item Updated!');
+            $this->setFlash('info',
+                    'Success',
+                    'Item Updated!');
         } else {
-            $this->setFlash('error', 'Error', 'Failed to Update Item!');
+            $this->setFlash('error',
+                    'Error',
+                    'Failed to Update Item!');
         }
     }
+
 }

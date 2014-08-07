@@ -30,14 +30,15 @@ class Equipment extends Entity {
 
     public function getJsonProperties() {
         return array(
+            'id' => $this->getId(),
             'equipment_id' => $this->getEquipment_id(),
             'asset_id' => $this->getAsset_id(),
-            'category_id' => $this->getCategory_id(),
-            'status_id' => $this->getStatus_id(),
-            'ispublished' => $this->getIspublished(),
+            'category' => $this->getCategory()->getName(),
+            'status' => $this->getStatus()->getName(),
+            'ispublished' => $this->getIspublished()?'Yes':'No',
             'created' => $this->getCreated(),
             'updated' => $this->getUpdated(),
-            'is_active' => $this->getIs_active()
+            'is_active' => $this->getIs_active()?'Yes':'No'
         );
     }
 
@@ -77,6 +78,20 @@ class Equipment extends Entity {
 
     public function getIs_active() {
         return $this->is_active;
+    }
+    
+    public function getCategory() {
+        if ($this->category_id > 0) {
+            return new EquipmentCategory($this->category_id);
+        }
+        return null;
+    }
+    
+    public function getStatus() {
+        if ($this->status_id > 0) {
+            return new EquipmentStatus($this->status_id);
+        }
+        return null;
     }
 
     /* ------------------> Setter methods <--------------------- */

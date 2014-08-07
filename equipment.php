@@ -164,6 +164,10 @@ class EquipmentPlugin extends Plugin {
         $item_url = url('^/equipment.*item/',
                 patterns(
                         'controller\EquipmentItem',
+                        url_get('^list$',
+                                'listAction'),
+                        url_get('^listJson$',
+                                'listJsonAction'),
                         url_get('^view/(?P<id>\d+)$',
                                 'viewAction'),
                         url_get('^new/(?P<category_id>\d+)$',
