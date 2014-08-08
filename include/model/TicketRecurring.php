@@ -115,6 +115,7 @@ class TicketRecurring extends Entity {
 
     public function setInterval($interval) {
         $this->interval = $interval;
+        $this->getHRInterval();
     }
 
     public function getActive() {
@@ -148,22 +149,26 @@ class TicketRecurring extends Entity {
             $mod = $seconds % 86400;
             if($mod == 0)
             {
-                return ($seconds / 86400).' days';
+                $this->setInterval_multiplier(86400);
+                return ($seconds / 86400).' Days';
             }
             
             $mod = $seconds % 3600;
             if($mod == 0)
             {
-                return ($seconds / 3600).' hours';
+                $this->setInterval_multiplier(3600);
+                return ($seconds / 3600).' Hours';
             }
             
             $mod = $seconds % 60;
             if($mod == 0)
             {
-                return ($seconds / 60).' minutes';
+                $this->setInterval_multiplier(60);
+                return ($seconds / 60).' Minutes';
             }
         }
-        return $seconds.' seconds';
+        $this->setInterval_multiplier(1);
+        return $seconds.' Seconds';
     }
 
     /* End Setters and Getters */

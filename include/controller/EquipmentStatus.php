@@ -19,10 +19,6 @@ class EquipmentStatus extends Controller {
         return 'model\EquipmentStatus';
     }
 
-    protected function getViewTemplateName() {
-        return 'status_view.html.twig';
-    }
-
     public function statusItemsJsonAction($status_id) {
         $equipment = Equipment_Status::getEquipment($status_id);
         $items = array();

@@ -118,7 +118,7 @@ class EquipmentStatus extends Entity {
                     . ' LIMIT 1';
             db_query($presql);
         }
-        parent::save();
+        return parent::save();
     }
 
     public function getEquipment() {

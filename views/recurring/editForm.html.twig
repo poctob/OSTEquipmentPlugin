@@ -18,7 +18,7 @@
                 Equipment:
             </td>
             <td>
-                  <select id="equipmentDD" name="equipment_id" min="1" required>
+                <select id="equipmentDD" name="equipment_id" min="1" required>
                     <option value="0">---Select Equipment---</option>                
                 </select>
             </td>
@@ -29,11 +29,23 @@
                 Repeat Every:
             </td>
             <td>
-                <input id="interval" name="interval" type="text" min="1" required/> 
+                <input id="interval" name="interval" type="text" value="{{ item.interval/item.interval_multiplier }}" min="1" required/> 
                 <select id="intervalDD" name="interval_multiplier"> 
-                    <option value="86400">Days</option>
-                    <option value="3600">Hours</option>
-                    <option value="60">Minutes</option>
+                    <option value="86400" 
+                            {% if item.interval_multiplier == 86400 %}
+                                selected
+                            {% endif %}
+                            >Days</option>
+                    <option value="3600" 
+                            {% if item.interval_multiplier == 3600 %}
+                                selected
+                            {% endif %}
+                            >Hours</option>
+                    <option value="60" 
+                            {% if item.interval_multiplier == 60 %}
+                                selected
+                            {% endif %}
+                            >Minutes</option>
                 </select>
             </td>
         </tr>
@@ -50,10 +62,26 @@
                 Active:
             </td>
             <td>
-                <input id="active" name="active" type="checkbox" />                      
+                <input id="active" name="active" type="checkbox" 
+                       {% if item.active %}
+                           checked
+                       {% endif %}
+                       />   
             </td>
         </tr>
     </table>
+    {% if item.ticket_id is defined %}
+        <script>
+            var ticket_id
+                    = {{ item.ticket.id }};</script>
+        {% endif %}      
+
+    {% if item.equipment_id is defined %}
+        <script>
+                    var equipment_id
+                    = {{ item.equipment.id }};
+        </script>
+    {% endif %}  
     <p style="padding-left:225px;">               
         <button id="saveButton" type="submit">Save</button>  
         <button id="resetButton" type="button">Reset</button>  

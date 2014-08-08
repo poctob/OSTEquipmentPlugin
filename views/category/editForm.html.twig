@@ -7,7 +7,7 @@
         <tr>  
             <td>
                 <input type="radio" name="ispublic" value="1" 
-                       {% if item.ispublic == 'Public' %}
+                       {% if item.ispublic == '1' %}
                            checked="checked"
                        {% endif %}                               
                        />
@@ -15,7 +15,7 @@
             </td>  
             <td>
                 <input type="radio" name="ispublic" value="0" 
-                       {% if item.ispublic == 'Private' %}
+                       {% if item.ispublic == '0' %}
                            checked="checked"
                        {% endif %}
                        >

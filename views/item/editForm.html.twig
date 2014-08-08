@@ -56,12 +56,19 @@
     <select id="statusDropDown" name="status_id" min="1" required>
         <option>---Select Status---</option>
     </select>
-    {% if item.status is defined and item.status.id is defined %}
+    {% if item.status.id is defined %}
         <script>
             var status_id
             = {{ item.status.id }};
         </script>
-    {% endif %}                            
+    {% endif %}      
+    
+     {% if item.category_id is defined %}
+        <script>
+            var category_id
+            = {{ item.category.id }};
+        </script>
+    {% endif %}  
 
     {# {% include 'dynamic_form.html.twig' %} #}
 

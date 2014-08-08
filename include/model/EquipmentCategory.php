@@ -210,7 +210,7 @@ class EquipmentCategory extends Entity {
         $sql = 'description=' . db_input($this->getDescription()) .
                 ',notes=' . db_input($this->getNotes()) .
                 ',name=' . db_input($this->getName()) .
-                ',ispublic=' . db_input($this->getIspublic()) .
+                ',ispublic=' . $this->getIspublic() .
                 ',updated= NOW()' .
                 ',created=' . $created;
         return $sql;

@@ -105,7 +105,7 @@ abstract class Entity {
 
         if ($id > 0) {
             $sql = 'UPDATE ' . $table .
-                    ' SET ' . $sql . ' WHERE ' . $id_column . '=' . db_input($this->id);
+                    ' SET ' . $sql . ' WHERE ' . $id_column . '=' . db_input($id);
             $retval = db_query($sql);
         } else {
             $sql = 'INSERT INTO ' . $table .

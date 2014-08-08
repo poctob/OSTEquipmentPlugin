@@ -11,6 +11,8 @@ $(function() {
 
     $('#ticketsDD').puidropdown();
     $('#equipmentDD').puidropdown();
+  //  $('#intervalDD').puidropdown();
+    
 
     $.getJSON(eq_root + 'recurring/listTicketsJson', populateTicketsDropDown);
     $.getJSON(eq_root + 'recurring/listEquipmentJson', populateEquipmentDropDown);
