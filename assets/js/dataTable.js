@@ -83,7 +83,19 @@ function boolToString(input)
 
 function getImage(input)
 {
-    return '<img src="assets/images/'+input.image+'" class="status_image_table" />';
+    return '<img src="assets/images/' + input.image + '" class="status_image_table" />';
+}
+
+function deleteAction()
+{
+    $('#delete-dialog-confirm').puidialog('hide');
+    $('input[name="id"]').val(selectedItem.toString());
+    $('#deleteForm').submit();
+  /*  $.post('delete', $('#deleteForm').serialize())
+            .done(function()
+            {
+                location.reload();
+            });*/
 }
 
 

@@ -112,7 +112,7 @@ class EquipmentCategory extends Entity {
         return $this->closed_ticket_count;
     }
 
-    public function delete() {
+  /*  public function delete() {
 
         if (parent::delete()) {
             if (db_query($sql) && ($num = db_affected_rows())) {
@@ -121,7 +121,7 @@ class EquipmentCategory extends Entity {
             }
         }
         return $num;
-    }
+    }*/
 
     /**
      * Counts a number of open tickets in this category.

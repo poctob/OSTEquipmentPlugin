@@ -24,11 +24,13 @@
         dt_columns = {{ dt_columns|json_encode|raw }};
         dt_caption = "{{ title }}";
     </script>
+    
     <form action="delete" method="post" id="deleteForm" id="classForm">
         <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
         <input type="hidden" name="id" value="" />
     </form>
-    <div id="dataTable"></div> 
+
+    <div id="dataTable"></div>    
 
     <div id="actionButtons">
         <button id="itemAdd" type="button">New</button>                 
