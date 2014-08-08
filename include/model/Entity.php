@@ -75,6 +75,20 @@ abstract class Entity {
     protected function reload() {
         return $this->load($this->getId());
     }
+    
+    public function saveFromData($data)
+    {
+        foreach($data as $key => $value)
+        {
+             $func = 'set'.ucfirst($key);
+            
+            if(method_exists($this, $func))
+            {
+                $this->$func($value);
+            }
+        }
+        return $this->save();
+    }
 
     public function save() {
         $retval = false;
@@ -86,8 +100,8 @@ abstract class Entity {
 
         $sql = $this->getSaveSQL();
         $id = $this->getId();
-        $table = self::getTableName();
-        $id_column = self::getIdColumn();
+        $table = static::getTableName();
+        $id_column = static::getIdColumn();
 
         if ($id > 0) {
             $sql = 'UPDATE ' . $table .

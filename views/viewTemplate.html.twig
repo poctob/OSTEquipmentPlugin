@@ -1,0 +1,33 @@
+{% extends 'layout.html.twig' %}
+
+{% block head %}
+    {% block javascripts %}
+        {{ parent() }}
+    {% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}
+
+{% block title %}
+    {{ stitle }}
+{% endblock %}
+
+{% block pagetitle %}
+    {{ stitle }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+
+    <div id="formViewPanel" style="margin-bottom:20px" title="
+         {% if item.id > 0 %}
+             Edit {{ stitle }}
+         {% else %}
+             New {{ stitle }}
+         {% endif %}
+         "> 
+        {% include form_path ~ "/editForm.html.twig" %}
+    </div>
+{% endblock %}
+

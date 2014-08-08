@@ -224,7 +224,11 @@ class EquipmentPlugin extends Plugin {
                                 'listJsonAction'),
                         url_get('^getItemsJson/(?P<status_id>\d+)$',
                                 'statusItemsJsonAction'),
-                        url_post('^save/(?P<id>\d+)$',
+                        url_get('^listTicketsJson$',
+                                'listTicketsJson'),
+                        url_get('^listEquipmentJson$',
+                                'listEquipmentJson'),
+                        url_post('^save',
                                 'saveAction'),
                         url_post('^delete',
                                 'deleteAction')

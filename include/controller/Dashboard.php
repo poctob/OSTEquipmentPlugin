@@ -24,8 +24,12 @@ class Dashboard extends Controller {
         
     }
 
-    protected function getTitle() {
+    protected function getTitle($plural = true) {
         return "Equipment Dashboard";
+    }
+
+    protected function getViewDirectory() {
+        
     }
 
 }

@@ -20,12 +20,12 @@ class EquipmentCategory extends Controller {
         return 'model\EquipmentCategory';
     }
 
-    protected function getViewTemplateName() {
-        return 'categories_view.html.twig';
+    protected function getViewDirectory() {
+        return 'category';
     }
 
-    protected function getTitle() {
-        return 'Equipment Categories';
+    protected function getTitle($plural = true) {
+        return $plural ? 'Equipment Categories' : 'Equipment Category';
     }
 
     protected function getListColumns() {
@@ -33,8 +33,10 @@ class EquipmentCategory extends Controller {
             array('field' => 'name', 'headerText' => 'Name', 'sortable' => 'true'),
             array('field' => 'ispublic', 'headerText' => 'Type', 'sortable' => 'true'),
             array('field' => 'equipment_count', 'headerText' => 'Equipment', 'sortable' => 'true'),
-            array('field' => 'open_ticket_count', 'headerText' => 'Open Tickets', 'sortable' => 'true'),
-            array('field' => 'closed_ticket_count', 'headerText' => 'Closed Tickets', 'sortable' => 'true'),
+            array('field' => 'open_ticket_count', 'headerText' => 'Open Tickets',
+                'sortable' => 'true'),
+            array('field' => 'closed_ticket_count', 'headerText' => 'Closed Tickets',
+                'sortable' => 'true'),
             array('field' => 'updated', 'headerText' => 'Last Updated', 'sortable' => 'true')
         );
     }

@@ -53,8 +53,12 @@ class EquipmentStatus extends Controller {
         );
     }
 
-    protected function getTitle() {
+    protected function getTitle($plural = true) {
         return 'Equipment Status';
+    }
+
+    protected function getViewDirectory() {
+        return 'status';
     }
 
 }

@@ -165,10 +165,6 @@ class EquipmentCategory extends Entity {
         return $count;
     }
 
-    public function validate() {
-        return false;
-    }
-
     public static function countAll() {
         return db_count('SELECT count(*) FROM ' . EQUIPMENT_CATEGORY_TABLE . ' cat ');
     }
@@ -187,7 +183,10 @@ class EquipmentCategory extends Entity {
         $res = db_query($sql);
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
-                $ids[] = $row['equipment_id'];
+                $id = $row['equipment_id'];
+                if (isset($id) && $id > 0) {
+                    $ids[] = $id;
+                }
             }
         }
 
@@ -207,7 +206,14 @@ class EquipmentCategory extends Entity {
     }
 
     protected function getSaveSQL() {
-        
+        $created = $this->category_id > 0 ? $this->created : 'NOW()';
+        $sql = 'description=' . db_input($this->getDescription()) .
+                ',notes=' . db_input($this->getNotes()) .
+                ',name=' . db_input($this->getName()) .
+                ',ispublic=' . db_input($this->getIspublic()) .
+                ',updated= NOW()' .
+                ',created=' . $created;
+        return $sql;
     }
 
     protected function init() {
@@ -218,6 +224,14 @@ class EquipmentCategory extends Entity {
         $this->name = '';
         $this->ispublic = 0;
         $this->updated = null;
+    }
+
+    public function validate() {
+        $retval = isset($this->description);
+        if (!$retval) {
+            $this->addError('Invalid Description!');
+        }
+        return $retval;
     }
 
     protected function setId($id) {

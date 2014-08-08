@@ -1,0 +1,75 @@
+<script src="assets/js/equipment_item_view.js"></script>
+
+<form action="{{ constant('EQUIPMENT_WEB_ROOT') }}item/save" method="post" id="saveForm">   
+    <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+    <input type="hidden" name="id" value="{{item.id}}" />
+    <br>
+    <div style="padding-top:5px;"><strong>Category (required)</strong></div>
+    <select id="categoriesDropDown" name="category_id" min="1" required>
+        <option>---Select Category---</option>                
+    </select>
+    <br/>
+    Item Type:
+    <table class="radio_table">  
+        <tr>  
+            <td>
+                <input type="radio" name="ispublished" value="1" 
+                       {% if item.ispublished == 1 %}
+                           checked="checked"
+                       {% endif %}
+                       >
+                <strong>Public</strong> (published)
+            </td>  
+            <td>
+                <input type="radio" name="ispublished" value="0" 
+                       {% if item.ispublished == 0 %}
+                           checked="checked"
+                       {% endif %}
+                       >
+                Private (internal)
+            </td>  
+        </tr>
+        <tr>  
+            <td>
+                <input type="radio" name="is_active" value="1" 
+                       {% if item.is_active == 1 %}
+                           checked="checked"
+                       {% endif %}
+                       >
+                <strong>Active</strong> (published)
+            </td>  
+            <td>
+                <input type="radio" name="is_active" value="0" 
+                       {% if item.is_active == 0 %}
+                           checked="checked"
+                       {% endif %}
+                       >
+                Retired (inactive)
+            </td>  
+        </tr>
+    </table>
+    <div style="padding-top:5px;"><b>Asset Id (required, at least 2 characters)</b></div>
+    <input id="asset_id" type ="text" size="70" name="asset_id" minlength="2" value="{{ item.asset_id }}" required/>
+    <br>
+
+    <div style="padding-top:5px;"><b>Status (required)</b></div>
+    <select id="statusDropDown" name="status_id" min="1" required>
+        <option>---Select Status---</option>
+    </select>
+    {% if item.status is defined and item.status.id is defined %}
+        <script>
+            var status_id
+            = {{ item.status.id }};
+        </script>
+    {% endif %}                            
+
+    {# {% include 'dynamic_form.html.twig' %} #}
+
+    <p style="padding-left:225px;">               
+        <button id="saveButton" type="submit">Save</button>  
+        <button id="resetButton" type="button">Reset</button>  
+        <button id="cancelButton" type="button">Cancel</button>                  
+    </p>
+</form>
+
+

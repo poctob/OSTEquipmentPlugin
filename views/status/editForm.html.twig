@@ -1,0 +1,50 @@
+<form action="../save" method="post" id="saveForm">   
+    <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+    <input type="hidden" name="id" value="{{item.id}}" />
+
+
+    <div style="padding-top:3px;">
+        <b>Status Name (required)</b>:&nbsp;
+        <span class="faded">Short descriptive name.</span>
+    </div>
+    <input id="name" type="text" size="70" name="name" value="{{ item.name }}" required/>
+    <br>
+
+    <div style="padding-top:3px;"><b>Image</b>:&nbsp;
+        <span class="faded">Path to an image to use for this status.</span>
+    </div>
+    <input id="image" type="text" size="70" name="image" value="{{ item.image }}">                    
+    <br>
+
+    <div style="padding-top:3px;"><b>Color</b>:&nbsp;
+        <span class="faded">Status color code (ex. red, green, etc.).</span>
+    </div>
+    <input id="color" type="text" size="70" name="color" value="{{ item.color }}">                    
+    <br>
+
+    <div style="padding-top:3px;"><b>Default</b>:&nbsp;
+        <span class="faded">This is the default status</span></div>            
+    <input type="checkbox" name="baseline" value="1" 
+           {% if item.baseline %}
+               checked="checked"                 
+           {% endif %}
+           />     
+    <br>
+
+    <div style="padding-top:5px;">
+        <b>Status Description</b>:
+    </div>
+
+    <textarea id="description" name="description" cols="21" rows="5" style="width:98%;">
+        {{ item.description }}
+    </textarea>
+
+
+    <p style="padding-left:225px;">               
+        <button id="saveButton" type="submit">Save</button>  
+        <button id="resetButton" type="button">Reset</button>  
+        <button id="cancelButton" type="button">Cancel</button>                  
+    </p>
+</form>
+
+

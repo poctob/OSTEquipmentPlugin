@@ -32,18 +32,14 @@ class EquipmentItem extends Controller {
         );
     }
 
-    protected function getTitle() {
-        return 'Equipment Items';
+    protected function getTitle($plural = true) {
+        return $plural?'Equipment Items':'Equipment Item';
     }
 
-    protected function getViewTemplateName() {
-        return 'item_view.html.twig';
-    }
-
-    public function newAction($category_id) {
+   /* public function newAction($category_id) {
         $viewargs = array();
         if ($category_id > 0) {
-            $category = Equipment_Category::lookup($category_id);
+            $category = new model\EquipmentCategory($category_id);
             $viewargs['category'] = $category;
             $this->viewAction(0,
                     $viewargs);
@@ -57,11 +53,11 @@ class EquipmentItem extends Controller {
     }
 
     protected function defaultAction() {
-        $category = Equipment_Category::lookup($_POST['category_id']);
+        $category = new model\EquipmentCategory($_POST['category_id']);
         $viewargs['category'] = $category;
         $this->viewAction($_POST['id'],
                 $viewargs);
-    }
+    }*/
 
     public function getDynamicForm($id = 0) {
         $form_id = EquipmentPlugin::getCustomForm();
@@ -125,6 +121,10 @@ class EquipmentItem extends Controller {
                     'Error',
                     'Failed to Update Item!');
         }
+    }
+
+    protected function getViewDirectory() {
+        return 'item';
     }
 
 }

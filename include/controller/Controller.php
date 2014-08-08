@@ -13,31 +13,44 @@ abstract class Controller {
 
     public static function loadClass($className) {
 
-        $className = ltrim($className, '\\');
+        $className = ltrim($className,
+                '\\');
         $fileName = '';
         $namespace = '';
-        if ($lastNsPos = strrpos($className, '\\')) {
-            $namespace = substr($className, 0, $lastNsPos);
-            $className = substr($className, $lastNsPos + 1);
-            $fileName = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        if ($lastNsPos = strrpos($className,
+                '\\')) {
+            $namespace = substr($className,
+                    0,
+                    $lastNsPos);
+            $className = substr($className,
+                    $lastNsPos + 1);
+            $fileName = str_replace('\\',
+                            DIRECTORY_SEPARATOR,
+                            $namespace) . DIRECTORY_SEPARATOR;
         }
-        $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+        $fileName .= str_replace('_',
+                        DIRECTORY_SEPARATOR,
+                        $className) . '.php';
 
         require $fileName;
     }
 
     protected abstract function getEntityClassName();
 
-     protected function getListTemplateName() {
+    protected function getListTemplateName() {
         return 'listTemplate.html.twig';
     }
 
-    protected abstract function getViewTemplateName();
-    
+    protected function getViewTemplateName() {
+        return 'viewTemplate.html.twig';
+    }
+
     protected abstract function getListColumns();
 
-    protected abstract function getTitle();
-    
+    protected abstract function getTitle($plural = true);
+
+    protected abstract function getViewDirectory();
+
     protected function defaultAction() {
         $this->listAction();
     }
@@ -59,7 +72,8 @@ abstract class Controller {
             unset($_SESSION['flash']);
         }
 
-        echo $twig->render($template, $args);
+        echo $twig->render($template,
+                $args);
     }
 
     public static function setFlash($severity, $summary, $details) {
@@ -80,49 +94,52 @@ abstract class Controller {
         $properties = array();
         $entityClass = $this->getEntityClassName();
         $items = $entityClass::getAll();
-        
-        foreach($items as $item)
-        {
-            $properties[]=$item->getJsonProperties();
+
+        foreach ($items as $item) {
+            $properties[] = $item->getJsonProperties();
         }
         echo json_encode($properties);
     }
 
     public function listAction() {
         $args = array();
-        $args['title'] =$this->getTitle();
-        $args['dt_columns'] =$this->getListColumns();
-        
+        $args['title'] = $this->getTitle();
+        $args['dt_columns'] = $this->getListColumns();
+
         $template_name = $this->getListTemplateName();
-        $this->render($template_name, $args);
+        $this->render($template_name,
+                $args);
     }
 
     public function viewAction($id = 0, $args = array()) {
         $entityClass = $this->getEntityClassName();
-        if (isset($id) && $id > 0) {
-            $item = $entityClass::lookup($id);
-            $title = 'Edit ' . $entityClass;
-        } else {
-            $item = new $entityClass();
-            $title = 'New ' . $entityClass;
-        }
+        $item = new $entityClass($id);
 
         $template_name = $this->getViewTemplateName();
         $args['item'] = $item;
-        $args['title'] = $title;
-        $this->render($template_name, $args);
+        $args['title'] = $this->getTitle();
+        $args['stitle'] = $this->getTitle(false);
+        $args['form_path'] = $this->getViewDirectory();
+        $this->render($template_name,
+                $args);
     }
 
     public function saveAction() {
-        $errors = array();
-        $form_id = EquipmentPlugin::getCustomForm();
+        $form_id = \EquipmentPlugin::getCustomForm();
         $_POST['form_id'] = $form_id;
         $entityClass = $this->getEntityClassName();
-        $entityClass::save($_POST['id'], $_POST, $errors);
-        if (isset($errors) && count($errors) > 0) {
-            $this::setFlash('error', 'Failed to save item!', print_r($errors));
-        } else {
-            $this::setFlash('info', 'Success!', 'Item Saved');
+        $object = new $entityClass($_POST['id']);
+
+        if (isset($object)) {
+            if (!$object->saveFromData($_POST)) {
+                $this::setFlash('error',
+                        'Failed to save item!',
+                        print_r($object->getErrors()));
+            } else {
+                $this::setFlash('info',
+                    'Success!',
+                    'Item Saved');
+            }
         }
         $this->defaultAction();
     }
@@ -131,24 +148,32 @@ abstract class Controller {
         $entityClass = $this->getEntityClassName();
         $item = new $entityClass($_POST['id']);
         if (isset($item) && $item->delete()) {
-            $this::setFlash('info', 'Success!', 'Item Deleted');
+            $this::setFlash('info',
+                    'Success!',
+                    'Item Deleted');
         } else {
-            $this::setFlash('error', '!', 'Failed to delete Item!');
+            $this::setFlash('error',
+                    '!',
+                    'Failed to delete Item!');
         }
         $this->listAction();
     }
 
     public function openTicketsJsonAction($item_id) {
         $entityClass = $this->getEntityClassName();
-        $ticket_id = $entityClass::getTicketList('open', $item_id);
-        $tickets = $this->ticketsAction('open', $ticket_id);
+        $ticket_id = $entityClass::getTicketList('open',
+                        $item_id);
+        $tickets = $this->ticketsAction('open',
+                $ticket_id);
         echo json_encode($tickets);
     }
 
     public function closedTicketsJsonAction($item_id) {
         $entityClass = $this->getEntityClassName();
-        $ticket_id = $entityClass::getTicketList('closed', $item_id);
-        $tickets = $this->ticketsAction('closed', $ticket_id);
+        $ticket_id = $entityClass::getTicketList('closed',
+                        $item_id);
+        $tickets = $this->ticketsAction('closed',
+                $ticket_id);
         echo json_encode($tickets);
     }
 

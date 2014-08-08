@@ -5,6 +5,32 @@ var flash_details = "";
 $(function() {
     $('#messages').puigrowl();
     $('#menuBarList').puimenubar();
+
+    $(':radio').puiradiobutton();
+    $(':checkbox').puicheckbox();
+    $(':text').puiinputtext();
+    $('textarea').puiinputtextarea();
+    
+     $('#formViewPanel').puipanel();
+
+    $('#saveButton').puibutton({
+        icon: 'ui-icon-disk'
+    });
+
+    $('#resetButton').puibutton({
+        icon: 'ui-icon-arrowrefresh-1-w',
+        click: function(event) {
+            resetForm($('#saveForm'));
+        }
+    });
+
+    $('#cancelButton').puibutton({
+        icon: 'ui-icon-circle-close',
+        click: function(event) {
+            window.location.href = eq_root + "dashboard/";
+        }
+    });
+
     $("#delete-dialog-confirm").puidialog({
         buttons: [{
                 text: 'Yes',
@@ -23,6 +49,8 @@ $(function() {
         ]
     }
     );
+    
+    $('#saveForm').validate();
     showFlash();
 });
 

@@ -142,7 +142,11 @@ class EquipmentStatus extends Entity {
         $res = db_query($sql);
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
-                $ids[] = $row['equipment_id'];
+                $id = $row['equipment_id'];
+                if(isset($id) && $id >0)
+                {
+                    $ids[] = $id;
+                }
             }
         }
 
@@ -184,9 +188,9 @@ class EquipmentStatus extends Entity {
     }
 
     protected function validate() {
-        $retval = isset($this->description);
+        $retval = isset($this->name);
         if (!$retval) {
-            $this->addError('Invalid Description!');
+            $this->addError('Invalid Name!');
             return $retval;
         }
 

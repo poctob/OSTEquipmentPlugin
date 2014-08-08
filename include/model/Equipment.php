@@ -34,7 +34,9 @@ class Equipment extends Entity {
             'equipment_id' => $this->getEquipment_id(),
             'asset_id' => $this->getAsset_id(),
             'category' => $this->getCategory()->getName(),
+            'category_id' => $this->getCategory_id(),
             'status' => $this->getStatus()->getName(),
+            'status_id' => $this->getStatus_id(),
             'ispublished' => $this->getIspublished()?'Yes':'No',
             'created' => $this->getCreated(),
             'updated' => $this->getUpdated(),
@@ -97,9 +99,9 @@ class Equipment extends Entity {
     /* ------------------> Setter methods <--------------------- */
 
     public function setId($id) {
-        setEquipment_id($id);
+        $this->setEquipment_id($id);
     }
-
+    
     public function setEquipment_id($equipment_id) {
         $this->equipment_id = $equipment_id;
     }
@@ -370,6 +372,8 @@ class Equipment extends Entity {
             $this->addError('Invalid Status ID!');
             return $retval;
         }
+        
+        return $retval;
     }
 
     protected static function getIdColumn() {

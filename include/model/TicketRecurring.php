@@ -15,15 +15,19 @@ class TicketRecurring extends Entity {
     private $last_opened;
     private $interval;
     private $active;
+    private $interval_multiplier;
 
     public function getJsonProperties() {
         return array(
             'id' => $this->getId(),
             'equipment' => $this->getEquipment()->getAsset_id(),
+            'equipment_id' => $this->getEquipment_id(),
             'ticket' => $this->getTicket()->getNumber(),
+            'ticket_id' => $this->getTicket_id(),
             'last_opened' => $this->getLast_opened(),
             'interval' => $this->getInterval(),
-            'active' => $this->getActive()?'Yes':'No',
+            'hr_interval' => $this->getHRInterval(),
+            'active' => $this->getActive()>0 ? 'Yes' : 'No',
         );
     }
 
@@ -118,7 +122,48 @@ class TicketRecurring extends Entity {
     }
 
     public function setActive($active) {
-        $this->active = $active;
+        if(is_numeric($active))
+        {
+            $this->active = $active;
+        }
+        else
+        {
+            $this->active = ($active == 'on')?1:0;
+        }
+    }
+
+    public function getInterval_multiplier() {
+        return $this->interval_multiplier;
+    }
+
+    public function setInterval_multiplier($interval_multiplier) {
+        $this->interval_multiplier = $interval_multiplier;
+    }
+    
+    public function getHRInterval()
+    {
+        $seconds = intval($this->interval);
+        if($seconds > 0)
+        {
+            $mod = $seconds % 86400;
+            if($mod == 0)
+            {
+                return ($seconds / 86400).' days';
+            }
+            
+            $mod = $seconds % 3600;
+            if($mod == 0)
+            {
+                return ($seconds / 3600).' hours';
+            }
+            
+            $mod = $seconds % 60;
+            if($mod == 0)
+            {
+                return ($seconds / 60).' minutes';
+            }
+        }
+        return $seconds.' seconds';
     }
 
     /* End Setters and Getters */
@@ -146,11 +191,20 @@ class TicketRecurring extends Entity {
     }
 
     protected function getSaveSQL() {
+
+        $seconds = intval($this->interval);
+        $multiplier = intval($this->interval_multiplier);
+        $seconds = $seconds * $multiplier;
+
+        $date = strtotime($this->next_date);
+        $db_date = date('Y-m-d H:i:s',
+                $date);
+
         $sql = 'equipment_id=' . db_input($this->equipment_id) .
                 ',ticket_id=' . db_input($this->ticket_id) .
                 ',last_opened=' . db_input($this->last_opened) .
-                ',next_date=' . db_input($this->next_date) .
-                ',`interval`=' . db_input($this->interval) .
+                ',next_date=' . db_input($db_date) .
+                ',`interval`=' . db_input($seconds) .
                 ',active=' . db_input($this->active);
         return $sql;
     }
@@ -163,6 +217,7 @@ class TicketRecurring extends Entity {
         $this->next_date = null;
         $this->interval = 0;
         $this->active = 0;
+        $this->interval_multiplier = 1;
     }
 
     protected static function getIdColumn() {

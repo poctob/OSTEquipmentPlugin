@@ -1,0 +1,62 @@
+<script src="assets/js/recurring.js"></script>
+<form action="{{ constant('EQUIPMENT_WEB_ROOT') }}recurring/save" method="post" id="saveForm">  
+    <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" /> 
+    <input type="hidden" name="id" value="{{item.id}}" />
+    <table>
+        <tr>
+            <td>
+                Ticket:
+            </td>
+            <td>
+                <select id="ticketsDD" name="ticket_id" min="1" required>
+                    <option value="0">---Select Ticket---</option>                
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Equipment:
+            </td>
+            <td>
+                  <select id="equipmentDD" name="equipment_id" min="1" required>
+                    <option value="0">---Select Equipment---</option>                
+                </select>
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                Repeat Every:
+            </td>
+            <td>
+                <input id="interval" name="interval" type="text" min="1" required/> 
+                <select id="intervalDD" name="interval_multiplier"> 
+                    <option value="86400">Days</option>
+                    <option value="3600">Hours</option>
+                    <option value="60">Minutes</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Start Date:
+            </td>
+            <td>
+                <input id="next_date" name="next_date" type="text" required/>                      
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Active:
+            </td>
+            <td>
+                <input id="active" name="active" type="checkbox" />                      
+            </td>
+        </tr>
+    </table>
+    <p style="padding-left:225px;">               
+        <button id="saveButton" type="submit">Save</button>  
+        <button id="resetButton" type="button">Reset</button>  
+        <button id="cancelButton" type="button">Cancel</button>                  
+    </p>
+</form>
