@@ -112,11 +112,15 @@ abstract class Controller {
     }
 
     public function viewAction($id = 0, $args = array()) {
-        $entityClass = $this->getEntityClassName();
-        $item = new $entityClass($id);
+
+        if ($id >= 0) {
+            $entityClass = $this->getEntityClassName();
+            $item = new $entityClass($id);
+            $args['item'] = $item;
+        }
 
         $template_name = $this->getViewTemplateName();
-        $args['item'] = $item;
+
         $args['title'] = $this->getTitle();
         $args['stitle'] = $this->getTitle(false);
         $args['form_path'] = $this->getViewDirectory();
@@ -125,8 +129,7 @@ abstract class Controller {
     }
 
     public function saveAction() {
-        $form_id = \EquipmentPlugin::getCustomForm();
-        $_POST['form_id'] = $form_id;
+
         $entityClass = $this->getEntityClassName();
         $object = new $entityClass($_POST['id']);
 
@@ -137,8 +140,8 @@ abstract class Controller {
                         print_r($object->getErrors()));
             } else {
                 $this::setFlash('info',
-                    'Success!',
-                    'Item Saved');
+                        'Success!',
+                        'Item Saved');
             }
         }
         $this->defaultAction();
@@ -180,14 +183,14 @@ abstract class Controller {
     protected function ticketsAction($type, $ticket_id) {
         $tickets = array();
         foreach ($ticket_id as $id) {
-            $ticket = Ticket::lookup($id['ticket_id']);
-            $equipment = new Equipment($id['equipment_id']);
+            $ticket = \Ticket::lookup($id['ticket_id']);
+            $equipment = new \model\Equipment($id['equipment_id']);
             if (isset($ticket) && isset($equipment)) {
                 $ticket_data = array(
                     'id' => $ticket->getId(),
                     'number' => $ticket->getNumber(),
-                    'equipment' => $equipment->getAssetId(),
-                    'create_date' => Format::db_datetime($ticket->getCreateDate()),
+                    'equipment' => $equipment->getAsset_id(),
+                    'create_date' => \Format::db_datetime($ticket->getCreateDate()),
                     'subject' => $ticket->getSubject(),
                     'name' => $ticket->getName()->getFull(),
                     'priority' => $ticket->getPriority(),
@@ -196,7 +199,7 @@ abstract class Controller {
                 if ($type == 'closed') {
                     $ts_open = strtotime($ticket->getCreateDate());
                     $ts_closed = strtotime($ticket->getCloseDate());
-                    $ticket_data['close_date'] = Format::db_datetime($ticket->getCloseDate());
+                    $ticket_data['close_date'] = \Format::db_datetime($ticket->getCloseDate());
                     $ticket_data['closed_by'] = $ticket->getStaff()->getUserName();
                     $ticket_data['elapsed'] = $this->elapsedTime($ts_closed - $ts_open);
                 }

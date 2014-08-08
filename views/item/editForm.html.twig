@@ -59,19 +59,28 @@
     {% if item.status.id is defined %}
         <script>
             var status_id
-            = {{ item.status.id }};
-        </script>
-    {% endif %}      
-    
-     {% if item.category_id is defined %}
+                    = {{ item.status.id }};</script>
+        {% endif %}      
+
+    {% if item.category_id is defined %}
         <script>
-            var category_id
-            = {{ item.category.id }};
-        </script>
-    {% endif %}  
+                    var category_id
+                    = {{ item.category.id }};</script>
+        {% endif %}  
 
-    {# {% include 'dynamic_form.html.twig' %} #}
-
+    <script>
+                var selected_item = {{ item.id }};
+    </script>
+    {% include 'dynamic_form.html.twig' %}
+    
+    
+    {% if item.id > 0 %}
+         <script src="assets/js/tickets_table_items.js"></script>
+        {% include "open_tickets.html.twig" %}
+        {% include "closed_tickets.html.twig" %}
+    {% endif %}
+    
+    
     <p style="padding-left:225px;">               
         <button id="saveButton" type="submit">Save</button>  
         <button id="resetButton" type="button">Reset</button>  

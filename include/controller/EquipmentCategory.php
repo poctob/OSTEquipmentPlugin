@@ -47,12 +47,12 @@ class EquipmentCategory extends Controller {
         $items = array();
 
         foreach ($equipment as $item) {
-            $status = new \model\EquipmentStatus($item->getStatus_id());
+            $status = $item->getStatus();
             $item_data = array(
                 'id' => $item->getId(),
                 'asset_id' => $item->getAsset_id(),
                 'category' => $category->getName(),
-                'status' => $status->getName(),
+                'status' => isset($status)?$status->getName():'',
                 'published' => $item->getIspublished() ? 'Yes' : 'No',
                 'active' => $item->getIs_active() ? 'Yes' : 'No'
             );

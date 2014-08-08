@@ -183,7 +183,7 @@ class TicketRecurring extends Entity {
                 ' FROM ' . EQUIPMENT_TICKET_RECURRING__TABLE .
                 ' WHERE equipment_id=' . db_input($id);
 
-        return self::populateBySQL($sql);
+        return static::populateBySQL($sql);
     }
 
     public static function findByTicketId($id) {
@@ -192,7 +192,7 @@ class TicketRecurring extends Entity {
                 ' FROM ' . EQUIPMENT_TICKET_RECURRING__TABLE .
                 ' WHERE ticket_id=' . db_input($id);
 
-        return self::populateBySQL($sql);
+        return static::populateBySQL($sql);
     }
 
     protected function getSaveSQL() {

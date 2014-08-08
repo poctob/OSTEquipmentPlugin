@@ -3,8 +3,8 @@ var currentTicket = 0;
 $(function() {
     $('#openTicketsPanel').puipanel();
     $('#closedTicketsPanel').puipanel();
-    open_url = eq_root + 'categories/openTicketsJson/' + selectedCategory;
-    closed_url = eq_root + 'categories/closedTicketsJson/' + selectedCategory;
+    open_url = eq_root + 'item/openTicketsJson/' + selected_item;
+    closed_url = eq_root + 'item/closedTicketsJson/' + selected_item;
     applyTicketsTableUI(open_url, closed_url);
 });
 

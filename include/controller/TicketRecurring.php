@@ -37,24 +37,22 @@ class TicketRecurring extends Controller {
     public function listTicketsJson() {
         $tickets = \model\EquipmentTicket::getAllTickets();
         $items = array();
-        foreach ($tickets as $ticket)
-        {
-            $items[]=array('number' => $ticket->getNumber(),
+        foreach ($tickets as $ticket) {
+            $items[] = array('number' => $ticket->getNumber(),
                 'ticket_id' => $ticket->getId());
         }
-        
+
         return json_encode($items);
     }
 
     public function listEquipmentJson() {
         $equipments = \model\EquipmentTicket::getAllEquipment();
-         $items = array();
-        foreach ($equipments as $equipment)
-        {
-            $items[]=array('asset_id' => $equipment->getAsset_Id(),
+        $items = array();
+        foreach ($equipments as $equipment) {
+            $items[] = array('asset_id' => $equipment->getAsset_Id(),
                 'equipment_id' => $equipment->getId());
         }
-        
+
         return json_encode($items);
     }
 
@@ -62,19 +60,16 @@ class TicketRecurring extends Controller {
         $args = array();
 
         if (isset($id) && $id > 0) {
-            $ticket = Ticket::lookup($id);
+            $ticket = \Ticket::lookup($id);
             if (isset($ticket)) {
                 $entityClass = $this->getEntityClassName();
                 $items = $entityClass::findByTicketId($id);
-                $title = 'Reccuring Ticket Information';
                 $args['ticket'] = $ticket;
                 $args['items'] = $items;
-                $args['title'] = $title;
             }
         }
 
-        $template_name = $this->getViewTemplateName();
-        $this->render($template_name,
+        $this->viewAction(-1,
                 $args);
     }
 

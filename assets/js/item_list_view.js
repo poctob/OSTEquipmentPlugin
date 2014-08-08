@@ -7,6 +7,7 @@ $(function() {
     applyItemsTableUI();
     applyItemButtonUI();
     disableItemButtons();
+    $('#itemAdd').hide();
 });
 
 function applyItemButtonUI()
@@ -35,7 +36,7 @@ function applyItemButtonUI()
     $('#itemUnpublish').puibutton({
         icon: 'ui-icon-document',
         click: function(event) {
-             publishItem(false);
+            publishItem(false);
         }
     });
 
@@ -66,10 +67,6 @@ function applyItemButtonUI()
 
 function disableItemButtons()
 {
-    if(typeof canadditem === 'undefined' || canadditem==false)
-    {
-        $('#itemAdd').puibutton('disable');
-    }
     $('#itemEdit').puibutton('disable');
     $('#itemEdit').puibutton('disable');
     $('#itemDelete').puibutton('disable');
@@ -81,6 +78,7 @@ function disableItemButtons()
 
 function enableItemButtons(published, active)
 {
+    disableItemButtons();
     $('#itemEdit').puibutton('enable');
     $('#itemDelete').puibutton('enable');
 
@@ -144,7 +142,7 @@ function applyItemsTableUI()
 function activateItem(activate)
 {
     $('input[name="item_id"]').val(selectedItem.toString());
-    $('input[name="item_activate"]').val(activate?'1':'0');
+    $('input[name="item_activate"]').val(activate ? '1' : '0');
     $.post('../../item/activate', $('#activateForm').serialize())
             .done(function()
             {
@@ -161,7 +159,7 @@ function activateItem(activate)
 function publishItem(publish)
 {
     $('input[name="item_id"]').val(selectedItem.toString());
-    $('input[name="item_publish"]').val(publish?'1':'0');
+    $('input[name="item_publish"]').val(publish ? '1' : '0');
     $.post('../../item/publish', $('#publishForm').serialize())
             .done(function()
             {
@@ -183,9 +181,9 @@ function deleteAction()
     $.post('../../item/delete', $('#deleteForm').serialize())
             .done(function()
             {
-               location.reload();              
+                location.reload();
             });
-          
+
 }
 
 

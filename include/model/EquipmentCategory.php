@@ -198,7 +198,7 @@ class EquipmentCategory extends Entity {
         $ids = $this->getEquipmentIds();
         $equipment = array();
         foreach ($ids as $id) {
-            $item = new Equipment($id['equipment_id']);
+            $item = new Equipment($id);
             $equipment[] = $item;
         }
 

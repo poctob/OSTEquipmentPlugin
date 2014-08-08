@@ -37,10 +37,10 @@ class Equipment extends Entity {
             'category_id' => $this->getCategory_id(),
             'status' => $this->getStatus()->getName(),
             'status_id' => $this->getStatus_id(),
-            'ispublished' => $this->getIspublished()?'Yes':'No',
+            'ispublished' => $this->getIspublished() ? 'Yes' : 'No',
             'created' => $this->getCreated(),
             'updated' => $this->getUpdated(),
-            'is_active' => $this->getIs_active()?'Yes':'No'
+            'is_active' => $this->getIs_active() ? 'Yes' : 'No'
         );
     }
 
@@ -81,14 +81,14 @@ class Equipment extends Entity {
     public function getIs_active() {
         return $this->is_active;
     }
-    
+
     public function getCategory() {
         if ($this->category_id > 0) {
             return new EquipmentCategory($this->category_id);
         }
         return null;
     }
-    
+
     public function getStatus() {
         if ($this->status_id > 0) {
             return new EquipmentStatus($this->status_id);
@@ -101,7 +101,7 @@ class Equipment extends Entity {
     public function setId($id) {
         $this->setEquipment_id($id);
     }
-    
+
     public function setEquipment_id($equipment_id) {
         $this->equipment_id = $equipment_id;
     }
@@ -136,34 +136,40 @@ class Equipment extends Entity {
 
     public static function getOpenTickets($id) {
         $ticket_ids = array();
-        $sql = 'SELECT et.ticket_id'
+        $sql = 'SELECT et.ticket_id, et.equipment_id'
                 . ' FROM ' . EQUIPMENT_TICKET_TABLE . ' et '
                 . ' LEFT JOIN ' . TICKET_TABLE . ' ticket ON(et.ticket_id=ticket.ticket_id) '
                 . ' WHERE et.equipment_id=' . db_input($id)
                 . ' AND ticket.status=\'open\'';
-        if (($res = db_query($sql)) && db_num_rows($res))
-            while (list($id) = db_fetch_row($res))
-                $ticket_ids[] = $id;
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $ticket_ids[] = $row;
+            }
+        }
 
         return $ticket_ids;
     }
 
     public static function getClosedTickets($id) {
         $ticket_ids = array();
-        $sql = 'SELECT et.ticket_id'
+        $sql = 'SELECT et.ticket_id, et.equipment_id'
                 . ' FROM ' . EQUIPMENT_TICKET_TABLE . ' et '
                 . ' LEFT JOIN ' . TICKET_TABLE . ' ticket ON(et.ticket_id=ticket.ticket_id) '
                 . ' WHERE et.equipment_id=' . db_input($id)
                 . ' AND ticket.status=\'closed\'';
-        if (($res = db_query($sql)) && db_num_rows($res))
-            while (list($id) = db_fetch_row($res))
-                $ticket_ids[] = $id;
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $ticket_ids[] = $row;
+            }
+        }
 
         return $ticket_ids;
     }
 
     public static function getTicketList($type, $id) {
-        return $type == 'open' ? self::getOpenTickets($id) : self::getClosedTickets($id);
+        return $type == 'open' ? static::getOpenTickets($id) : static::getClosedTickets($id);
     }
 
     /**
@@ -300,8 +306,8 @@ class Equipment extends Entity {
     }
 
     public static function saveDynamicData($form_id, $id, $data) {
-        if ($id > 0) {
-            $form = DynamicForm::lookup($form_id);
+        if (intval($id) > 0) {
+            $form = \DynamicForm::lookup($form_id);
 
             if (isset($form)) {
                 $form_entry = self::getDynamicData($id);
@@ -326,7 +332,7 @@ class Equipment extends Entity {
     }
 
     public static function getDynamicData($id) {
-        return DynamicFormEntry::objects()
+        return \DynamicFormEntry::objects()
                         ->filter(array('object_id' => $id,
                             'object_type' => 'E'));
     }
@@ -372,7 +378,7 @@ class Equipment extends Entity {
             $this->addError('Invalid Status ID!');
             return $retval;
         }
-        
+
         return $retval;
     }
 

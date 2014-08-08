@@ -33,38 +33,15 @@ class EquipmentItem extends Controller {
     }
 
     protected function getTitle($plural = true) {
-        return $plural?'Equipment Items':'Equipment Item';
+        return $plural ? 'Equipment Items' : 'Equipment Item';
     }
-
-   /* public function newAction($category_id) {
-        $viewargs = array();
-        if ($category_id > 0) {
-            $category = new model\EquipmentCategory($category_id);
-            $viewargs['category'] = $category;
-            $this->viewAction(0,
-                    $viewargs);
-        } else {
-            $this->setFlash
-                    ('error',
-                    'Unable to create new item!',
-                    'invalid category specified!');
-            $this->viewAction(0);
-        }
-    }
-
-    protected function defaultAction() {
-        $category = new model\EquipmentCategory($_POST['category_id']);
-        $viewargs['category'] = $category;
-        $this->viewAction($_POST['id'],
-                $viewargs);
-    }*/
 
     public function getDynamicForm($id = 0) {
-        $form_id = EquipmentPlugin::getCustomForm();
+        $form_id = \EquipmentPlugin::getCustomForm();
         if (isset($form_id)) {
-            $form = DynamicForm::lookup($form_id);
+            $form = \DynamicForm::lookup($form_id);
             if ($id > 0) {
-                $data = Equipment::getDynamicData($id);
+                $data = \model\Equipment::getDynamicData($id);
                 $one = $data->one();
                 if (isset($one)) {
                     $one->getSaved();
@@ -77,54 +54,44 @@ class EquipmentItem extends Controller {
         }
     }
 
-    public function publishAction() {
-        $id = $_POST['item_id'];
-        $result = false;
-        if (isset($id)) {
-            $equipment = new Equipment($id);
-            $publish = $_POST['item_publish'];
-            if ($publish) {
-                $result = $equipment->publish();
-            } else {
-                $result = $equipment->unpublish();
-            }
+    public function saveAction() {
+        $form_id = \EquipmentPlugin::getCustomForm();
+        if (isset($form_id)) {
+            \model\Equipment::saveDynamicData($form_id, $_POST['id'],$_POST);            
         }
-        if ($result) {
-            $this->setFlash('info',
-                    'Success',
-                    'Item Updated!');
-        } else {
-            $this->setFlash('error',
-                    'Error',
-                    'Failed to Update Item!');
-        }
-    }
-
-    public function activateAction() {
-        $id = $_POST['item_id'];
-        $result = false;
-        if (isset($id)) {
-            $equipment = new Equipment($id);
-            $activate = $_POST['item_activate'];
-            if ($activate) {
-                $result = $equipment->activate();
-            } else {
-                $result = $equipment->retire();
-            }
-        }
-        if ($result) {
-            $this->setFlash('info',
-                    'Success',
-                    'Item Updated!');
-        } else {
-            $this->setFlash('error',
-                    'Error',
-                    'Failed to Update Item!');
-        }
+        return parent::saveAction();
     }
 
     protected function getViewDirectory() {
         return 'item';
+    }
+    
+    public function publishAction()
+    {
+        $id = $_POST['item_id'];
+        if(isset($id) && $id > 0)
+        {
+            $item = new \model\Equipment($id);
+            if(isset($item))
+            {
+                $item->setIspublished($_POST['item_publish']);
+                $item->save();
+            }
+        }
+    }
+    
+    public function activateAction()
+    {
+        $id = $_POST['item_id'];
+        if(isset($id) && $id > 0)
+        {
+            $item = new \model\Equipment($id);
+            if(isset($item))
+            {
+                $item->setIs_active($_POST['item_activate']);
+                $item->save();
+            }
+        }
     }
 
 }

@@ -28,10 +28,10 @@
         <b>Category Name (required)</b>:&nbsp;
         <span class="faded">Short descriptive name.</span>
     </div>
-                       
+
     <input id="name" type="text" size="70" name="name" value="{{ item.name }}" required/>
     <br>
-    
+
     <div style="padding-top:5px;">
         <b>Category Description</b>:&nbsp;
         <span class="faded">Summary of the category.</span>
@@ -57,3 +57,14 @@
 </form>
 
 
+{% if item.id > 0 %}
+    <script>
+        var selectedCategory = {{ item.id }};
+    </script>
+    {% include "items_list.html.twig" %}
+    
+    <script src="assets/js/tickets_table.js"></script>
+    {% include "open_tickets.html.twig" %}
+    {% include "closed_tickets.html.twig" %}
+    
+{% endif %}
