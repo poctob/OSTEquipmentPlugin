@@ -106,37 +106,40 @@ class TicketRecurring extends Controller {
                 $args);
     }
 
-    /*   public function saveAction($id = 0) {
-      $class = $this->getEntityClassName();
-      $item = new $class($id);
-      if (isset($item)) {
-      $item->setTicket_id($_POST['ticket_id']);
-      $item->setEquipment_id($_POST['equipment_id']);
-      $date = strtotime($_POST['next_date']);
-      $db_date = date('Y-m-d H:i:s',
-      $date);
-      $item->setNext_date($db_date);
+    public function test() {
+        static::runRecurrance();
+    }
 
-      $active = $_POST['active'] == 'on' ? 1 : 0;
-      $item->setActive($active);
+    static public function runRecurrance() {
+        $items = \model\TicketRecurring::getAll();
+        foreach ($items as $item) {
+            if ($item->getActive()) {
+                $date = new \DateTime();
+                $now = $date->getTimestamp();
+                $next_date = strtotime($item->getNext_date());
 
-      $interval = $_POST['interval'];
-      $multiplier = $_POST['interval_multiplier'];
+                if ($next_date <= $now) {
+                    static::repeatTicket($item->getTicket_id());
+                    $interval = $item->getInterval();
+                    $next_dt = new \DateTime();
+                    $next_dt->add(new \DateInterval('PT' . $interval . 'S'));
+                    
+                    $item->setNext_date($next_dt->format('Y-m-d H:i:s'));
 
-      $item->setInterval(intval($interval) * intval($multiplier));
+                    $item->setLast_opened($date->format('Y-m-d H:i:s'));
+                    $item->setInterval_multiplier(1);
+                    $item->save();
+                }
+            }
+        }
+    }
 
-      if ($item->save()) {
-      $this::setFlash('info',
-      'Success!',
-      'Item Saved');
-      } else {
-      $this::setFlash('error',
-      'Failed to save item!',
-      print_r($item->getErrors()));
-      }
-      }
-      $this->defaultAction();
-      } */
+    static private function repeatTicket($id) {
+        $ticket = new \Ticket($id);
+        if (isset($ticket)) {
+            $ticket->setStatus('open');
+        }
+    }
 
     protected function getViewDirectory() {
         return 'recurring';

@@ -238,4 +238,33 @@ BEGIN
 	END IF;
 END$	
 
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%ticket_event_AUPD`$
+CREATE TRIGGER `%TABLE_PREFIX%ticket_event_AUPD` AFTER UPDATE ON `%TABLE_PREFIX%ticket_event` FOR EACH ROW
+BEGIN
+		SET @status_id = (SELECT status_id FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
+						ticket_id= NEW.ticket_id AND field_label='Status' LIMIT 1);
+                
+                SET @asset_id = (SELECT value FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
+							ticket_id= NEW.ticket_id AND field_label='Asset ID' LIMIT 1);
+		IF( @asset_id IS NULL) THEN
+			SET @asset_id_str = (SELECT value FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
+							ticket_id= NEW.ticket_id AND field_label='Equipment' LIMIT 1);
+			SET @asset_id = (SELECT SUBSTRING_INDEX(@asset_id_str, 'Asset_ID:', -1));
+		END IF;
+
+		
+		SET @equipment_id = (SELECT equipment_id FROM `%TABLE_PREFIX%equipment` WHERE 
+							asset_id= @asset_id);	
+
+		IF ((@status_id IS NOT NULL) AND 
+			(@status_id >0)) AND 
+			((@equipment_id IS NOT NULL) AND 
+			(@equipment_id >0)) THEN						
+				
+				UPDATE `%TABLE_PREFIX%equipment` SET status_id = @status_id WHERE equipment_id=@equipment_id;
+		END IF;
+	
+	END IF;
+END$
+
 UPDATE `%TABLE_PREFIX%plugin` SET version='0.2' WHERE name = 'Equipment Manager'$

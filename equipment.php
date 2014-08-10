@@ -125,6 +125,9 @@ class EquipmentPlugin extends Plugin {
         }
         Signal::connect('apps.scp',
                 array('EquipmentPlugin', 'callbackDispatch'));
+        
+        Signal::connect('cron',
+                array('\controller\TicketRecurring', 'runRecurrance'));
     }
 
     public static function getCustomForm() {
@@ -231,7 +234,9 @@ class EquipmentPlugin extends Plugin {
                         url_post('^save',
                                 'saveAction'),
                         url_post('^delete',
-                                'deleteAction')
+                                'deleteAction'),
+                        url_get('^test',
+                                'test')
         ));
 
         $media_url = url('^/equipment.*assets/',

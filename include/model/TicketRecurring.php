@@ -16,6 +16,7 @@ class TicketRecurring extends Entity {
     private $interval;
     private $active;
     private $interval_multiplier;
+    private $next_date;
 
     public function getJsonProperties() {
         return array(
