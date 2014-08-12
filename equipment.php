@@ -315,7 +315,7 @@ class EquipmentPlugin extends Plugin {
 
     function configureUpgrade() {
 
-        $installer = new EquipmentInstaller();
+        $installer = new \util\EquipmentInstaller();
         if (!$installer->upgrade()) {
             echo "Upgrade configuration error.  "
             . "Unable to upgrade database tables!";
@@ -337,17 +337,17 @@ class EquipmentPlugin extends Plugin {
      * @return boolean
      */
     function createDBTables() {
-        $installer = new EquipmentInstaller();
+        $installer = new \util\EquipmentInstaller();
         return $installer->install();
     }
 
     /**
      * Uninstall hook.
      * @param type $errors
-     * @return boolean
+     * @return boolean 
      */
     function pre_uninstall(&$errors) {
-        $installer = new EquipmentInstaller();
+        $installer = new \util\EquipmentInstaller();
         return $installer->remove();
     }
 

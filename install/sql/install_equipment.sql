@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket_recurring` (
   `ticket_id` int(11) NOT NULL,
   `active` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8$
 
 INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
 VALUES ('equipment_status',NOW(),'internal equipment plugin list, do not modify',NOW())$ 
@@ -296,6 +296,7 @@ BEGIN
 END$	
 
 DROP TRIGGER IF EXISTS `%TABLE_PREFIX%ticket_event_AUPD`$
+
 CREATE TRIGGER `%TABLE_PREFIX%ticket_event_AUPD` AFTER UPDATE ON `%TABLE_PREFIX%ticket_event` FOR EACH ROW
 BEGIN
 		SET @status_id = (SELECT status_id FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
@@ -321,7 +322,7 @@ BEGIN
 				UPDATE `%TABLE_PREFIX%equipment` SET status_id = @status_id WHERE equipment_id=@equipment_id;
 		END IF;
 	
-	END IF;
+	
 END$	
 
 UPDATE `%TABLE_PREFIX%plugin` SET version='0.2' WHERE name = 'Equipment Manager'$

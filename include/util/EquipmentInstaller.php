@@ -15,7 +15,7 @@ namespace util;
  * ******************************************************************** */
 require_once 'class.setup.php';
 
-class EquipmentInstaller extends SetupWizard {
+class EquipmentInstaller extends \SetupWizard {
 
     /**
      * Loads, checks and installs SQL file.
