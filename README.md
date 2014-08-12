@@ -22,7 +22,7 @@ from here https://github.com/poctob/OSTEquipmentPlugin/releases
      Check Enable Frontend. 
      Copy  [Plugin Root]/Equipment_Front directory into [OSTicket root].
      Backup up [OSTicket root]/include/class.nav.php file.
-     Copy [OSTicket root]/include/class.nav.php with one from [Plugin Root]/ost_core/include directory.
+     Replace [OSTicket root]/include/class.nav.php with one from [Plugin Root]/ost_core/include directory.
  
  h. Go to Manage->Help Topics. Select a topic that you would like to use equipment for (for example Report a Problem).  Under Custom Form select Equipment.  Click Save.
 
@@ -37,6 +37,8 @@ from here https://github.com/poctob/OSTEquipmentPlugin/releases
     [OSTicket root]/include/plugins
 
  c. Copy [OSTicket root]/scp/apps/dispatcher.php to [OSTicket root]/scp/dispatcher.php.
+
+You may see a database error on upgrade, it should go away on the next reload.
 
 For more information visit Wiki page:
 https://github.com/poctob/OSTEquipmentPlugin/wiki
