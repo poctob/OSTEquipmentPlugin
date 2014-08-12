@@ -14,7 +14,6 @@
     vim: expandtab sw=4 ts=4 sts=4:
 **********************************************************************/
 require('equipment.inc.php');
-require_once(EQUIPMENT_INCLUDE_DIR.'class.equipment_category.php');
 $inc='equipment_list.inc.php';
 require(CLIENTINC_DIR.'header.inc.php');
 require(EQUIPMENT_CLIENTINC_DIR.$inc);

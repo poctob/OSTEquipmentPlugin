@@ -153,6 +153,34 @@ BEGIN
 	END IF; 
 END$
 
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_AINS`$
+
+CREATE TRIGGER `%TABLE_PREFIX%equipment_status_AINS` AFTER INSERT ON `%TABLE_PREFIX%equipment_status` FOR EACH ROW
+BEGIN
+	SET @pk=NEW.status_id;
+	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment_status');
+	INSERT INTO `%TABLE_PREFIX%list_items` (list_id, `value`, `properties`) 
+	VALUES (@list_pk, NEW.name, CONCAT('',@pk));
+END$
+
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_AUPD`$
+
+CREATE TRIGGER `%TABLE_PREFIX%equipment_status_AUPD` AFTER UPDATE ON `%TABLE_PREFIX%equipment_status` FOR EACH ROW
+BEGIN
+	SET @pk=NEW.status_id;
+	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment_status'); 
+	UPDATE `%TABLE_PREFIX%list_items` SET `value`= NEW.name WHERE `properties`= CONCAT('',@pk) AND list_id=@list_pk;
+END$
+
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_status_ADEL`$
+
+CREATE TRIGGER `%TABLE_PREFIX%equipment_status_ADEL` AFTER DELETE ON `%TABLE_PREFIX%equipment_status` FOR EACH ROW
+BEGIN
+	SET @pk=OLD.status_id; 
+	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment_status');
+	DELETE FROM `%TABLE_PREFIX%list_items` WHERE list_id = @list_pk AND properties=CONCAT('',@pk);
+END$
+
 DROP VIEW IF EXISTS `%TABLE_PREFIX%EquipmentFormView`$
 
 CREATE VIEW `%TABLE_PREFIX%EquipmentFormView` AS 
@@ -264,7 +292,14 @@ BEGIN
 				UPDATE `%TABLE_PREFIX%equipment` SET status_id = @status_id WHERE equipment_id=@equipment_id;
 		END IF;
 	
-	END IF;
+	
 END$
 
-UPDATE `%TABLE_PREFIX%plugin` SET version='0.2' WHERE name = 'Equipment Manager'$
+DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%update_version`$
+CREATE PROCEDURE `%TABLE_PREFIX%update_version`(plugin_name VARCHAR(250), plugin_version VARCHAR(100))
+begin
+	SET @id = (SELECT id FROM `%TABLE_PREFIX%plugin` WHERE `name`= plugin_name);
+	UPDATE `%TABLE_PREFIX%plugin` SET version = plugin_version WHERE id=@id;
+END$
+
+call `%TABLE_PREFIX%update_version`('Equipment Manager', '0.2')$

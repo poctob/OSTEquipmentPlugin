@@ -22,55 +22,35 @@ require_once('config.php');
 
 
 
-define('EQUIPMENT_PLUGIN_VERSION',
-        '0.2');
+define('EQUIPMENT_PLUGIN_VERSION', '0.2');
 
-define('EQUIPMENT_TABLE',
-        TABLE_PREFIX . 'equipment');
-define('EQUIPMENT_CATEGORY_TABLE',
-        TABLE_PREFIX . 'equipment_category');
-define('EQUIPMENT_STATUS_TABLE',
-        TABLE_PREFIX . 'equipment_status');
-define('EQUIPMENT_TICKET_TABLE',
-        TABLE_PREFIX . 'equipment_ticket');
+define('EQUIPMENT_TABLE', TABLE_PREFIX . 'equipment');
+define('EQUIPMENT_CATEGORY_TABLE', TABLE_PREFIX . 'equipment_category');
+define('EQUIPMENT_STATUS_TABLE', TABLE_PREFIX . 'equipment_status');
+define('EQUIPMENT_TICKET_TABLE', TABLE_PREFIX . 'equipment_ticket');
 define('EQUIPMENT_TICKET_RECURRING__TABLE',
         TABLE_PREFIX . 'equipment_ticket_recurring');
-define('EQUIPMENT_TICKET_VIEW',
-        TABLE_PREFIX . 'EquipmentTicketView');
+define('EQUIPMENT_TICKET_VIEW', TABLE_PREFIX . 'EquipmentTicketView');
 
-define('OST_WEB_ROOT',
-        osTicket::get_root_path(__DIR__));
+define('OST_WEB_ROOT', osTicket::get_root_path(__DIR__));
 
-define('EQUIPMENT_WEB_ROOT',
-        OST_WEB_ROOT . 'scp/dispatcher.php/equipment/');
+define('EQUIPMENT_WEB_ROOT', OST_WEB_ROOT . 'scp/dispatcher.php/equipment/');
 
-define('OST_ROOT',
-        INCLUDE_DIR . '../');
+define('OST_ROOT', INCLUDE_DIR . '../');
 
-define('PLUGINS_ROOT',
-        INCLUDE_DIR . 'plugins/');
+define('PLUGINS_ROOT', INCLUDE_DIR . 'plugins/');
 
-define('EQUIPMENT_PLUGIN_ROOT',
-        __DIR__ . '/');
-define('EQUIPMENT_INCLUDE_DIR',
-        EQUIPMENT_PLUGIN_ROOT . 'include/');
-define('EQUIPMENT_MODEL_DIR',
-        EQUIPMENT_INCLUDE_DIR . 'model/');
-define('EQUIPMENT_CONTROLLER_DIR',
-        EQUIPMENT_INCLUDE_DIR . 'controller/');
+define('EQUIPMENT_PLUGIN_ROOT', __DIR__ . '/');
+define('EQUIPMENT_INCLUDE_DIR', EQUIPMENT_PLUGIN_ROOT . 'include/');
+define('EQUIPMENT_MODEL_DIR', EQUIPMENT_INCLUDE_DIR . 'model/');
+define('EQUIPMENT_CONTROLLER_DIR', EQUIPMENT_INCLUDE_DIR . 'controller/');
 
-define('EQUIPMENT_APP_DIR',
-        EQUIPMENT_PLUGIN_ROOT . 'app/');
-define('EQUIPMENT_ASSETS_DIR',
-        EQUIPMENT_PLUGIN_ROOT . 'assets/');
-define('EQUIPMENT_VENDOR_DIR',
-        EQUIPMENT_PLUGIN_ROOT . 'vendor/');
-define('EQUIPMENT_VIEWS_DIR',
-        EQUIPMENT_PLUGIN_ROOT . 'views/');
-define('EQUIPMENT_STAFFINC_DIR',
-        EQUIPMENT_INCLUDE_DIR . 'staff/');
-define('EQUIPMENT_CLIENTINC_DIR',
-        EQUIPMENT_INCLUDE_DIR . 'client/');
+define('EQUIPMENT_APP_DIR', EQUIPMENT_PLUGIN_ROOT . 'app/');
+define('EQUIPMENT_ASSETS_DIR', EQUIPMENT_PLUGIN_ROOT . 'assets/');
+define('EQUIPMENT_VENDOR_DIR', EQUIPMENT_PLUGIN_ROOT . 'vendor/');
+define('EQUIPMENT_VIEWS_DIR', EQUIPMENT_PLUGIN_ROOT . 'views/');
+define('EQUIPMENT_STAFFINC_DIR', EQUIPMENT_INCLUDE_DIR . 'staff/');
+define('EQUIPMENT_CLIENTINC_DIR', EQUIPMENT_INCLUDE_DIR . 'client/');
 
 require_once (EQUIPMENT_VENDOR_DIR . 'autoload.php');
 spl_autoload_register(array('EquipmentPlugin', 'autoload'));
@@ -80,24 +60,15 @@ class EquipmentPlugin extends Plugin {
     var $config_class = 'EquipmentConfig';
 
     public static function autoload($className) {
-        $className = ltrim($className,
-                '\\');
+        $className = ltrim($className, '\\');
         $fileName = '';
         $namespace = '';
-        if ($lastNsPos = strrpos($className,
-                '\\')) {
-            $namespace = substr($className,
-                    0,
-                    $lastNsPos);
-            $className = substr($className,
-                    $lastNsPos + 1);
-            $fileName = str_replace('\\',
-                            DIRECTORY_SEPARATOR,
-                            $namespace) . DIRECTORY_SEPARATOR;
+        if ($lastNsPos = strrpos($className, '\\')) {
+            $namespace = substr($className, 0, $lastNsPos);
+            $className = substr($className, $lastNsPos + 1);
+            $fileName = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
         }
-        $fileName .= str_replace('_',
-                        DIRECTORY_SEPARATOR,
-                        $className) . '.php';
+        $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
         $fileName = 'include/' . $fileName;
 
         if (file_exists(EQUIPMENT_PLUGIN_ROOT . $fileName)) {
@@ -118,16 +89,18 @@ class EquipmentPlugin extends Plugin {
 
         if ($config->get('equipment_backend_enable')) {
             $this->createStaffMenu();
-
-            if ($config->get('equipment_frontend_enable')) {
-                $this->createFrontMenu();
-            }
         }
-        Signal::connect('apps.scp',
-                array('EquipmentPlugin', 'callbackDispatch'));
-        
+        if ($config->get('equipment_frontend_enable')) {
+            $this->createFrontMenu();
+        }
+
+        Signal::connect('apps.scp', array('EquipmentPlugin', 'callbackDispatch'));
+
         Signal::connect('cron',
                 array('\controller\TicketRecurring', 'runRecurrance'));
+
+        //call it anyway, not sure if cron works like it is suppose to.
+        \controller\TicketRecurring::runRecurrance();
     }
 
     public static function getCustomForm() {
@@ -146,118 +119,84 @@ class EquipmentPlugin extends Plugin {
         $categories_url = url('^/equipment.*categories/',
                 patterns(
                         'controller\EquipmentCategory',
-                        url_get('^list$',
-                                'listAction'),
-                        url_get('^listJson$',
-                                'listJsonAction'),
-                        url_get('^view/(?P<id>\d+)$',
-                                'viewAction'),
+                        url_get('^list$', 'listAction'),
+                        url_get('^listJson$', 'listJsonAction'),
+                        url_get('^view/(?P<id>\d+)$', 'viewAction'),
                         url_get('^openTicketsJson/(?P<item_id>\d+)$',
                                 'openTicketsJsonAction'),
                         url_get('^closedTicketsJson/(?P<item_id>\d+)$',
                                 'closedTicketsJsonAction'),
                         url_get('^getItemsJson/(?P<category_id>\d+)$',
                                 'categoryItemsJsonAction'),
-                        url_post('^save',
-                                'saveAction'),
-                        url_post('^delete',
-                                'deleteAction')
+                        url_post('^save', 'saveAction'),
+                        url_post('^delete', 'deleteAction')
         ));
 
         $item_url = url('^/equipment.*item/',
                 patterns(
                         'controller\EquipmentItem',
-                        url_get('^list$',
-                                'listAction'),
-                        url_get('^listJson$',
-                                'listJsonAction'),
-                        url_get('^view/(?P<id>\d+)$',
-                                'viewAction'),
-                        url_get('^new/(?P<category_id>\d+)$',
-                                'newAction'),
-                        url_post('^publish',
-                                'publishAction'),
-                        url_post('^activate',
-                                'activateAction'),
-                        url_post('^save',
-                                'saveAction'),
+                        url_get('^list$', 'listAction'),
+                        url_get('^listJson$', 'listJsonAction'),
+                        url_get('^view/(?P<id>\d+)$', 'viewAction'),
+                        url_get('^new/(?P<category_id>\d+)$', 'newAction'),
+                        url_post('^publish', 'publishAction'),
+                        url_post('^activate', 'activateAction'),
+                        url_post('^save', 'saveAction'),
                         url_get('^openTicketsJson/(?P<item_id>\d+)$',
                                 'openTicketsJsonAction'),
                         url_get('^closedTicketsJson/(?P<item_id>\d+)$',
                                 'closedTicketsJsonAction'),
-                        url_get('^getDynamicForm/(?P<id>\d+)$',
-                                'getDynamicForm'),
-                        url_post('^delete',
-                                'deleteAction')
+                        url_get('^getDynamicForm/(?P<id>\d+)$', 'getDynamicForm'),
+                        url_post('^delete', 'deleteAction')
         ));
 
         $status_url = url('^/equipment.*status/',
                 patterns(
                         'controller\EquipmentStatus',
-                        url_get('^list$',
-                                'listAction'),
-                        url_get('^view/(?P<id>\d+)$',
-                                'viewAction'),
-                        url_get('^new/(?P<category_id>\d+)$',
-                                'newAction'),
-                        url_get('^listJson$',
-                                'listJsonAction'),
+                        url_get('^list$', 'listAction'),
+                        url_get('^view/(?P<id>\d+)$', 'viewAction'),
+                        url_get('^new/(?P<category_id>\d+)$', 'newAction'),
+                        url_get('^listJson$', 'listJsonAction'),
                         url_get('^getItemsJson/(?P<status_id>\d+)$',
                                 'statusItemsJsonAction'),
-                        url_post('^save',
-                                'saveAction'),
-                        url_post('^delete',
-                                'deleteAction')
+                        url_post('^save', 'saveAction'),
+                        url_post('^delete', 'deleteAction')
         ));
 
         $recurring_url = url('^/equipment.*recurring/',
                 patterns(
                         'controller\TicketRecurring',
-                        url_get('^list$',
-                                'listAction'),
-                        url_get('^view/(?P<id>\d+)$',
-                                'viewAction'),
+                        url_get('^list$', 'listAction'),
+                        url_get('^view/(?P<id>\d+)$', 'viewAction'),
                         url_get('^viewByTicket/(?P<id>\d+)$',
                                 'viewByTicketAction'),
-                        url_get('^addByTicket/(?P<id>\d+)$',
-                                'addByTicketAction'),
-                        url_get('^new/(?P<category_id>\d+)$',
-                                'newAction'),
-                        url_get('^listJson$',
-                                'listJsonAction'),
+                        url_get('^addByTicket/(?P<id>\d+)$', 'addByTicketAction'),
+                        url_get('^new/(?P<category_id>\d+)$', 'newAction'),
+                        url_get('^listJson$', 'listJsonAction'),
                         url_get('^getItemsJson/(?P<status_id>\d+)$',
                                 'statusItemsJsonAction'),
-                        url_get('^listTicketsJson$',
-                                'listTicketsJson'),
-                        url_get('^listEquipmentJson$',
-                                'listEquipmentJson'),
-                        url_post('^save',
-                                'saveAction'),
-                        url_post('^delete',
-                                'deleteAction'),
-                        url_get('^test',
-                                'test')
+                        url_get('^listTicketsJson$', 'listTicketsJson'),
+                        url_get('^listEquipmentJson$', 'listEquipmentJson'),
+                        url_post('^save', 'saveAction'),
+                        url_post('^delete', 'deleteAction'),
+                        url_get('^test', 'test')
         ));
 
         $media_url = url('^/equipment.*assets/',
                 patterns(
                         'controller\MediaController',
-                        url_get('^(?P<url>.*)$',
-                                'defaultAction')))
+                        url_get('^(?P<url>.*)$', 'defaultAction')))
         ;
 
         $dashboard_url = url('^/equipment.*dashboard/',
                 patterns(
-                        'controller\Dashboard',
-                        url_get('.*',
-                                'viewAction')))
+                        'controller\Dashboard', url_get('.*', 'viewAction')))
         ;
 
         $redirect_url = url('^/equipment.*ostroot/',
                 patterns(
                         'controller\MediaController',
-                        url_get('^(?P<url>.*)$',
-                                'redirectAction')))
+                        url_get('^(?P<url>.*)$', 'redirectAction')))
         ;
 
         $object->append($media_url);
@@ -285,8 +224,7 @@ class EquipmentPlugin extends Plugin {
      */
     function createFrontMenu() {
         Application::registerClientApp('Equipment Status',
-                'equipment_front/index.php',
-                array(iconclass => 'equipment'));
+                'equipment_front/index.php', array(iconclass => 'equipment'));
     }
 
     /**

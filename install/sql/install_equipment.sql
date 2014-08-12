@@ -325,4 +325,11 @@ BEGIN
 	
 END$	
 
-UPDATE `%TABLE_PREFIX%plugin` SET version='0.2' WHERE name = 'Equipment Manager'$
+DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%update_version`$
+CREATE PROCEDURE `%TABLE_PREFIX%update_version`(plugin_name VARCHAR(250), plugin_version VARCHAR(100))
+begin
+	SET @id = (SELECT id FROM `%TABLE_PREFIX%plugin` WHERE `name`= plugin_name);
+	UPDATE `%TABLE_PREFIX%plugin` SET version = plugin_version WHERE id=@id;
+END$
+
+call `%TABLE_PREFIX%update_version`('Equipment Manager', '0.2')$

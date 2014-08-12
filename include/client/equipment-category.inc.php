@@ -13,15 +13,15 @@
 
     vim: expandtab sw=4 ts=4 sts=4:
 **********************************************************************/
-if(!defined('OSTCLIENTINC') || !$category || !$category->isPublic()) die('Access Denied');
+if(!defined('OSTCLIENTINC') || !$category || !$category->getIspublic()) die('Access Denied');
 ?>
 <h1><strong><?php echo $category->getName() ?></strong></h1>
 <p>
-<?php echo Format::safe_html($category->getDescription()); ?>
+<?php echo \Format::safe_html($category->getDescription()); ?>
 </p>
 <hr>
 <?php
-$sql='SELECT equipment.equipment_id as equipment_id, equipment.name as Equipment, 
+$sql='SELECT equipment.equipment_id as equipment_id, equipment.asset_id as Equipment, 
     status.name as Status, status.image as Image'
     .' FROM '.EQUIPMENT_TABLE.' equipment '
     .' LEFT JOIN '.EQUIPMENT_STATUS_TABLE.' status ON(status.status_id=equipment.status_id) '
@@ -35,9 +35,9 @@ if(($res=db_query($sql)) && db_num_rows($res)) {
     while($row=db_fetch_array($res)) {
         echo sprintf('
             <li>%s <a href="equipment.php?id=%d" >%s &nbsp;%s</a></li>',
-            '<img src="../images/'.$row['Image'].'" width="20" height="20"/>',    
+            '<img src="images/'.$row['Image'].'" width="20" height="20"/>',    
              $row['equipment_id'],
-             Format::htmlchars($row['Equipment']), $row['Status']);
+             \Format::htmlchars($row['Equipment']), $row['Status']);
     }
     echo '  </ol>
          </div>

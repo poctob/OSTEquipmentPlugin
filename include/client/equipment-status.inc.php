@@ -17,11 +17,11 @@ if(!defined('OSTCLIENTINC') || !$status ) die('Access Denied');
 ?>
 <h1><strong><?php echo $status->getName() ?></strong></h1>
 <p>
-<?php echo Format::safe_html($status->getDescription()); ?>
+<?php echo \Format::safe_html($status->getDescription()); ?>
 </p>
 <hr>
 <?php
-$sql='SELECT equipment.equipment_id as equipment_id, equipment.name as Equipment, 
+$sql='SELECT equipment.equipment_id as equipment_id, equipment.asset_id as Equipment, 
     status.name as Status, status.color as color'
     .' FROM '.EQUIPMENT_TABLE.' equipment '
     .' LEFT JOIN '.EQUIPMENT_STATUS_TABLE.' status ON(status.status_id=equipment.status_id) '
@@ -37,7 +37,7 @@ if(($res=db_query($sql)) && db_num_rows($res)) {
             <li> <a href="equipment.php?id=%d" %s>%s &nbsp;%s</a></li>',   
              $row['equipment_id'],
              'style="color:'.$row['color'].'"',
-             Format::htmlchars($row['Equipment']), $row['Status']);
+             \Format::htmlchars($row['Equipment']), $row['Status']);
     }
     echo '  </ol>
          </div>

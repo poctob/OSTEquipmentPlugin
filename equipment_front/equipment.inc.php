@@ -13,9 +13,9 @@
 **********************************************************************/
 define('ROOT_PATH','../');
 require_once('../client.inc.php');
-require_once(EQUIPMENT_INCLUDE_DIR.'class.equipment.php');
+//require_once(EQUIPMENT_INCLUDE_DIR.'class.equipment.php');
 /* Bail out if knowledgebase is disabled or if we have no public-published Equipment. */
-if(!Equipment::countPublishedEquipment()) {
+if(!\model\Equipment::countPublishedEquipment()) {
     header('Location: ../');
     exit;
 }
