@@ -125,6 +125,7 @@ abstract class Entity {
     {
         
     }
+   
 
     public function getErrors() {
         return $this->errors;

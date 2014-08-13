@@ -121,6 +121,7 @@ class EquipmentPlugin extends Plugin {
                         'controller\EquipmentCategory',
                         url_get('^list$', 'listAction'),
                         url_get('^listJson$', 'listJsonAction'),
+                        url_get('^listJsonTree$', 'listJsonTreeAction'),
                         url_get('^view/(?P<id>\d+)$', 'viewAction'),
                         url_get('^openTicketsJson/(?P<item_id>\d+)$',
                                 'openTicketsJsonAction'),

@@ -31,5 +31,11 @@ if(!b.element.is(":focus")){b.box.addClass("ui-state-active")
 b._trigger("change",null)
 })
 },_isChecked:function(){return this.element.prop("checked")
+},_unbindEvents:function(){this.box.off();
+if(this.label.length>0){this.label.off()
+}},enable:function(){this._bindEvents();
+this.box.removeClass("ui-state-disabled")
+},disable:function(){this._unbindEvents();
+this.box.addClass("ui-state-disabled")
 }})
 });

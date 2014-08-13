@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_category` (
   `notes` tinytext NOT NULL,
   `created` date NOT NULL,
   `updated` date NOT NULL,
+  `parent_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`category_id`),
   KEY `ispublic` (`ispublic`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8$

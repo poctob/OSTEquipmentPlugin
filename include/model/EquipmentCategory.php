@@ -25,6 +25,7 @@ class EquipmentCategory extends Entity {
     private $name;
     private $ispublic;
     private $updated;
+    private $parent_id;
 
     public function getJsonProperties() {
         return array(
@@ -112,16 +113,13 @@ class EquipmentCategory extends Entity {
         return $this->closed_ticket_count;
     }
 
-  /*  public function delete() {
+    public function getParent_id() {
+        return $this->parent_id;
+    }
 
-        if (parent::delete()) {
-            if (db_query($sql) && ($num = db_affected_rows())) {
-                db_query('DELETE FROM ' . EQUIPMENT_TABLE
-                        . ' WHERE category_id=' . db_input($this->getId()));
-            }
-        }
-        return $num;
-    }*/
+    public function setParent_id($parent_id) {
+        $this->parent_id = $parent_id;
+    }
 
     /**
      * Counts a number of open tickets in this category.
@@ -193,6 +191,26 @@ class EquipmentCategory extends Entity {
         return $ids;
     }
 
+    public function getChildren() {
+        $categories = array();
+        $sql = ' SELECT category_id as category_id'
+                . ' FROM ' . EQUIPMENT_CATEGORY_TABLE
+                . ' WHERE parent_id =' . db_input($this->getId());
+
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $id = $row['category_id'];
+                if (isset($id) && $id > 0) {
+                    $category = new \model\EquipmentCategory($id);
+                    $categories[] = $category;
+                }
+            }
+        }
+
+        return $categories;
+    }
+
     public function getEquipment() {
 
         $ids = $this->getEquipmentIds();
@@ -212,7 +230,8 @@ class EquipmentCategory extends Entity {
                 ',name=' . db_input($this->getName()) .
                 ',ispublic=' . $this->getIspublic() .
                 ',updated= NOW()' .
-                ',created=' . $created;
+                ',created=' . $created .
+                ',parent_id=' . db_input($this->getParent_id());
         return $sql;
     }
 
@@ -224,6 +243,7 @@ class EquipmentCategory extends Entity {
         $this->name = '';
         $this->ispublic = 0;
         $this->updated = null;
+        $this->parent_id = 0;
     }
 
     public function validate() {
@@ -244,6 +264,10 @@ class EquipmentCategory extends Entity {
 
     protected static function getTableName() {
         return EQUIPMENT_CATEGORY_TABLE;
+    }
+
+    public function expose() {
+        return json_encode($this);
     }
 
 }

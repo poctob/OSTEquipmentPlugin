@@ -29,16 +29,16 @@ b.attr("aria-hidden",false);
 a.attr("aria-expanded",true);
 if(this.options.effect){e.hide(this.options.effect.name,null,this.options.effect.duration,function(){f.removeClass("pui-tabview-selected ui-state-active");
 a.removeClass("ui-state-hover").addClass("pui-tabview-selected ui-state-active");
-b.show(d.options.name,null,d.options.effect.duration,function(){d._trigger("change",null,c)
+b.show(d.options.name,null,d.options.effect.duration,function(){d._trigger("change",null,{index:c})
 })
 })
 }else{f.removeClass("pui-tabview-selected ui-state-active");
 e.hide();
 a.removeClass("ui-state-hover").addClass("pui-tabview-selected ui-state-active");
 b.show();
-this._trigger("change",null,c)
+d._trigger("change",null,{index:c})
 }},remove:function(b){var d=this.navContainer.children().eq(b),a=this.panelContainer.children().eq(b);
-this._trigger("close",null,b);
+this._trigger("close",null,{index:b});
 d.remove();
 a.remove();
 if(b==this.options.selected){var c=this.options.selected==this.getLength()?this.options.selected-1:this.options.selected;

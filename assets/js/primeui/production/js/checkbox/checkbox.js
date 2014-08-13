@@ -4,7 +4,7 @@ this.box=$('<div class="pui-chkbox-box ui-widget ui-corner-all ui-state-default"
 this.icon=$('<span class="pui-chkbox-icon pui-c"></span>').appendTo(this.box);
 this.disabled=this.element.prop("disabled");
 this.label=$('label[for="'+this.element.attr("id")+'"]');
-if(this.element.prop("checked")){this.box.addClass("ui-state-active");
+if(this.isChecked()){this.box.addClass("ui-state-active");
 this.icon.addClass("ui-icon ui-icon-check")
 }if(this.disabled){this.box.addClass("ui-state-disabled")
 }else{this._bindEvents()
@@ -38,5 +38,16 @@ if(!b){this.box.addClass("ui-state-active")
 this.box.removeClass("ui-state-active");
 this.icon.removeClass("ui-icon ui-icon-check");
 this.element.trigger("change")
-}}})
+}},_unbindEvents:function(){this.box.off();
+this.element.off("focus blur keydown keyup");
+this.label.off()
+},disable:function(){this.box.prop("disabled",true);
+this.box.attr("aria-disabled",true);
+this.box.addClass("ui-state-disabled").removeClass("ui-state-hover");
+this._unbindEvents()
+},enable:function(){this.box.prop("disabled",false);
+this.box.attr("aria-disabled",false);
+this.box.removeClass("ui-state-disabled");
+this._bindEvents()
+}})
 });

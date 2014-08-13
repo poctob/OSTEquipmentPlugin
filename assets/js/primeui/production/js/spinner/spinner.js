@@ -72,5 +72,13 @@ if(a===""){if(this.options.min!==undefined){this.value=this.options.min
 if(this.options.prefix){a=this.options.prefix+a
 }if(this.options.suffix){a=a+this.options.suffix
 }this.element.val(a)
+},_unbindEvents:function(){this.wrapper.children(".pui-spinner-button").off();
+this.element.off()
+},enable:function(){this.wrapper.removeClass("ui-state-disabled");
+this.element.puiinputtext("enable");
+this._bindEvents()
+},disable:function(){this.wrapper.addClass("ui-state-disabled");
+this.element.puiinputtext("disable");
+this._unbindEvents()
 }})
 });

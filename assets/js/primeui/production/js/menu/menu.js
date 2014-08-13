@@ -2,10 +2,9 @@ $(function(){$.widget("primeui.puibasemenu",{options:{popup:false,trigger:null,m
 }},_initPopup:function(){var a=this;
 this.element.closest(".pui-menu").addClass("pui-menu-dynamic pui-shadow").appendTo(document.body);
 this.positionConfig={my:this.options.my,at:this.options.at,of:this.options.trigger};
-this.options.trigger.on(this.options.triggerEvent+".pui-menu",function(c){var b=$(this);
-if(a.element.is(":visible")){a.hide()
+this.options.trigger.on(this.options.triggerEvent+".pui-menu",function(b){if(a.element.is(":visible")){a.hide()
 }else{a.show()
-}c.preventDefault()
+}b.preventDefault()
 });
 $(document.body).on("click.pui-menu",function(d){var b=a.element.closest(".pui-menu");
 if(b.is(":hidden")){return
@@ -138,7 +137,6 @@ this.links=this.element.find("a.pui-menuitem-link:not(.ui-state-disabled)");
 this.backward=this.wrapper.children("div.pui-slidemenu-backward");
 this.stack=[];
 this.jqWidth=this.container.width();
-var a=this;
 if(!this.element.hasClass("pui-menu-dynamic")){this._applyDimensions()
 }this._super();
 this._bindEvents()

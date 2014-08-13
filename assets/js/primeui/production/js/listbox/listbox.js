@@ -2,20 +2,23 @@ $(function(){$.widget("primeui.puilistbox",{options:{scrollHeight:200},_create:f
 this.container=this.element.parent().parent();
 this.listContainer=$('<ul class="pui-listbox-list"></ul>').appendTo(this.container);
 this.options.multiple=this.element.prop("multiple");
-if(this.options.data){for(var b=0;
+if(this.options.data){this._populateInputFromData()
+}this._populateContainerFromOptions();
+this._restrictHeight();
+this._bindEvents()
+},_populateInputFromData:function(){for(var b=0;
 b<this.options.data.length;
 b++){var a=this.options.data[b];
 if(a.label){this.element.append('<option value="'+a.value+'">'+a.label+"</option>")
 }else{this.element.append('<option value="'+a+'">'+a+"</option>")
-}}}this.choices=this.element.children("option");
+}}},_populateContainerFromOptions:function(){this.choices=this.element.children("option");
 for(var b=0;
 b<this.choices.length;
 b++){var a=this.choices.eq(b),c=this.options.content?this.options.content.call(this,this.options.data[b]):a.text();
 this.listContainer.append('<li class="pui-listbox-item ui-corner-all">'+c+"</li>")
-}this.items=this.listContainer.find(".pui-listbox-item:not(.ui-state-disabled)");
-if(this.container.height()>this.options.scrollHeight){this.container.height(this.options.scrollHeight)
-}this._bindEvents()
-},_bindEvents:function(){var a=this;
+}this.items=this.listContainer.find(".pui-listbox-item:not(.ui-state-disabled)")
+},_restrictHeight:function(){if(this.container.height()>this.options.scrollHeight){this.container.height(this.options.scrollHeight)
+}},_bindEvents:function(){var a=this;
 this.items.on("mouseover.puilistbox",function(){var b=$(this);
 if(!b.hasClass("ui-state-highlight")){b.addClass("ui-state-hover")
 }}).on("mouseout.puilistbox",function(){$(this).removeClass("ui-state-hover")
@@ -65,5 +68,17 @@ if($.type(b)==="number"){a=this.items.eq(b)
 }a.removeClass("ui-state-highlight");
 this.choices.eq(a.index()).prop("selected",false);
 this._trigger("itemUnselect",null,this.choices.eq(a.index()))
+},_setOption:function(a,b){$.Widget.prototype._setOption.apply(this,arguments);
+if(a==="data"){this.element.empty();
+this.listContainer.empty();
+this._populateInputFromData();
+this._populateContainerFromOptions();
+this._restrictHeight();
+this._bindEvents()
+}},_unbindEvents:function(){this.items.off("mouseover.puilistbox click.puilistbox dblclick.puilistbox")
+},disable:function(){this._unbindEvents();
+this.items.addClass("ui-state-disabled")
+},enable:function(){this._bindEvents();
+this.items.removeClass("ui-state-disabled")
 }})
 });

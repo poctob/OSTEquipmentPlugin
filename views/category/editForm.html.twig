@@ -1,3 +1,4 @@
+<script src="assets/js/equipment_item_view.js"></script>
 <form action="../save" method="post" id="saveForm">   
     <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
     <input type="hidden" name="id" value="{{item.id}}" />
@@ -31,6 +32,11 @@
 
     <input id="name" type="text" size="70" name="name" value="{{ item.name }}" required/>
     <br>
+     <div style="padding-top:5px;"><strong>Parent category</strong></div>
+    <select id="categoriesDropDown" name="parent_id">
+        <option>---Select Parent---</option>                
+    </select>
+    <br/>
 
     <div style="padding-top:5px;">
         <b>Category Description</b>:&nbsp;

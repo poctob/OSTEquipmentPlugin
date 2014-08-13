@@ -16,21 +16,23 @@ c<d.length;
 c++){var a=d[c];
 if(a.label){b.append('<option value="'+a.value+'">'+a.label+"</option>")
 }else{b.append('<option value="'+a+'">'+a+"</option>")
-}}},_createList:function(g,l,j,b){g.wrap('<div class="ui-helper-hidden"></div>');
-var d=$('<div class="pui-picklist-listwrapper '+l+'"></div>'),f=$('<ul class="ui-widget-content pui-picklist-list pui-inputtext"></ul>'),k=g.children("option");
-if(this.options.filter){d.append('<div class="pui-picklist-filter-container"><input type="text" class="pui-picklist-filter" /><span class="ui-icon ui-icon-search"></span></div>');
-d.find("> .pui-picklist-filter-container > input").puiinputtext()
-}if(j){d.append('<div class="pui-picklist-caption ui-widget-header ui-corner-tl ui-corner-tr">'+j+"</div>");
+}}},_createList:function(d,b,c,e){d.wrap('<div class="ui-helper-hidden"></div>');
+var a=$('<div class="pui-picklist-listwrapper '+b+'"></div>'),f=$('<ul class="ui-widget-content pui-picklist-list pui-inputtext"></ul>');
+if(this.options.filter){a.append('<div class="pui-picklist-filter-container"><input type="text" class="pui-picklist-filter" /><span class="ui-icon ui-icon-search"></span></div>');
+a.find("> .pui-picklist-filter-container > input").puiinputtext()
+}if(c){a.append('<div class="pui-picklist-caption ui-widget-header ui-corner-tl ui-corner-tr">'+c+"</div>");
 f.addClass("ui-corner-bottom")
 }else{f.addClass("ui-corner-all")
-}for(var c=0;
-c<k.length;
-c++){var a=k.eq(c),e=this.options.content?this.options.content.call(this,b[c]):a.text(),h=$('<li class="pui-picklist-item ui-corner-all">'+e+"</li>").data({"item-label":a.text(),"item-value":a.val()});
-this.items=this.items.add(h);
-f.append(h)
-}d.append(f).appendTo(this.element);
+}this._populateContainerFromOptions(d,f,e);
+a.append(f).appendTo(this.element);
 return f
-},_createButtons:function(){var b=this,a=$('<ul class="pui-picklist-buttons"></ul>');
+},_populateContainerFromOptions:function(b,h,f){var g=b.children("option");
+for(var c=0;
+c<g.length;
+c++){var a=g.eq(c),e=this.options.content?this.options.content.call(this,f[c]):a.text(),d=$('<li class="pui-picklist-item ui-corner-all">'+e+"</li>").data({"item-label":a.text(),"item-value":a.val()});
+this.items=this.items.add(d);
+h.append(d)
+}},_createButtons:function(){var b=this,a=$('<ul class="pui-picklist-buttons"></ul>');
 a.append(this._createButton("ui-icon-arrow-1-e","pui-picklist-button-add",function(){b._add()
 })).append(this._createButton("ui-icon-arrowstop-1-e","pui-picklist-button-addall",function(){b._addAll()
 })).append(this._createButton("ui-icon-arrow-1-w","pui-picklist-button-remove",function(){b._remove()
@@ -165,5 +167,22 @@ if(this.filterMatcher(c,g)){d.show()
 }}}},_startsWithFilter:function(b,a){return b.toLowerCase().indexOf(a)===0
 },_containsFilter:function(b,a){return b.toLowerCase().indexOf(a)!==-1
 },_endsWithFilter:function(b,a){return b.indexOf(a,b.length-a.length)!==-1
+},_setOption:function(a,b){$.Widget.prototype._setOption.apply(this,arguments);
+if(a==="sourceData"){this._setOptionData(this.sourceInput,this.sourceList,this.options.sourceData)
+}if(a==="targetData"){this._setOptionData(this.targetInput,this.targetList,this.options.targetData)
+}},_setOptionData:function(a,c,b){a.empty();
+c.empty();
+this._populateInputFromData(a,b);
+this._populateContainerFromOptions(a,c,b);
+this._bindEvents()
+},_unbindEvents:function(){this.items.off("mouseover.puipicklist mouseout.puipicklist click.puipicklist dblclick.pickList")
+},disable:function(){this._unbindEvents();
+this.items.addClass("ui-state-disabled");
+this.element.find(".pui-picklist-buttons > button").each(function(a,b){$(b).puibutton("disable")
+})
+},enable:function(){this._bindEvents();
+this.items.removeClass("ui-state-disabled");
+this.element.find(".pui-picklist-buttons > button").each(function(a,b){$(b).puibutton("enable")
+})
 }})
 });

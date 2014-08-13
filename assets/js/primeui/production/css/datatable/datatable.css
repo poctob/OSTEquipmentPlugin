@@ -1,4 +1,4 @@
-.pui-datatable table{border-collapse:collapse;width:100%;}
+.pui-datatable table{border-collapse:collapse;width:100%;table-layout:fixed;}
 .pui-datatable .pui-datatable-header,.pui-datatable .pui-datatable-footer{text-align:center;padding:4px 10px;}
 .pui-datatable .pui-datatable-caption{border-bottom:0 none;text-align:center;padding:4px 10px;}
 .pui-datatable .pui-datatable-footer{border-top:0 none;}
@@ -10,3 +10,5 @@
 .pui-datatable .pui-paginator{border-top:0 none;}
 .pui-datatable .pui-datatable-data tr.ui-state-hover{font-weight:inherit;cursor:pointer;}
 .pui-datatable tr.ui-state-highlight{cursor:pointer;}
+.pui-datatable-scrollable-header,.pui-datatable-scrollable-footer{border:0 none;overflow:hidden;}
+.pui-datatable-scrollable-body{overflow:auto;}

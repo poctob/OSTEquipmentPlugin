@@ -29,5 +29,11 @@ for(var a=0;
 a<b;
 a++){this.stars.eq(a).addClass("pui-rating-star-on")
 }this._trigger("rate",null,b)
+},enable:function(){this.container.removeClass("ui-state-disabled");
+this._bindEvents()
+},disable:function(){this.container.addClass("ui-state-disabled");
+this._unbindEvents()
+},_unbindEvents:function(){this.stars.off("click");
+this.container.children(".pui-rating-cancel").off("hover click")
 }})
 });

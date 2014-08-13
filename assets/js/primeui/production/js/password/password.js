@@ -29,7 +29,8 @@ b.infoText.text(c)
 if(!this.options.inline){var a="resize."+this.element.attr("id");
 $(window).unbind(a).bind(a,function(){if(b.panel.is(":visible")){b.align()
 }})
-}},_testStrength:function(d){var b=0,c=0,a=this;
+}},_unbindEvents:function(){this.element.off("focus.puipassword blur.puipassword keyup.puipassword")
+},_testStrength:function(d){var b=0,c=0,a=this;
 c=d.match("[0-9]");
 b+=a._normalize(c?c.length:1/4,1)*25;
 c=d.match("[a-zA-Z]");
@@ -49,5 +50,9 @@ this.panel.fadeIn()
 }else{this.panel.slideDown()
 }},hide:function(){if(this.options.inline){this.panel.slideUp()
 }else{this.panel.fadeOut()
-}}})
+}},disable:function(){this.element.puiinputtext("disable");
+this._unbindEvents()
+},enable:function(){this.element.puiinputtext("enable");
+this._bindEvents()
+}})
 });

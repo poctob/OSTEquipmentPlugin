@@ -1,3 +1,7 @@
+ALTER TABLE `%TABLE_PREFIX%equipment_category` 
+ADD COLUMN `parent_id` INT NOT NULL DEFAULT 0 AFTER `updated`$
+
+
 CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket_recurring` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
   `equipment_id` int(11) NOT NULL,

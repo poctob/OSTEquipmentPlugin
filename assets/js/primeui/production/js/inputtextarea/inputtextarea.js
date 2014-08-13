@@ -106,5 +106,7 @@ this.panel.css({left:a.left+b.left,top:a.top+b.top,width:this.element.innerWidth
 },_show:function(){this._alignPanel();
 this.panel.show()
 },_hide:function(){this.panel.hide()
+},disable:function(){this.element.puiinputtext("disable")
+},enable:function(){this.element.puiinputtext("enable")
 }})
 });

@@ -10,7 +10,7 @@ if(c.text){a.text(c.text)
 }this.content=this.element.children(".pui-dialog-content");
 this.titlebar=this.element.children(".pui-dialog-titlebar");
 if(this.options.closable){this._renderHeaderIcon("pui-dialog-titlebar-close","ui-icon-close")
-}if(this.options.minimizable){this._renderHeaderIcon("pui-dialog-titlebar-maximize","ui-icon-extlink")
+}if(this.options.maximizable){this._renderHeaderIcon("pui-dialog-titlebar-maximize","ui-icon-extlink")
 }if(this.options.minimizable){this._renderHeaderIcon("pui-dialog-titlebar-minimize","ui-icon-minus")
 }this.icons=this.titlebar.children(".pui-dialog-titlebar-icon");
 this.closeIcon=this.titlebar.children(".pui-dialog-titlebar-close");

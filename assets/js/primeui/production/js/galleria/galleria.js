@@ -43,17 +43,18 @@ this.slideshowActive=true
 this.slideshowActive=false
 },isSlideshowActive:function(){return this.slideshowActive
 },select:function(g,j){if(g!==this.options.activeIndex){if(this.options.showCaption){this._hideCaption()
-}var a=this.panels.eq(this.options.activeIndex),c=this.frames.eq(this.options.activeIndex),b=this.panels.eq(g),e=this.frames.eq(g);
+}var a=this.panels.eq(this.options.activeIndex),b=this.panels.eq(g);
 a.hide(this.options.effect,this.options.effectOptions,this.options.effectSpeed);
 b.show(this.options.effect,this.options.effectOptions,this.options.effectSpeed);
+if(this.options.showFilmstrip){var c=this.frames.eq(this.options.activeIndex),e=this.frames.eq(g);
 c.removeClass("pui-galleria-frame-active").css("opacity","");
 e.animate({opacity:1},this.options.effectSpeed,null,function(){$(this).addClass("pui-galleria-frame-active")
 });
-if(this.options.showCaption){this._showCaption(b)
-}if(j===undefined||j===true){var h=e.position().left,k=this.options.frameWidth+parseInt(e.css("margin-right"),10),i=this.strip.position().left,d=h+i,f=d+this.options.frameWidth;
+if((j===undefined||j===true)){var h=e.position().left,k=this.options.frameWidth+parseInt(e.css("margin-right"),10),i=this.strip.position().left,d=h+i,f=d+this.options.frameWidth;
 if(f>this.stripWrapper.width()){this.strip.animate({left:"-="+k},this.options.effectSpeed,"easeInOutCirc")
 }else{if(d<0){this.strip.animate({left:"+="+k},this.options.effectSpeed,"easeInOutCirc")
-}}}this.options.activeIndex=g
+}}}}if(this.options.showCaption){this._showCaption(b)
+}this.options.activeIndex=g
 }},_hideCaption:function(){this.caption.slideUp(this.options.effectSpeed)
 },_showCaption:function(a){var b=a.children("img");
 this.caption.html("<h4>"+b.attr("title")+"</h4><p>"+b.attr("alt")+"</p>").slideDown(this.options.effectSpeed)
