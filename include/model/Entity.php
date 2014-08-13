@@ -120,6 +120,11 @@ abstract class Entity {
         }
         return $retval;
     }
+    
+    public function postSave($data)
+    {
+        
+    }
 
     public function getErrors() {
         return $this->errors;

@@ -57,7 +57,8 @@ class EquipmentItem extends Controller {
     public function saveAction() {
         $form_id = \EquipmentPlugin::getCustomForm();
         if (isset($form_id)) {
-            \model\Equipment::saveDynamicData($form_id, $_POST['id'],$_POST);            
+        //    \model\Equipment::saveDynamicData($form_id, $_POST['id'],$_POST);
+            $_POST['form_id'] = $form_id;
         }
         return parent::saveAction();
     }

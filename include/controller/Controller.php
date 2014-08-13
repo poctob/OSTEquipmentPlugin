@@ -139,6 +139,7 @@ abstract class Controller {
                         'Failed to save item!',
                         print_r($object->getErrors()));
             } else {
+                $object->postSave($_POST);
                 $this::setFlash('info',
                         'Success!',
                         'Item Saved');

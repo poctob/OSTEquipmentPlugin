@@ -184,9 +184,7 @@ class Equipment extends Entity {
      */
     public static function assignTicket($ticket_id, $id) {
 
-        self::onCloseTicket($ticket_id,
-                $id,
-                true);
+        self::onCloseTicket($ticket_id, $id, true);
         self::deleteByTicket($ticket_id);
 
         $sql = 'equipment_id=' . db_input($id)
@@ -304,28 +302,30 @@ class Equipment extends Entity {
 
         return false;
     }
+    
+    public function postSave($data)
+    {
+        if(isset($data['form_id']))
+        {
+            static::saveDynamicData($data['form_id'], $this->getId(), $data);
+        }
+    }
 
     public static function saveDynamicData($form_id, $id, $data) {
         if (intval($id) > 0) {
             $form = \DynamicForm::lookup($form_id);
 
             if (isset($form)) {
-                $form_entry = self::getDynamicData($id);
+                $form_entry = static::getDynamicData($id);
                 $one = $form_entry->one();
                 if (isset($one)) {
                     $one->getSaved();
                 } else {
                     $one = $form->instanciate();
-                    $one->set('object_type',
-                            'E');
+                    $one->set('object_type', 'E');
                     $one->setObjectId($id);
                 }
-                foreach ($one->getFields() as $f) {
-                    if (isset($data[$f->get('name')])) {
-                        $one->setAnswer($f->get('name'),
-                                $data[$f->get('name')]);
-                    }
-                }
+                $one->setSource($data);
                 $one->save();
             }
         }
