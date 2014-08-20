@@ -37,6 +37,7 @@ END$
 CALL `%TABLE_PREFIX%RemoveEquipmentFormFields`$
 DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%RemoveEquipmentFormFields`$
 DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%update_version`$
+DROP EVENT IF EXISTS `%TABLE_PREFIX%EquipmentCron`$
 
 
 

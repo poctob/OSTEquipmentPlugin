@@ -299,6 +299,12 @@ BEGIN
 	
 END$
 
+DROP EVENT IF EXISTS `%TABLE_PREFIX%EquipmentCron`$
+CREATE EVENT `%TABLE_PREFIX%EquipmentCron`
+    ON SCHEDULE EVERY 1 MINUTE
+    DO
+      CALL `%TABLE_PREFIX%EquipmentCron`()$
+
 DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%update_version`$
 CREATE PROCEDURE `%TABLE_PREFIX%update_version`(plugin_name VARCHAR(250), plugin_version VARCHAR(100))
 begin
@@ -306,4 +312,4 @@ begin
 	UPDATE `%TABLE_PREFIX%plugin` SET version = plugin_version WHERE id=@id;
 END$
 
-call `%TABLE_PREFIX%update_version`('Equipment Manager', '0.2')$
+call `%TABLE_PREFIX%update_version`('Equipment Manager', '0.3')$
