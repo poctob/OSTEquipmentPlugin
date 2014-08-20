@@ -52,14 +52,19 @@ CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket_recurring` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8$
 
+SET SQL_SAFE_UPDATES=0$
+DELETE FROM `%TABLE_PREFIX%list` WHERE `name`='equipment_status'$ 
 INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
 VALUES ('equipment_status',NOW(),'internal equipment plugin list, do not modify',NOW())$ 
 
+DELETE FROM `%TABLE_PREFIX%list` WHERE `name`='equipment'$ 
 INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
 VALUES ('equipment',NOW(),'internal equipment plugin list, do not modify',NOW())$ 
 
+DELETE FROM `%TABLE_PREFIX%form` WHERE `title`='Equipment'$
 INSERT INTO `%TABLE_PREFIX%form` (`type`, `deletable`,`title`, `notes`, `created`, `updated`)
 VALUES ('G',0,'Equipment','Equipment internal form',NOW(),NOW())$ 
+SET SQL_SAFE_UPDATES=1$
 
 DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%CreateEquipmentFormFields`$
 
@@ -326,17 +331,172 @@ BEGIN
 	
 END$	
 
-DROP EVENT IF EXISTS `%TABLE_PREFIX%EquipmentCron`$
-CREATE EVENT `%TABLE_PREFIX%EquipmentCron`
-    ON SCHEDULE EVERY 1 MINUTE
-    DO
-      CALL `%TABLE_PREFIX%EquipmentCron`()$
+DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%Equipment_Copy_Form_Entry`$
+CREATE PROCEDURE `%TABLE_PREFIX%Equipment_Copy_Form_Entry`(p_ticket_id INT, p_new_ticket_id INT)
+BEGIN
+	DECLARE n INT DEFAULT 0;
+	DECLARE i INT DEFAULT 0;
+	DECLARE l_id INT;
+	DECLARE l_new_id INT;
 
-DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%update_version`$
-CREATE PROCEDURE `%TABLE_PREFIX%update_version`(plugin_name VARCHAR(250), plugin_version VARCHAR(100))
-begin
-	SET @id = (SELECT id FROM `%TABLE_PREFIX%plugin` WHERE `name`= plugin_name);
-	UPDATE `%TABLE_PREFIX%plugin` SET version = plugin_version WHERE id=@id;
+	DROP TEMPORARY TABLE IF EXISTS tmp_table2;
+	CREATE TEMPORARY TABLE tmp_table2 
+        SELECT * 
+        FROM %TABLE_PREFIX%_form_entry 
+        WHERE object_id = p_ticket_id AND `object_type` = 'T';
+
+	SET SQL_SAFE_UPDATES=0;
+
+	ALTER TABLE tmp_table2 modify column id int;
+
+	SELECT COUNT(*) FROM tmp_table2 INTO n;
+	SET i = 0;
+
+	WHILE i<n DO
+		SELECT id INTO l_id FROM tmp_table2 LIMIT i,1;	
+		UPDATE tmp_table2 set object_id=p_new_ticket_id, created=NOW(), updated=NOW() WHERE id=l_id;
+
+		INSERT INTO %TABLE_PREFIX%_form_entry 
+		(SELECT NULL, form_id, object_id, object_type, sort, created, updated 
+		 FROM tmp_table2 WHERE id=l_id); 
+
+		SELECT LAST_INSERT_ID() INTO l_new_id;
+
+		DROP TEMPORARY TABLE IF EXISTS tmp_table3;
+		CREATE TEMPORARY TABLE tmp_table3 
+
+		SELECT * FROM %TABLE_PREFIX%_form_entry_values 
+		WHERE entry_id = l_id;
+
+		ALTER TABLE tmp_table3 modify column entry_id int;
+		UPDATE tmp_table3 SET entry_id = l_new_id;
+		INSERT INTO %TABLE_PREFIX%_form_entry_values SELECT * FROM tmp_table3;		
+		DROP TEMPORARY TABLE IF EXISTS tmp_table3;
+
+		SET i = i + 1;
+	END WHILE;
+	
+	SET SQL_SAFE_UPDATES=1;
+	DROP TEMPORARY TABLE IF EXISTS tmp_table2;
 END$
 
-call `%TABLE_PREFIX%update_version`('Equipment Manager', '0.3')$
+
+DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%Equipment_Reopen_Ticket`$
+CREATE PROCEDURE `%TABLE_PREFIX%Equipment_Reopen_Ticket`(p_etr_id INT)
+BEGIN
+	DECLARE l_ticket_id INT;
+	DECLARE l_new_ticket_id INT;
+	DECLARE l_equipment_id INT;
+	DECLARE l_ticket_number INT;
+	DECLARE l_loop_flag boolean;
+	DECLARE l_tmp INT;
+
+	DROP TEMPORARY TABLE IF EXISTS tmp_table1;
+
+	SELECT equipment_id, ticket_id 
+	INTO l_equipment_id, l_ticket_id 
+	FROM %TABLE_PREFIX%equipment_ticket_recurring 
+	WHERE id=p_etr_id;
+	
+	IF l_ticket_id IS NOT NULL THEN	
+		SET l_loop_flag = FALSE;
+		WHILE l_loop_flag = FALSE DO
+			SET l_tmp = NULL;
+			SET l_ticket_number = FLOOR(RAND()*900000)+100000;
+			SELECT ticket_id INTO l_tmp FROM %TABLE_PREFIX%ticket WHERE `number` = l_ticket_number;
+			IF l_tmp IS NULL THEN
+				SET l_loop_flag = TRUE;
+			END IF;
+		END WHILE;		
+
+		CREATE TEMPORARY TABLE tmp_table1 
+                SELECT * 
+                FROM %TABLE_PREFIX%ticket 
+                WHERE ticket_id = l_ticket_id;
+
+		SET SQL_SAFE_UPDATES=0;
+		ALTER TABLE tmp_table1 modify column ticket_id int;
+		UPDATE tmp_table1 
+		SET `number` = l_ticket_number, 
+			ticket_id = NULL, 
+			`status` = 'open', 
+			closed = NULL, 
+			created = NOW(), 
+			updated = NOW(),
+			isanswered = 0,
+			lastmessage = NOW(),
+			lastresponse = NULL;
+		SET SQL_SAFE_UPDATES=1;		
+
+		INSERT INTO %TABLE_PREFIX%ticket SELECT * FROM tmp_table1;
+		DROP TEMPORARY TABLE IF EXISTS tmp_table1;
+
+		SELECT ticket_id INTO l_new_ticket_id FROM %TABLE_PREFIX%ticket WHERE `number` = l_ticket_number;
+		IF l_new_ticket_id IS NOT NULL THEN	
+			CREATE TEMPORARY TABLE tmp_table1 SELECT * FROM %TABLE_PREFIX%ticket__cdata WHERE ticket_id = l_ticket_id;
+			SET SQL_SAFE_UPDATES=0;
+			ALTER TABLE tmp_table1 modify column ticket_id int;
+			UPDATE tmp_table1 SET ticket_id = l_new_ticket_id;
+			SET SQL_SAFE_UPDATES=1;	
+
+			INSERT INTO %TABLE_PREFIX%ticket__cdata SELECT * FROM tmp_table1;
+			DROP TEMPORARY TABLE IF EXISTS tmp_table1;
+
+			CALL %TABLE_PREFIX%Equipment_Copy_Form_Entry(l_ticket_id, l_new_ticket_id);
+
+			CREATE TEMPORARY TABLE tmp_table1 SELECT * FROM %TABLE_PREFIX%ticket_event 
+			WHERE ticket_id = l_ticket_id
+			AND `state`='created';
+			SET SQL_SAFE_UPDATES=0;
+			UPDATE tmp_table1 SET ticket_id=l_new_ticket_id, `timestamp` = NOW();
+			INSERT INTO %TABLE_PREFIX%ticket_event SELECT * FROM tmp_table1;
+			SET SQL_SAFE_UPDATES=1;	
+			DROP TEMPORARY TABLE IF EXISTS tmp_table1;
+			
+			
+		END IF;
+	END IF;
+END$
+
+DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%EquipmentCronProc`$
+CREATE PROCEDURE `%TABLE_PREFIX%EquipmentCronProc`()
+BEGIN
+	DECLARE done INT DEFAULT FALSE;
+	DECLARE l_id INT;
+	DECLARE l_next_date datetime;
+	DECLARE l_interval double;
+	DECLARE cur1 CURSOR FOR (SELECT id, `interval`, next_date
+	FROM %TABLE_PREFIX%equipment_ticket_recurring
+	WHERE active=1);
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+		
+
+	OPEN cur1;
+
+	read_loop: LOOP
+		FETCH cur1 INTO l_id, l_interval, l_next_date;
+		IF done then
+			LEAVE read_loop;
+		END IF;
+
+		IF l_next_date <= NOW() 	THEN
+			SET l_next_date = DATE_ADD(l_next_date, INTERVAL l_interval SECOND);
+			CALL %TABLE_PREFIX%Equipment_Reopen_Ticket(l_id);
+			UPDATE %TABLE_PREFIX%equipment_ticket_recurring 
+                        SET next_date=l_next_date WHERE id=l_id;
+		END IF;
+	END LOOP;
+
+	CLOSE cur1;
+END$
+
+
+SET SQL_SAFE_UPDATES=0$
+UPDATE `%TABLE_PREFIX%plugin` SET version = '0.3' WHERE `name`='Equipment Manager'$
+SET SQL_SAFE_UPDATES=1$	
+
+DROP EVENT IF EXISTS `%TABLE_PREFIX%EquipmentCron`$
+CREATE EVENT `%TABLE_PREFIX%EquipmentCron`
+    ON SCHEDULE EVERY 1 HOUR
+    DO
+      CALL `%TABLE_PREFIX%EquipmentCronProc`()$

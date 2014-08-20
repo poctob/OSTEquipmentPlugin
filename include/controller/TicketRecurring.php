@@ -106,40 +106,6 @@ class TicketRecurring extends Controller {
                 $args);
     }
 
-    public function test() {
-        static::runRecurrance();
-    }
-
-    static public function runRecurrance() {
-        $items = \model\TicketRecurring::getAll();
-        foreach ($items as $item) {
-            if ($item->getActive()) {
-                $date = new \DateTime();
-                $now = $date->getTimestamp();
-                $next_date = strtotime($item->getNext_date());
-
-                if ($next_date <= $now) {
-                    static::repeatTicket($item->getTicket_id());
-                    $interval = $item->getInterval();
-                    $next_dt = new \DateTime();
-                    $next_dt->add(new \DateInterval('PT' . $interval . 'S'));
-                    
-                    $item->setNext_date($next_dt->format('Y-m-d H:i:s'));
-
-                    $item->setLast_opened($date->format('Y-m-d H:i:s'));
-                    $item->setInterval_multiplier(1);
-                    $item->save();
-                }
-            }
-        }
-    }
-
-    static private function repeatTicket($id) {
-        $ticket = new \Ticket($id);
-        if (isset($ticket)) {
-            $ticket->setStatus('open');
-        }
-    }
 
     protected function getViewDirectory() {
         return 'recurring';

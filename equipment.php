@@ -22,7 +22,7 @@ require_once('config.php');
 
 
 
-define('EQUIPMENT_PLUGIN_VERSION', '0.2');
+define('EQUIPMENT_PLUGIN_VERSION', '0.3');
 
 define('EQUIPMENT_TABLE', TABLE_PREFIX . 'equipment');
 define('EQUIPMENT_CATEGORY_TABLE', TABLE_PREFIX . 'equipment_category');
@@ -78,7 +78,10 @@ class EquipmentPlugin extends Plugin {
 
     function bootstrap() {
         if ($this->firstRun()) {
-            $this->configureFirstRun();
+            if(!$this->configureFirstRun())
+            {
+                return false;
+            }
         }
 
         if ($this->needUpgrade()) {
@@ -95,12 +98,6 @@ class EquipmentPlugin extends Plugin {
         }
 
         Signal::connect('apps.scp', array('EquipmentPlugin', 'callbackDispatch'));
-
-        Signal::connect('cron',
-                array('\controller\TicketRecurring', 'runRecurrance'));
-
-        //call it anyway, not sure if cron works like it is suppose to.
-        \controller\TicketRecurring::runRecurrance();
     }
 
     public static function getCustomForm() {
@@ -179,8 +176,7 @@ class EquipmentPlugin extends Plugin {
                         url_get('^listTicketsJson$', 'listTicketsJson'),
                         url_get('^listEquipmentJson$', 'listEquipmentJson'),
                         url_post('^save', 'saveAction'),
-                        url_post('^delete', 'deleteAction'),
-                        url_get('^test', 'test')
+                        url_post('^delete', 'deleteAction')
         ));
 
         $media_url = url('^/equipment.*assets/',
@@ -268,7 +264,9 @@ class EquipmentPlugin extends Plugin {
         if (!$this->createDBTables()) {
             echo "First run configuration error.  "
             . "Unable to create database tables!";
+            return false;
         }
+        return true;
     }
 
     /**

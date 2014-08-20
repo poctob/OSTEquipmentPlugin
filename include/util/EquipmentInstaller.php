@@ -50,8 +50,9 @@ class EquipmentInstaller extends \SetupWizard {
                 echo '<br />';
                 echo 'Error parsing SQL schema! Get help from developers (#4)';
                 echo '<br />';
+                return false;
             }
-            return false;
+            return true;
         }
 
         return true;
