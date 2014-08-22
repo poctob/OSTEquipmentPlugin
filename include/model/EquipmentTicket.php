@@ -91,7 +91,9 @@ class EquipmentTicket extends Entity {
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
                 $item = new Equipment($row['equipment_id']);
-                $items[] = $item;
+                if (isset($item)) {
+                    $items[] = $item;
+                }
             }
         }
 
@@ -107,7 +109,9 @@ class EquipmentTicket extends Entity {
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
                 $item = \Ticket::lookup($row['ticket_id']);
-                $items[] = $item;
+                if (isset($item)) {
+                    $items[] = $item;
+                }
             }
         }
 
@@ -125,7 +129,9 @@ class EquipmentTicket extends Entity {
             while ($row = db_fetch_array($res)) {
                 $item = new EquipmentTicket($row['ticket_id'],
                         $row['equipment_id']);
-                $items[] = $item;
+                if (isset($item)) {
+                    $items[] = $item;
+                }
             }
         }
 
@@ -143,7 +149,9 @@ class EquipmentTicket extends Entity {
             while ($row = db_fetch_array($res)) {
                 $item = new EquipmentTicket($row['ticket_id'],
                         $row['equipment_id']);
-                $items[] = $item;
+                if (isset($item)) {
+                    $items[] = $item;
+                }
             }
         }
 
