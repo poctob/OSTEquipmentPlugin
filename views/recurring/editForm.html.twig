@@ -65,13 +65,13 @@
             </td>
         </tr>
     </table>
-    {% if item.ticket_id is defined %}
+    {% if item.ticket.id is defined %}
         <script>
             var ticket_id
                     = {{ item.ticket.id }};</script>
         {% endif %}      
 
-    {% if item.equipment_id is defined %}
+    {% if item.equipment.id is defined %}
         <script>
                     var equipment_id
                     = {{ item.equipment.id }};
