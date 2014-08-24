@@ -1,0 +1,18 @@
+{% extends 'layout.html.twig' %}
+{% block head %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="assets/js/listRecurring.js"></script>  
+    {% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}
+{% block body %}
+    {{ parent() }}
+    <script>var events_on = false;</script>
+    <div id="noticePanel" title="Recurring Events">  
+        <p style="color:red;">Something went wrong! Check your database settings and privileges and try again.</p>
+    </div>
+{% endblock %}
+

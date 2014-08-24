@@ -1,0 +1,43 @@
+{% extends 'layout.html.twig' %}
+{% block head %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="assets/js/listRecurring.js"></script>  
+    {% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}
+{% block body %}
+    {{ parent() }}
+    <div id="actionButtons">
+        <div id="noticePanel" title="Recurring Events">  
+            Recurring tickets functionality allows to create a schedule where a
+            ticket is being created at regular intervals for a particular piece of
+            equipment.  This functionality may be useful for preventive maintenance, 
+            calibration or end of life purposes.  This functionality is using
+            MySQL events, the following is needed: 
+            <br/>
+            * MySQL events should be running (SET GLOBAL event_scheduler = ON;)
+            <br/>
+            * OSTicket user should have a privilege of creating events 
+            (GRANT EVENT ON [databasename].* TO [user]@[host];)
+            <br/>
+            If you don't know what this means, you can safely ignore this page from now on.
+        </div> 
+        {% if enabled %}
+            It looks like events are enabled.  Let's try enabling ocurrance 
+            <br/>
+            (it's your responsibility to grant current user appropriate privileges):
+            <script>var events_on = true;</script>
+        {% else %}
+            Events are not enabled in the database server.  Please enable the events and reload this page.
+            <script>var events_on = false;</script>
+        {% endif %}
+        <br/>
+        <form action="enableEvents" method="post" id="eventEnableForm" id="classForm">
+            <button id="enableButton" type="submit">Enable</button>    
+        </form>
+    </div>
+{% endblock %}
+

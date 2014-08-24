@@ -20,6 +20,8 @@ DROP TABLE IF EXISTS `%TABLE_PREFIX%equipment_status`$
 DROP TABLE IF EXISTS `%TABLE_PREFIX%equipment_category`$
 DROP TABLE IF EXISTS `%TABLE_PREFIX%equipment`$
 DROP TABLE IF EXISTS `%TABLE_PREFIX%equipment_ticket_recurring`$
+DROP TABLE IF EXISTS `%TABLE_PREFIX%equipment_config`$
+
 
 CREATE PROCEDURE `%TABLE_PREFIX%RemoveEquipmentFormFields`()
 BEGIN

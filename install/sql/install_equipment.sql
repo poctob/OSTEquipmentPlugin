@@ -52,6 +52,17 @@ CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket_recurring` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8$
 
+CREATE TABLE `%TABLE_PREFIX%equipment_config` (
+   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL DEFAULT 'undefined',
+  `value` varchar(255) NOT NULL DEFAULT 'undefined',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `key_UNIQUE` (`key`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8$
+
+REPLACE INTO `%TABLE_PREFIX%equipment_config` (`key`, `value`)
+VALUES ('recurrance_enabled','false')$ 
+
 SET SQL_SAFE_UPDATES=0$
 DELETE FROM `%TABLE_PREFIX%list` WHERE `name`='equipment_status'$ 
 INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
@@ -494,9 +505,3 @@ END$
 SET SQL_SAFE_UPDATES=0$
 UPDATE `%TABLE_PREFIX%plugin` SET version = '0.3' WHERE `name`='Equipment Manager'$
 SET SQL_SAFE_UPDATES=1$	
-
-DROP EVENT IF EXISTS `%TABLE_PREFIX%EquipmentCron`$
-CREATE EVENT `%TABLE_PREFIX%EquipmentCron`
-    ON SCHEDULE EVERY 1 HOUR
-    DO
-      CALL `%TABLE_PREFIX%EquipmentCronProc`()$

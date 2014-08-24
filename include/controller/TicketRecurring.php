@@ -106,9 +106,66 @@ class TicketRecurring extends Controller {
                 $args);
     }
 
-
     protected function getViewDirectory() {
         return 'recurring';
+    }
+
+    public function listAction() {
+        $enabled = \model\EquipmentConfig::findByKey('recurrance_enabled');
+        if (isset($enabled) && $enabled == 'true') {
+            parent::listAction();
+        } else {
+            $args = array();
+            $args['title'] = $this->getTitle();
+            $args['dt_columns'] = $this->getListColumns();
+            $args['enabled'] = $this->checkEventScheduler();
+
+            $template_name = 'listRecurringTemplate.html.twig';
+            $this->render($template_name,
+                    $args);
+        }
+    }
+
+    protected function checkEventScheduler() {
+        $retval = false;
+        $sql = "show variables like '%event_scheduler%'";
+
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $retval = $row['Value'] == 'ON';
+            }
+        }
+        return $retval;
+    }
+
+    protected function createEvent() {
+
+        $sql = 'DROP EVENT IF EXISTS `' . TABLE_PREFIX . 'EquipmentCron`';
+        db_query($sql);
+        $sql = 'CREATE EVENT `' . TABLE_PREFIX . 'EquipmentCron`
+                ON SCHEDULE EVERY 1 HOUR
+                DO
+                CALL `' . TABLE_PREFIX . 'EquipmentCronProc`()';
+
+        $res = db_query($sql);
+        if ($res) {
+            \model\EquipmentConfig::saveConfig('recurrance_enabled',
+                    'true');
+        }
+        return $res;
+    }
+
+    public function enableEventsAction() {
+        if ($this->createEvent()) {
+            parent::listAction();
+            return;
+        }
+        $args = array();
+        $args['title'] = $this->getTitle();
+        $template_name = 'listRecurringTemplateFail.html.twig';
+        $this->render($template_name,
+                $args);
     }
 
 }

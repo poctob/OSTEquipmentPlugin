@@ -28,6 +28,7 @@ define('EQUIPMENT_TABLE', TABLE_PREFIX . 'equipment');
 define('EQUIPMENT_CATEGORY_TABLE', TABLE_PREFIX . 'equipment_category');
 define('EQUIPMENT_STATUS_TABLE', TABLE_PREFIX . 'equipment_status');
 define('EQUIPMENT_TICKET_TABLE', TABLE_PREFIX . 'equipment_ticket');
+define('EQUIPMENT_CONFIG_TABLE', TABLE_PREFIX . 'equipment_config');
 define('EQUIPMENT_TICKET_RECURRING__TABLE',
         TABLE_PREFIX . 'equipment_ticket_recurring');
 define('EQUIPMENT_TICKET_VIEW', TABLE_PREFIX . 'EquipmentTicketView');
@@ -176,7 +177,8 @@ class EquipmentPlugin extends Plugin {
                         url_get('^listTicketsJson$', 'listTicketsJson'),
                         url_get('^listEquipmentJson$', 'listEquipmentJson'),
                         url_post('^save', 'saveAction'),
-                        url_post('^delete', 'deleteAction')
+                        url_post('^delete', 'deleteAction'),
+                        url_post('^enableEvents', 'enableEventsAction')
         ));
 
         $media_url = url('^/equipment.*assets/',
