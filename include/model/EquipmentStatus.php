@@ -156,6 +156,28 @@ class EquipmentStatus extends Entity {
     public function countEquipment() {
         return count($this->getEquipmentIds());
     }
+    
+     public function countEquipmentByCategory($category_id) {
+        $ids = array();
+        $sql = ' SELECT equipment.equipment_id as equipment_id '
+                . ' FROM ' . EQUIPMENT_STATUS_TABLE . ' status '
+                . ' LEFT JOIN ' . EQUIPMENT_TABLE . ' equipment ON(equipment.status_id=status.status_id) '
+                . ' WHERE status.status_id=' . db_input($this->getId())
+                . ' AND equipment.category_id=' . db_input($category_id)
+        ;
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $id = $row['equipment_id'];
+                if(isset($id) && $id >0)
+                {
+                    $ids[] = $id;
+                }
+            }
+        }
+
+        return count($ids);
+    }
 
     protected function getSaveSQL() {
         $sql = 'name=' . db_input($this->name) .

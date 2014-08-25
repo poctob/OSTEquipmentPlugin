@@ -4,6 +4,13 @@
  * and open the template in the editor.
  */
 $(function() {
+    
+     $('#equipmentTree').puipanel({
+        toggleable: true
+        , closable: true
+    });
+    
+    
     $('#totalEquipment').puipanel({
         toggleable: true
         , closable: true
@@ -23,6 +30,20 @@ $(function() {
         toggleable: true
         , closable: true
     });
+    
+    $('#dashboardTree').puitree({  
+        nodes: function(ui, response) {                          
+            $.ajax({  
+                type: "GET",  
+                url: 'treeJson',  
+                dataType: "json",  
+                context: this,  
+                success: function(data) {  
+                    response.call(this, data);  
+                }  
+            });  
+        }  
+    });  
 
 });
 

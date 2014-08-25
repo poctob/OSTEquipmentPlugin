@@ -271,11 +271,28 @@ class Equipment extends Entity {
 
         return $id;
     }
+    
+    public static function findByStatusAndCategory($status_id, $category_id)
+    {
+        $items = array();
+         $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TABLE
+                . ' WHERE status_id=' . db_input($status_id)
+                . ' AND category_id=' . db_input($category_id);
+         
+         $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $items[] = new \model\Equipment($row['equipment_id']);
+            }
+        }
+        return $items;
+    }
 
     public static function findByAssetId($asset_id) {
 
-        if (($id = self::findIdByAssetId($asset_id)))
+        if (($id = self::findIdByAssetId($asset_id))) {
             return self::lookup($id);
+        }
 
         return false;
     }

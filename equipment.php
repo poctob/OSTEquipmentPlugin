@@ -189,7 +189,8 @@ class EquipmentPlugin extends Plugin {
 
         $dashboard_url = url('^/equipment.*dashboard/',
                 patterns(
-                        'controller\Dashboard', url_get('.*', 'viewAction')))
+                        'controller\Dashboard', url_get('^treeJson', 'treeJsonAction'),
+                        url_get('.*', 'viewAction')))
         ;
 
         $redirect_url = url('^/equipment.*ostroot/',

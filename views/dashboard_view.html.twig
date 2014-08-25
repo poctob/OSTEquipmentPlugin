@@ -15,10 +15,14 @@
 {% block body %}
     {{ parent() }}
 
+    <div id="equipmentTree" style="margin-bottom:20px" title="Equipment Tree">
+        <div id="dashboardTree"></div>
+    </div>
+
     <div id="totalEquipment" style="margin-bottom:20px" title="Equipment">
         Total Asset Count: {{ item.equipment|length}}
     </div>
-    
+
     <div id="totalCategories" style="margin-bottom:20px" title="Categories">
         Total Categories Count: {{ item.categories|length}}
         <hr />
@@ -31,10 +35,10 @@
             <br/>
         {% endfor %}
     </div>
-    
+
     <div id="totalStatus" style="margin-bottom:20px" title="Status">
         Total Status Count: {{ item.status|length}}  
-         <hr />
+        <hr />
         {% for status in item.status %}
             <strong>{{ status.name }}</strong>
             <ul>
@@ -43,8 +47,8 @@
             <br/>
         {% endfor %}
     </div>
-    
-     <div id="totalTickets" style="margin-bottom:20px" title="Tickets">
+
+    <div id="totalTickets" style="margin-bottom:20px" title="Tickets">
         Total Open Ticket Count: {{ item.tickets }} 
     </div>
 {% endblock %}
