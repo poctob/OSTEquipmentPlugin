@@ -168,7 +168,13 @@ class EquipmentCategory extends Entity {
     }
 
     public function countEquipment() {
-        return count($this->getEquipmentIds());
+        $count = count($this->getEquipmentIds());
+        $kids = $this->getChildren();
+        foreach($kids as $kid)
+        {
+            $count += $kid->countEquipment();
+        }
+        return $count;
     }
 
     private function getEquipmentIds() {

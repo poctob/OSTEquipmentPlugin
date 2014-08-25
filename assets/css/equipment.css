@@ -83,3 +83,9 @@ img.status_image_table{
 #dynamic-form-body td{
     padding: 5px;
 }
+
+.etreeImage
+{
+    width: 20px;
+    height: 20px;
+}

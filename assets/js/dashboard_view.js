@@ -31,7 +31,7 @@ $(function() {
         , closable: true
     });
     
-    $('#dashboardTree').puitree({  
+    $('#dashboardTree').etree({  
         nodes: function(ui, response) {                          
             $.ajax({  
                 type: "GET",  
