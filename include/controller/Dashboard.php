@@ -31,6 +31,14 @@ class Dashboard extends Controller {
     protected function getViewDirectory() {
         
     }
+    
+    public function viewClientPage()
+    {
+        $data = $this->treeJsonAction();
+        $args = array();
+        $args['data'] = $data;
+        $this->render('dashboard_front.html.twig', $args);
+    }
 
     public function treeJsonAction() {
         $items = \model\EquipmentCategory::getAll();

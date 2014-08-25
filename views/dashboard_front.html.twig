@@ -1,0 +1,33 @@
+
+{% block javascripts %}
+    <script src="assets/js/jquery-2.1.0.min.js"></script>
+    <script src="assets/js/jquery-ui-1.10.4.min.js"></script>
+    <script src="assets/js/primeui/production/primeui-1.1-min.js"></script> 
+    <script src="assets/js/treeExt.js"></script>
+    <script src="assets/js/dashboard_view.js"></script>
+{% endblock %}
+{% block stylesheets %}
+    <link href="assets/css/equipment.css" rel="stylesheet" />
+    <link href="assets/css/jquery-ui-1.10.4.css" rel="stylesheet" />
+    <link href="assets/js/primeui/themes/cupertino/theme.css" rel="stylesheet" />
+    <link href="assets/js/primeui/production/primeui-1.1-min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block title %}
+    Equipment Dashboard
+{% endblock %}
+
+
+{% block body %}
+    {% if data is defined %}
+        <script>
+            var tree_data
+            ={{ data|raw }} ;
+        </script>
+    {% endif %}
+    <div id="equipmentTree" style="margin-bottom:20px" title="Equipment Summary">
+        <div id="dashboardTree"></div>
+    </div>
+
+{% endblock %}
+
