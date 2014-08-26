@@ -99,3 +99,21 @@ img.status_image_table{
 {
      width: 360px;
 }
+#topBar{    
+    height: 50px;
+    background: white;
+    border: 1px solid #aaa;
+}
+#menuBar
+{
+    width:60%;
+    float:left;
+}
+
+#searchBox
+{
+    width:22%;
+    float:right;
+    padding-right: 10px;
+    
+}

@@ -57,7 +57,7 @@ class EquipmentItem extends Controller {
     public function saveAction() {
         $form_id = \EquipmentPlugin::getCustomForm();
         if (isset($form_id)) {
-        //    \model\Equipment::saveDynamicData($form_id, $_POST['id'],$_POST);
+            //    \model\Equipment::saveDynamicData($form_id, $_POST['id'],$_POST);
             $_POST['form_id'] = $form_id;
         }
         return parent::saveAction();
@@ -66,33 +66,47 @@ class EquipmentItem extends Controller {
     protected function getViewDirectory() {
         return 'item';
     }
-    
-    public function publishAction()
-    {
+
+    public function publishAction() {
         $id = $_POST['item_id'];
-        if(isset($id) && $id > 0)
-        {
+        if (isset($id) && $id > 0) {
             $item = new \model\Equipment($id);
-            if(isset($item))
-            {
+            if (isset($item)) {
                 $item->setIspublished($_POST['item_publish']);
                 $item->save();
             }
         }
     }
-    
-    public function activateAction()
-    {
+
+    public function activateAction() {
         $id = $_POST['item_id'];
-        if(isset($id) && $id > 0)
-        {
+        if (isset($id) && $id > 0) {
             $item = new \model\Equipment($id);
-            if(isset($item))
-            {
+            if (isset($item)) {
                 $item->setIs_active($_POST['item_activate']);
                 $item->save();
             }
         }
+    }
+
+    public function searchAction() {
+        $properties = array();
+        $needle = $_POST['searchCriteria'];
+
+        if (isset($needle)) {
+            $items = \model\Equipment::search($needle);
+            foreach ($items as $item) {
+                $properties[] = $item->getJsonProperties();
+            }
+        }
+
+        $args = array();
+        $args['title'] = count($properties)>0?'Search Results:' : 'Nothing Found!';
+        $args['dt_columns'] = $this->getListColumns();
+        $args['data'] = json_encode($properties);
+
+        $template_name = $this->getListTemplateName();
+        $this->render($template_name, $args);
     }
 
 }

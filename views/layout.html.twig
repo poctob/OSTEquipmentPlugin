@@ -48,14 +48,24 @@
 
                 {% endblock %}
             </div>
-            <div id="menuBar">
-                <ul id="menuBarList">
-                    <li> <a data-icon="ui-icon-bookmark" href="{{ constant('EQUIPMENT_WEB_ROOT') }}dashboard/">Dashboard</a> </li>
-                    <li> <a data-icon="ui-icon-wrench" href="{{ constant('EQUIPMENT_WEB_ROOT') }}item/list">Equipment</a> </li>
-                    <li> <a data-icon="ui-icon-folder-collapsed" href="{{ constant('EQUIPMENT_WEB_ROOT') }}categories/list">Categories</a> </li>
-                    <li> <a data-icon="ui-icon-tag" href="{{ constant('EQUIPMENT_WEB_ROOT') }}status/list">Status</a> </li>
-                    <li> <a data-icon="ui-icon-clock" href="{{ constant('EQUIPMENT_WEB_ROOT') }}recurring/list">Recurring</a> </li>
-                </ul>
+            <div id="topBar">
+                <div id="menuBar">
+                    <ul id="menuBarList">
+                        <li> <a data-icon="ui-icon-bookmark" href="{{ constant('EQUIPMENT_WEB_ROOT') }}dashboard/">Dashboard</a> </li>
+                        <li> <a data-icon="ui-icon-wrench" href="{{ constant('EQUIPMENT_WEB_ROOT') }}item/list">Equipment</a> </li>
+                        <li> <a data-icon="ui-icon-folder-collapsed" href="{{ constant('EQUIPMENT_WEB_ROOT') }}categories/list">Categories</a> </li>
+                        <li> <a data-icon="ui-icon-tag" href="{{ constant('EQUIPMENT_WEB_ROOT') }}status/list">Status</a> </li>
+                        <li> <a data-icon="ui-icon-clock" href="{{ constant('EQUIPMENT_WEB_ROOT') }}recurring/list">Recurring</a> </li>
+                    </ul>
+
+                </div>
+                <div id="searchBox">
+                    <form id="searchForm" method="post" action="search">
+                         <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+                        <input id="searchInput" name="searchCriteria" type="text"/>  
+                        <button id="searchSubmit" type="Submit"></button> 
+                    </form>
+                </div>
             </div>
 
 

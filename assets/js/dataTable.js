@@ -33,13 +33,12 @@ $(function() {
 
 function initDataTable()
 {
-    $('#dataTable').puidatatable({
-        caption: dt_caption,
-        paginator: {
-            rows: 25
-        },
-        columns: dt_columns,
-        datasource: function(callback) {
+    u_data = null;
+
+
+    if (typeof user_data === 'undefined')
+    {
+        u_data = function(callback) {
             $.ajax({
                 type: "GET",
                 url: "listJson",
@@ -49,7 +48,21 @@ function initDataTable()
                     callback.call(this, response);
                 }
             });
+        };
+    }
+    else
+    {
+        u_data = user_data;
+    }
+
+
+    $('#dataTable').puidatatable({
+        caption: dt_caption,
+        paginator: {
+            rows: 25
         },
+        columns: dt_columns,
+        datasource: u_data,
         selectionMode: 'single',
         rowSelect: function(event, data) {
             selectedItem = data.id;
@@ -91,11 +104,11 @@ function deleteAction()
     $('#delete-dialog-confirm').puidialog('hide');
     $('input[name="id"]').val(selectedItem.toString());
     $('#deleteForm').submit();
-  /*  $.post('delete', $('#deleteForm').serialize())
-            .done(function()
-            {
-                location.reload();
-            });*/
+    /*  $.post('delete', $('#deleteForm').serialize())
+     .done(function()
+     {
+     location.reload();
+     });*/
 }
 
 

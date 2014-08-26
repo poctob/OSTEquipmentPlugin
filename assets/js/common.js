@@ -10,12 +10,16 @@ $(function() {
     $(':checkbox').puicheckbox();
     $(':text').puiinputtext();
     $('textarea').puiinputtextarea();
-    
-     $('#formViewPanel').puipanel();
+
+    $('#formViewPanel').puipanel();
 
     $('#saveButton').puibutton({
         icon: 'ui-icon-disk'
     });
+    
+     $('#searchSubmit').puibutton({
+        icon: 'ui-icon-search'
+    });        
 
     $('#resetButton').puibutton({
         icon: 'ui-icon-arrowrefresh-1-w',
@@ -49,8 +53,11 @@ $(function() {
         ]
     }
     );
-    
+
+
+
     $('#saveForm').validate();
+    $('#searchForm').validate();
     showFlash();
 });
 

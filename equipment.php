@@ -32,6 +32,7 @@ define('EQUIPMENT_CONFIG_TABLE', TABLE_PREFIX . 'equipment_config');
 define('EQUIPMENT_TICKET_RECURRING__TABLE',
         TABLE_PREFIX . 'equipment_ticket_recurring');
 define('EQUIPMENT_TICKET_VIEW', TABLE_PREFIX . 'EquipmentTicketView');
+define('EQUIPMENT_SEARCH_VIEW', TABLE_PREFIX . 'EquipmentSearchView');
 
 define('OST_WEB_ROOT', osTicket::get_root_path(__DIR__));
 
@@ -114,6 +115,12 @@ class EquipmentPlugin extends Plugin {
 
     static public function callbackDispatch($object, $data) {
 
+        $search_url = url('^/equipment.*search',
+                patterns(
+                        'controller\EquipmentItem',
+                         url_post('^.*', 'searchAction')
+                        ));
+        
         $categories_url = url('^/equipment.*categories/',
                 patterns(
                         'controller\EquipmentCategory',
@@ -136,7 +143,7 @@ class EquipmentPlugin extends Plugin {
                         'controller\EquipmentItem',
                         url_get('^list$', 'listAction'),
                         url_get('^listJson$', 'listJsonAction'),
-                        url_get('^view/(?P<id>\d+)$', 'viewAction'),
+                        url_get('^view/(?P<id>\d+)$', 'viewAction'),                        
                         url_get('^new/(?P<category_id>\d+)$', 'newAction'),
                         url_post('^publish', 'publishAction'),
                         url_post('^activate', 'activateAction'),
@@ -146,7 +153,8 @@ class EquipmentPlugin extends Plugin {
                         url_get('^closedTicketsJson/(?P<item_id>\d+)$',
                                 'closedTicketsJsonAction'),
                         url_get('^getDynamicForm/(?P<id>\d+)$', 'getDynamicForm'),
-                        url_post('^delete', 'deleteAction')
+                        url_post('^search', 'searchAction')
+                        
         ));
 
         $status_url = url('^/equipment.*status/',
@@ -199,6 +207,7 @@ class EquipmentPlugin extends Plugin {
                         url_get('^(?P<url>.*)$', 'redirectAction')))
         ;
 
+        $object->append($search_url);
         $object->append($media_url);
         $object->append($redirect_url);
         $object->append($dashboard_url);

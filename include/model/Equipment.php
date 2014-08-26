@@ -271,15 +271,30 @@ class Equipment extends Entity {
 
         return $id;
     }
-    
-    public static function findByStatusAndCategory($status_id, $category_id)
-    {
+
+    public static function findByStatusAndCategory($status_id, $category_id) {
         $items = array();
-         $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TABLE
+        $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TABLE
                 . ' WHERE status_id=' . db_input($status_id)
                 . ' AND category_id=' . db_input($category_id);
-         
-         $res = db_query($sql);
+
+        $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $items[] = new \model\Equipment($row['equipment_id']);
+            }
+        }
+        return $items;
+    }
+
+    public static function search($needle) {
+        $key = '%'.$needle.'%';
+        $items = array();
+        $sql = 'SELECT DISTINCT equipment_id FROM ' . EQUIPMENT_SEARCH_VIEW
+                . ' WHERE asset_id LIKE ' . db_input($key)
+                . ' OR `value` LIKE ' . db_input($key) ;
+
+        $res = db_query($sql);
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
                 $items[] = new \model\Equipment($row['equipment_id']);
@@ -319,11 +334,9 @@ class Equipment extends Entity {
 
         return false;
     }
-    
-    public function postSave($data)
-    {
-        if(isset($data['form_id']))
-        {
+
+    public function postSave($data) {
+        if (isset($data['form_id'])) {
             static::saveDynamicData($data['form_id'], $this->getId(), $data);
         }
     }
