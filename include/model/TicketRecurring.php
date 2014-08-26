@@ -25,6 +25,7 @@ class TicketRecurring extends Entity {
             'equipment_id' => $this->getEquipment_id(),
             'ticket' => $this->getTicket()->getNumber(),
             'ticket_id' => $this->getTicket_id(),
+            'subject' => $this->getTicket()->getSubject(),
             'last_opened' => $this->getLast_opened(),
             'interval' => $this->getInterval(),
             'hr_interval' => $this->getHRInterval(),

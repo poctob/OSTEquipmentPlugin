@@ -24,6 +24,7 @@ class TicketRecurring extends Controller {
         return array(
             array('field' => 'equipment', 'headerText' => 'Equipment', 'sortable' => 'true'),
             array('field' => 'ticket', 'headerText' => 'Ticket', 'sortable' => 'true'),
+            array('field' => 'subject', 'headerText' => 'Subject', 'sortable' => 'true'),
             array('field' => 'last_opened', 'headerText' => 'Last Ocurrence', 'sortable' => 'true'),
             array('field' => 'hr_interval', 'headerText' => 'Interval', 'sortable' => 'true'),
             array('field' => 'active', 'headerText' => 'Is Active?', 'sortable' => 'true')
@@ -38,7 +39,7 @@ class TicketRecurring extends Controller {
         $tickets = \model\EquipmentTicket::getAllTickets();
         $items = array();
         foreach ($tickets as $ticket) {
-            $items[] = array('number' => $ticket->getNumber(),
+            $items[] = array('number' => $ticket->getNumber().' - '.$ticket->getSubject(),
                 'ticket_id' => $ticket->getId());
         }
 
