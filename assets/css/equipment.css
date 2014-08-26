@@ -89,3 +89,13 @@ img.status_image_table{
     width: 20px;
     height: 20px;
 }
+
+.equipment_item_select
+{
+    width: 450px;
+}
+
+.equipment_interval_select
+{
+     width: 360px;
+}

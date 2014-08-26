@@ -8,7 +8,7 @@
                 Ticket:
             </td>
             <td>
-                <select id="ticketsDD" name="ticket_id" min="1" required>
+                <select id="ticketsDD" name="ticket_id" class="equipment_item_select" min="1" required>
                     <option value="0">---Select Ticket---</option>                
                 </select>
             </td>
@@ -18,7 +18,7 @@
                 Equipment:
             </td>
             <td>
-                <select id="equipmentDD" name="equipment_id" min="1" required>
+                <select id="equipmentDD" name="equipment_id" class="equipment_item_select" min="1" required>
                     <option value="0">---Select Equipment---</option>                
                 </select>
             </td>
@@ -29,8 +29,8 @@
                 Repeat Every:
             </td>
             <td>
-                <input id="interval" name="interval" type="text" value="{{ item.interval/item.interval_multiplier }}" min="1" required/> 
-                <select id="intervalDD" name="interval_multiplier"> 
+                <input id="interval" name="interval" class="equipment_interval_select" type="text" value="{{ item.interval/item.interval_multiplier }}" min="1" required/> 
+                <select id="intervalDD" class="pui-inputtext ui-widget ui-corner-all" name="interval_multiplier"> 
                     <option value="86400" 
                             {% if item.interval_multiplier == 86400 %}
                                 selected
@@ -49,7 +49,7 @@
                 Start Date:
             </td>
             <td>
-                <input id="next_date" name="next_date" type="text" required/>                      
+                <input id="next_date" name="next_date" class="equipment_item_select" type="text" required/>                      
             </td>
         </tr>
         <tr>

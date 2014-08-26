@@ -5,7 +5,7 @@
     <input type="hidden" name="id" value="{{item.id}}" />
     <br>
     <div style="padding-top:5px;"><strong>Category (required)</strong></div>
-    <select id="categoriesDropDown" name="category_id" min="1" required>
+    <select id="categoriesDropDown" name="category_id" class="equipment_item_select" min="1" required>
         <option>---Select Category---</option>                
     </select>
     <br/>
@@ -49,11 +49,11 @@
         </tr>
     </table>
     <div style="padding-top:5px;"><b>Asset Id (required, at least 2 characters)</b></div>
-    <input id="asset_id" type ="text" size="70" name="asset_id" minlength="2" value="{{ item.asset_id }}" required/>
+    <input id="asset_id" type ="text" class="equipment_item_select" size="70" name="asset_id" minlength="2" value="{{ item.asset_id }}" required/>
     <br>
 
     <div style="padding-top:5px;"><b>Status (required)</b></div>
-    <select id="statusDropDown" name="status_id" min="1" required>
+    <select id="statusDropDown" name="status_id" class="equipment_item_select" min="1" required>
         <option>---Select Status---</option>
     </select>
     {% if item.status.id is defined %}
