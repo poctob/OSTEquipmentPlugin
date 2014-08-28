@@ -235,12 +235,11 @@ DROP VIEW IF EXISTS `%TABLE_PREFIX%EquipmentSearchView`$
 
 CREATE VIEW `%TABLE_PREFIX%EquipmentSearchView` AS 
 select `eq`.`equipment_id` AS `equipment_id`,`eq`.`asset_id` AS `asset_id`,`fev`.`value` AS `value` 
-from ((`%TABLE_PREFIX%equipment` `eq` 
-left join `%TABLE_PREFIX%form_entry` `fe` 
-on((`eq`.`equipment_id` = `fe`.`object_id`))) 
-left join `%TABLE_PREFIX%form_entry_values` `fev` 
-on((`fe`.`id` = `fev`.`entry_id`))) 
-where (`fe`.`object_type` = 'E')$
+from
+`%TABLE_PREFIX%form_entry` `fe` 
+left join `%TABLE_PREFIX%form_entry_values` `fev` ON (`fe`.`id` = `fev`.`entry_id` AND     
+(`fe`.`object_type` = 'E'))
+right join `%TABLE_PREFIX%equipment` `eq` ON (`eq`.`equipment_id` = `fe`.`object_id`)$
 
 DROP TRIGGER IF EXISTS `%TABLE_PREFIX%ticket_event_AINS`$
 

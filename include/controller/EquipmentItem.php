@@ -110,7 +110,7 @@ class EquipmentItem extends Controller {
         $args['dt_columns'] = $this->getListColumns();
         $args['data'] = json_encode($properties);
 
-        $template_name = $this->getListTemplateName();
+        $template_name = parent::getListTemplateName();
         $this->render($template_name, $args);
     }
 
