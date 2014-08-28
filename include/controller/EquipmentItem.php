@@ -21,6 +21,10 @@ class EquipmentItem extends Controller {
     protected function getEntityClassName() {
         return 'model\Equipment';
     }
+    
+    protected function getListTemplateName() {
+        return 'listItemTemplate.html.twig';
+    }
 
     protected function getListColumns() {
         return array(
@@ -28,7 +32,8 @@ class EquipmentItem extends Controller {
             array('field' => 'category', 'headerText' => 'Category', 'sortable' => 'true'),
             array('field' => 'status', 'headerText' => 'Status', 'sortable' => 'true'),
             array('field' => 'ispublished', 'headerText' => 'Is Published', 'sortable' => 'true'),
-            array('field' => 'is_active', 'headerText' => 'Is Active?', 'sortable' => 'true')
+            array('field' => 'is_active', 'headerText' => 'Is Active?', 'sortable' => 'true'),
+            array('field' => 'staff', 'headerText' => 'Assigned To', 'sortable' => 'true')
         );
     }
 
@@ -101,12 +106,50 @@ class EquipmentItem extends Controller {
         }
 
         $args = array();
-        $args['title'] = count($properties)>0?'Search Results:' : 'Nothing Found!';
+        $args['title'] = count($properties) > 0 ? 'Search Results:' : 'Nothing Found!';
         $args['dt_columns'] = $this->getListColumns();
         $args['data'] = json_encode($properties);
 
         $template_name = $this->getListTemplateName();
         $this->render($template_name, $args);
+    }
+
+    public function listStaffJsonAction() {
+        $staff = array();
+        $items = \Staff::getAvailableStaffMembers();
+        foreach ($items as $id => $name) {
+            if (isset($id) && isset($name)) {
+                $entry = array();
+                $entry['name'] = $name;
+                $entry['staff_id'] = $id;
+                $staff[] = $entry;
+            }
+        }
+        return json_encode($staff);
+    }
+
+    public function listBelongingJsonAction() {
+        $properties = array();
+        $staff = \StaffAuthenticationBackend::getUser();
+        if (isset($staff)) {
+            $items = \model\Equipment::findByStaffId($staff->getId());
+        }
+        foreach ($items as $item) {
+            $properties[] = $item->getJsonProperties();
+        }
+        echo json_encode($properties);
+    }
+    
+     public function listNotBelongingJsonAction() {
+        $properties = array();
+        $staff = \StaffAuthenticationBackend::getUser();
+        if (isset($staff)) {
+            $items = \model\Equipment::findByNotStaffId($staff->getId());
+        }
+        foreach ($items as $item) {
+            $properties[] = $item->getJsonProperties();
+        }
+        echo json_encode($properties);
     }
 
 }

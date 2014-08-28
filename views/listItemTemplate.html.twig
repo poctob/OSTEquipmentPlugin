@@ -1,0 +1,60 @@
+{% extends 'layout.html.twig' %}
+{% block head %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="assets/js/itemDataTable.js"></script>  
+    {% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}
+
+
+{% block pagetitle %}
+    {{ title }}
+{% endblock %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }} 
+    <script>
+        dt_columns = {{ dt_columns|json_encode|raw }};
+                dt_caption = "{{ title }}";
+
+        {% if data is defined %}
+            var user_data ={{ data | raw }} ;
+        {% endif %}
+    </script>
+
+    <form action="delete" method="post" id="deleteForm" id="classForm">
+        <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+        <input type="hidden" name="id" value="" />
+    </form>
+
+    <div id="myEquipment" style="margin-bottom:20px" title="My Equipment">
+        <div id="myDataTable"></div>    
+
+        <div id="myActionButtons">
+            <button id="myItemAdd" type="button">New</button>                 
+            <button id="myItemEdit" type="button">View/Edit</button>
+            <button id="myItemDelete" type="button">Delete</button>
+        </div>
+    </div>
+
+    <div id="notMyEquipment" style="margin-bottom:20px" title="Other Equipment">
+        <div id="notMyDataTable"></div>    
+
+        <div id="notMyActionButtons">
+            <button id="notMyItemAdd" type="button">New</button>                 
+            <button id="notMyItemEdit" type="button">View/Edit</button>
+            <button id="notMyItemDelete" type="button">Delete</button>
+        </div>
+    </div>
+
+    <div id="delete-dialog-confirm2" title="Confirm Dialog">
+        Are you sure you want to delete this item?
+    </div>
+{% endblock %}

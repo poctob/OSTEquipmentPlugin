@@ -1,10 +1,27 @@
 $(function() {
     $('#categoriesDropDown').puidropdown();
     $('#statusDropDown').puidropdown();
+    $('#staffDropDown').puidropdown();
     $.getJSON(eq_root + 'status/listJson', populateStatusDropDown);
     $.getJSON(eq_root + 'categories/listJson', populateCategoriesDropDown);
+    $.getJSON(eq_root + 'item/listStaffJson', populateStaffDropDown);
 });
 
+function populateStaffDropDown(data)
+{
+
+    for (var key in data)
+    {
+        var staff = data[key];
+        $('#staffDropDown').puidropdown
+                ('addOption', staff['name'], staff['staff_id']);
+
+        if (typeof staff_id !== 'undefined')
+        {
+            $('#staffDropDown').puidropdown('selectValue', staff_id);
+        }
+    }
+}
 
 function populateStatusDropDown(data)
 {

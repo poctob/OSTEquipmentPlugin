@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment` (
   `created` date NOT NULL,
   `updated` date NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `staff_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`equipment_id`),
   UNIQUE KEY `asset_id_UNIQUE` (`asset_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8$

@@ -56,6 +56,12 @@
     <select id="statusDropDown" name="status_id" class="equipment_item_select" min="1" required>
         <option>---Select Status---</option>
     </select>
+
+    <div style="padding-top:5px;"><b>Assigned to staff member:</b></div>
+    <select id="staffDropDown" name="staff_id" class="equipment_item_select" min="1" required>
+        <option>---Select Staff---</option>
+    </select>
+
     {% if item.status.id is defined %}
         <script>
             var status_id
@@ -68,19 +74,24 @@
                     = {{ item.category.id }};</script>
         {% endif %}  
 
+    {% if item.staff_id is defined and item.staff_id > 0 %}
+        <script>
+                    var staff_id
+                    = {{ item.staff.id }};</script>
+        {% endif %}  
+
     <script>
-                var selected_item = {{ item.id }};
-    </script>
+                var selected_item = {{ item.id }};    </script>
     {% include 'dynamic_form.html.twig' %}
-    
-    
+
+
     {% if item.id > 0 %}
-         <script src="assets/js/tickets_table_items.js"></script>
+        <script src="assets/js/tickets_table_items.js"></script>
         {% include "open_tickets.html.twig" %}
         {% include "closed_tickets.html.twig" %}
     {% endif %}
-    
-    
+
+
     <p style="padding-left:225px;">               
         <button id="saveButton" type="submit">Save</button>  
         <button id="resetButton" type="button">Reset</button>  

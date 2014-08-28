@@ -27,6 +27,8 @@ class Equipment extends Entity {
     private $created;
     private $updated;
     private $is_active;
+    private $user_id;
+    private $staff_id;
 
     public function getJsonProperties() {
         return array(
@@ -40,7 +42,8 @@ class Equipment extends Entity {
             'ispublished' => $this->getIspublished() ? 'Yes' : 'No',
             'created' => $this->getCreated(),
             'updated' => $this->getUpdated(),
-            'is_active' => $this->getIs_active() ? 'Yes' : 'No'
+            'is_active' => $this->getIs_active() ? 'Yes' : 'No',
+            'staff' => $this->getStaff()->getName()->getFull()
         );
     }
 
@@ -95,7 +98,26 @@ class Equipment extends Entity {
         }
         return null;
     }
+    
+    public function getUser_id() {
+        return $this->user_id;
+    }
+    
+    public function getUser()
+    {
+        return \User::lookup($this->user_id);
+    }
 
+    public function getStaff_id() {
+        return $this->staff_id;
+    }
+    
+    public function getStaff()
+    {
+        return new \Staff($this->staff_id);
+    }
+
+    
     /* ------------------> Setter methods <--------------------- */
 
     public function setId($id) {
@@ -133,7 +155,16 @@ class Equipment extends Entity {
     public function setIs_active($is_active) {
         $this->is_active = $is_active;
     }
+    
+    public function setUser_id($user_id) {
+        $this->user_id = $user_id;
+    }
 
+    public function setStaff_id($staff_id) {
+        $this->staff_id = $staff_id;
+    }
+
+    
     public static function getOpenTickets($id) {
         $ticket_ids = array();
         $sql = 'SELECT et.ticket_id, et.equipment_id'
@@ -271,6 +302,34 @@ class Equipment extends Entity {
 
         return $id;
     }
+    
+     public static function findByStaffId($staff_id) {
+        $items = array();
+        $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TABLE
+                . ' WHERE staff_id=' . db_input($staff_id);
+
+         $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $items[] = new \model\Equipment($row['equipment_id']);
+            }
+        }
+        return $items;
+    }
+    
+    public static function findByNotStaffId($staff_id) {
+        $items = array();
+        $sql = 'SELECT equipment_id FROM ' . EQUIPMENT_TABLE
+                . ' WHERE staff_id IS NULL OR staff_id !=' . db_input($staff_id);
+
+         $res = db_query($sql);
+        if ($res && ($num = db_num_rows($res))) {
+            while ($row = db_fetch_array($res)) {
+                $items[] = new \model\Equipment($row['equipment_id']);
+            }
+        }
+        return $items;
+    }
 
     public static function findByStatusAndCategory($status_id, $category_id) {
         $items = array();
@@ -375,7 +434,9 @@ class Equipment extends Entity {
                 ',ispublished=' . db_input($this->ispublished) .
                 ',updated= NOW()' .
                 ',created=' . $created .
-                ',is_active=' . db_input($this->is_active);
+                ',is_active=' . db_input($this->is_active).
+                ',user_id=' . db_input($this->user_id).
+                ',staff_id=' . db_input($this->staff_id);
         return $sql;
     }
 
@@ -388,6 +449,8 @@ class Equipment extends Entity {
         $this->created = null;
         $this->updated = null;
         $this->is_active = 0;
+        $this->staff_id = null;
+        $this->user_id = null;
     }
 
     protected function validate() {

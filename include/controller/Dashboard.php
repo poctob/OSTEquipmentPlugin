@@ -53,7 +53,7 @@ class Dashboard extends Controller {
         return json_encode($object);
     }
 
-    private function getJsonTreeObject($item, &$color) {
+    private function getJsonTreeObject($item, &$color=null) {
         $data = array();
         $data['label'] = $item->getName() . ' (' . $item->countEquipment() . ')';
         $data['data'] = $item->getId();
