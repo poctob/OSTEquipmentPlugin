@@ -467,7 +467,7 @@ BEGIN
 		END IF;
 
 		IF l_next_date <= NOW() 	THEN
-			SET l_next_date = DATE_ADD(l_next_date, INTERVAL l_interval SECOND);
+			SET l_next_date = DATE_ADD(NOW(), INTERVAL l_interval SECOND);
 			CALL %TABLE_PREFIX%Equipment_Reopen_Ticket(l_id);
 			UPDATE %TABLE_PREFIX%equipment_ticket_recurring 
                         SET next_date=l_next_date, last_opened=NOW() WHERE id=l_id;
