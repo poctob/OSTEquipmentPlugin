@@ -366,7 +366,7 @@ BEGIN
 	DROP TEMPORARY TABLE IF EXISTS tmp_table2;
 	CREATE TEMPORARY TABLE tmp_table2 
         SELECT * 
-        FROM %TABLE_PREFIX%_form_entry 
+        FROM %TABLE_PREFIX%form_entry 
         WHERE object_id = p_ticket_id AND `object_type` = 'T';
 
 	SET SQL_SAFE_UPDATES=0;
@@ -380,7 +380,7 @@ BEGIN
 		SELECT id INTO l_id FROM tmp_table2 LIMIT i,1;	
 		UPDATE tmp_table2 set object_id=p_new_ticket_id, created=NOW(), updated=NOW() WHERE id=l_id;
 
-		INSERT INTO %TABLE_PREFIX%_form_entry 
+		INSERT INTO %TABLE_PREFIX%form_entry 
 		(SELECT NULL, form_id, object_id, object_type, sort, created, updated 
 		 FROM tmp_table2 WHERE id=l_id); 
 
@@ -389,12 +389,12 @@ BEGIN
 		DROP TEMPORARY TABLE IF EXISTS tmp_table3;
 		CREATE TEMPORARY TABLE tmp_table3 
 
-		SELECT * FROM %TABLE_PREFIX%_form_entry_values 
+		SELECT * FROM %TABLE_PREFIX%form_entry_values 
 		WHERE entry_id = l_id;
 
 		ALTER TABLE tmp_table3 modify column entry_id int;
 		UPDATE tmp_table3 SET entry_id = l_new_id;
-		INSERT INTO %TABLE_PREFIX%_form_entry_values SELECT * FROM tmp_table3;		
+		INSERT INTO %TABLE_PREFIX%form_entry_values SELECT * FROM tmp_table3;		
 		DROP TEMPORARY TABLE IF EXISTS tmp_table3;
 
 		SET i = i + 1;
@@ -507,7 +507,7 @@ BEGIN
 			SET l_next_date = DATE_ADD(l_next_date, INTERVAL l_interval SECOND);
 			CALL %TABLE_PREFIX%Equipment_Reopen_Ticket(l_id);
 			UPDATE %TABLE_PREFIX%equipment_ticket_recurring 
-                        SET next_date=l_next_date WHERE id=l_id;
+                        SET next_date=l_next_date, last_opened=NOW() WHERE id=l_id;
 		END IF;
 	END LOOP;
 
