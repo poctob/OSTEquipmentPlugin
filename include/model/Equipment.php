@@ -5,9 +5,9 @@ namespace model;
 /* * *******************************************************************
   class.equipment.php
 
-  Backend support for equipmnet, creates, edits, deletes.
+  Backend support for equipment, creates, edits, deletes.
 
-  Copyright (c)  2006-2013 XpressTek
+  Copyright (c)  2006-2014 XpressTek
   http://www.xpresstek.net
 
   Released under the GNU General Public License WITHOUT ANY WARRANTY.
@@ -174,7 +174,6 @@ class Equipment extends Entity {
                 $ticket_ids[] = $row;
             }
         }
-
         return $ticket_ids;
     }
 
@@ -484,6 +483,9 @@ class Equipment extends Entity {
         return 'equipment_id';
     }
 
+    /**
+     * @return string
+     */
     protected static function getTableName() {
         return EQUIPMENT_TABLE;
     }
