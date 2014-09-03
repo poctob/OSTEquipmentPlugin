@@ -7,7 +7,7 @@ var selectedItem2 = 0;
 $(function() {
 
     $('#myEquipment').puipanel({
-        toggleable: true, 
+        toggleable: true,
         closable: false
     });
 
@@ -59,8 +59,22 @@ $(function() {
             $("#delete-dialog-confirm2").puidialog('show');
         }
     });
-    
-     $("#delete-dialog-confirm2").puidialog({
+
+    $('#myItemNewTicket').puibutton({
+        icon: 'ui-icon-tag',
+          click: function() {
+           newTicketAction();
+        }
+    });
+
+    $('#notMyItemNewTicket').puibutton({
+        icon: 'ui-icon-tag',
+          click: function() {
+           newTicketAction2();
+        }
+    });
+
+    $("#delete-dialog-confirm2").puidialog({
         buttons: [{
                 text: 'Yes',
                 icon: 'ui-icon-check',
@@ -120,8 +134,8 @@ function initDataTable()
             disableEditButtons();
         }
     });
-    
-     u_data = function(callback) {
+
+    u_data = function(callback) {
         $.ajax({
             type: "GET",
             url: "listNotBelongingJson",
@@ -156,24 +170,28 @@ function enableEditButtons()
 {
     $('#myItemEdit').puibutton('enable');
     $('#myItemDelete').puibutton('enable');
+    $('#myItemNewTicket').puibutton('enable');
 }
 
 function disableEditButtons()
 {
     $('#myItemEdit').puibutton('disable');
     $('#myItemDelete').puibutton('disable');
+    $('#myItemNewTicket').puibutton('disable');
 }
 
 function enableEditButtons2()
 {
     $('#notMyItemEdit').puibutton('enable');
     $('#notMyItemDelete').puibutton('enable');
+    $('#notMyItemNewTicket').puibutton('enable');
 }
 
 function disableEditButtons2()
 {
     $('#notMyItemEdit').puibutton('disable');
     $('#notMyItemDelete').puibutton('disable');
+    $('#notMyItemNewTicket').puibutton('disable');
 }
 
 function boolToString(input)
@@ -200,4 +218,16 @@ function deleteAction2()
     $('#deleteForm').submit();
 }
 
+
+function newTicketAction()
+{
+    $('input[name="id"]').val(selectedItem.toString());
+    $('#newTicketForm').submit();
+}
+
+function newTicketAction2()
+{
+    $('input[name="id"]').val(selectedItem2.toString());
+    $('#newTicketForm').submit();
+}
 

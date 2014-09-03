@@ -34,6 +34,11 @@
         <input type="hidden" name="id" value="" />
     </form>
 
+    <form action="openNewTicket" method="post" id="newTicketForm" id="classForm">
+        <input type="hidden" name="{{tocken_name}}" value="{{tocken}}" />
+        <input type="hidden" name="id" value="" />
+    </form>
+
     <div id="myEquipment" style="margin-bottom:20px" title="My Equipment">
         <div id="myDataTable"></div>    
 
@@ -41,6 +46,7 @@
             <button id="myItemAdd" type="button">New</button>                 
             <button id="myItemEdit" type="button">View/Edit</button>
             <button id="myItemDelete" type="button">Delete</button>
+            <button id="myItemNewTicket" type="button">New Ticket</button>
         </div>
     </div>
 
@@ -51,6 +57,7 @@
             <button id="notMyItemAdd" type="button">New</button>                 
             <button id="notMyItemEdit" type="button">View/Edit</button>
             <button id="notMyItemDelete" type="button">Delete</button>
+            <button id="notMyItemNewTicket" type="button">New Ticket</button>
         </div>
     </div>
 

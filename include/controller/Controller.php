@@ -180,6 +180,7 @@ abstract class Controller {
                 $ticket_id);
         echo json_encode($tickets);
     }
+    
 
     protected function ticketsAction($type, $ticket_id) {
         $tickets = array();

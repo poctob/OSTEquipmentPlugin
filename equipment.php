@@ -157,7 +157,8 @@ class EquipmentPlugin extends Plugin {
                                 'closedTicketsJsonAction'),
                         url_get('^getDynamicForm/(?P<id>\d+)$', 'getDynamicForm'),
                         url_post('^search', 'searchAction'),
-                        url_post('^delete', 'deleteAction')
+                        url_post('^delete', 'deleteAction'),
+                        url_post('^openNewTicket', 'openNewTicketAction')
                         
         ));
 

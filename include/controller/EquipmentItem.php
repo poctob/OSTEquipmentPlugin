@@ -21,7 +21,7 @@ class EquipmentItem extends Controller {
     protected function getEntityClassName() {
         return 'model\Equipment';
     }
-    
+
     protected function getListTemplateName() {
         return 'listItemTemplate.html.twig';
     }
@@ -139,8 +139,8 @@ class EquipmentItem extends Controller {
         }
         echo json_encode($properties);
     }
-    
-     public function listNotBelongingJsonAction() {
+
+    public function listNotBelongingJsonAction() {
         $properties = array();
         $staff = \StaffAuthenticationBackend::getUser();
         if (isset($staff)) {
@@ -150,6 +150,23 @@ class EquipmentItem extends Controller {
             $properties[] = $item->getJsonProperties();
         }
         echo json_encode($properties);
+    }
+
+    public function openNewTicketAction() {
+        $id = $_POST['id'];
+        if (isset($id)) {
+            $item = new \model\Equipment($id);
+            if (isset($item)) {
+                $form_id = $item->getTicketFormId();
+                $form = \DynamicForm::lookup($form_id);
+                if (isset($form)) {
+                    $data_id = $form->getField('asset_id')->getWidget()->name;
+                    $_SESSION[':form-data'] = array($data_id => $item->getAsset_id());
+                    header("Location: ".OST_WEB_ROOT."scp/tickets.php?a=open");
+                    die();
+                }
+            }
+        }
     }
 
 }
