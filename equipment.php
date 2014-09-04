@@ -193,6 +193,14 @@ class EquipmentPlugin extends Plugin {
                         url_post('^delete', 'deleteAction'),
                         url_post('^enableEvents', 'enableEventsAction')
         ));
+        
+        $maintenance_url = url('^/equipment.*maintenance/',
+                patterns(
+                        'controller\Maintenance',
+                        url_get('^startStructureTest$', 'startDatabaseIntegrityTest'),
+                        url_get('^checkProgress$', 'checkProgress'),
+                        url_get('.*', 'defaultAction')))
+        ;
 
         $media_url = url('^/equipment.*assets/',
                 patterns(
@@ -212,9 +220,10 @@ class EquipmentPlugin extends Plugin {
                         url_get('^(?P<url>.*)$', 'redirectAction')))
         ;
 
-        $object->append($search_url);
+        $object->append($search_url);        
         $object->append($media_url);
         $object->append($redirect_url);
+        $object->append($maintenance_url);
         $object->append($dashboard_url);
         $object->append($categories_url);
         $object->append($item_url);

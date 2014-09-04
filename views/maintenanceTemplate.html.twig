@@ -1,0 +1,49 @@
+{% extends 'layout.html.twig' %}
+{% block head %}
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="assets/js/maintenance.js"></script>  
+    {% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+    {% endblock %}
+{% endblock %}
+
+
+{% block pagetitle %}
+    {{ title }}
+{% endblock %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }} 
+    <div id="tabview">
+        <ul>
+            <li><a href="#checkStructureTab">Check Database Structure</a></li>
+            <li><a href="#purgeDatabaseTab">Purge Database</a></li>
+            <li><a href="#deleteDatabaseTab">Delete Database</a></li>
+            <li><a href="#recreateDatabaseTab">Recreate Database</a></li>
+            </ul>
+            <div>
+                <div id="checkStructureTab">
+                    Check database sturctural integrity.  Non-destructive operation.
+                    <button id="startStructureTest">Begin</button>
+                    <div id="structureTestPB" />  
+                    <div id="structureTestResults"></div>
+                </div>
+                <div id="purgeDatabaseTab">
+                    
+                </div>
+                 <div id="deleteDatabaseTab">
+                    
+                </div>
+                 <div id="recreateDatabaseTab">
+                    
+                </div>
+            </div>
+        
+    </div>
+{% endblock %}

@@ -15,8 +15,8 @@ class EquipmentConfig extends Entity {
 
 
     protected function getSaveSQL() {
-          $sql = 'key=' . db_input($this->key) .
-                ',value=' . db_input($this->value);
+          $sql = '`key`=' . db_input($this->key) .
+                ',`value`=' . db_input($this->value);
         return $sql;
     }
 
