@@ -63,6 +63,11 @@ class EquipmentInstaller extends \SetupWizard {
         $schemaFile = EQUIPMENT_PLUGIN_ROOT . 'install/sql/remove_equipment.sql'; //DB dump.	
         return $this->runJob($schemaFile);
     }
+    
+    function purgeData(){
+        $schemaFile = EQUIPMENT_PLUGIN_ROOT . 'install/sql/purge_equipment_data.sql'; //DB dump.	
+        return $this->runJob($schemaFile);
+    }
 
     /**
      * Overriding split, we need semicolons in procedures and triggers, so 

@@ -24,8 +24,7 @@
     <div id="tabview">
         <ul>
             <li><a href="#checkStructureTab">Check Database Structure</a></li>
-            <li><a href="#purgeDatabaseTab">Purge Database</a></li>
-            <li><a href="#deleteDatabaseTab">Delete Database</a></li>
+            <li><a href="#purgeDatabaseTab">Purge Database</a></li>            
             <li><a href="#recreateDatabaseTab">Recreate Database</a></li>
             </ul>
             <div>
@@ -34,16 +33,27 @@
                     <button id="startStructureTest">Begin</button>
                     <br />
                     <div id="structureTestResults"></div>
-                     <div id="waitImage"><img src="assets/images/taco.gif"/></div>
+                    <div id="waitImage"><img src="assets/images/taco.gif"/></div>
                 </div>
+                
                 <div id="purgeDatabaseTab">
+                    Purges database data. <p style="color: red;">All equipment related information will be deleted forever!.</p> 
                     
+                    <button id="purgeData">Purge</button>
+                    <br />
+                    <div id="purgeResults"></div>
                 </div>
-                 <div id="deleteDatabaseTab">
-                    
-                </div>
+
                  <div id="recreateDatabaseTab">
+                     Deletes and recreates database tables, views, triggers and stored procedures related to equipment. 
+                   <p style="color: red;">All equipment related information will be deleted forever!.</p> 
+                   <p style="color: red;">Equipment database structure will be deleted!.</p> 
+                   <p style="color: red;">Equipment database structure will be recreated!.</p> 
                     
+                    <button id="recreateDatabase">Begin</button>
+                    <br />
+                    <div id="recreateResults"></div>
+                    <div id="waitImage2"><img src="assets/images/taco.gif"/></div>
                 </div>
             </div>
         

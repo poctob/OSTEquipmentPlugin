@@ -45,6 +45,11 @@ define('STATUS_DELETE_TRIGGER', TABLE_PREFIX . 'equipment_status_ADEL');
 define('EVENT_DELETE_TRIGGER', TABLE_PREFIX . 'ticket_event_AINS');
 define('EVENT_UPDATE_TRIGGER', TABLE_PREFIX . 'ticket_event_AUPD');
 
+define('CREATE_FORM_FIELDS_PROCEEDURE', TABLE_PREFIX . 'CreateEquipmentFormFields');
+define('COPY_FORM_ENTRY_PROCEEDURE', TABLE_PREFIX . 'Equipment_Copy_Form_Entry');
+define('REOPEN_TICKET_PROCEEDURE', TABLE_PREFIX . 'Equipment_Reopen_Ticket');
+define('CRON_PROCEEDURE', TABLE_PREFIX . 'EquipmentCronProc');
+
 define('OST_WEB_ROOT', osTicket::get_root_path(__DIR__));
 
 define('EQUIPMENT_WEB_ROOT', OST_WEB_ROOT . 'scp/dispatcher.php/equipment/');
@@ -209,7 +214,8 @@ class EquipmentPlugin extends Plugin {
                 patterns(
                         'controller\Maintenance',
                         url_get('^startStructureTest$', 'startDatabaseIntegrityTest'),
-                        url_get('^checkProgress$', 'checkProgress'),
+                        url_get('^purgeData$', 'startDatabaseDataPurge'),
+                        url_get('^recreateDatabase', 'startDatabaseRecreate'),
                         url_get('.*', 'defaultAction')))
         ;
 
