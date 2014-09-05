@@ -1,4 +1,5 @@
 $(function() {
+    $('#waitImage').hide();
     $('#tabview').puitabview(
             {
                 orientation: 'left'
@@ -8,28 +9,16 @@ $(function() {
             {
                 click: function(event)
                 {
+                    $('#waitImage').show();
                     $.ajax({
-                        url: 'startStructureTest'
-                    });
-                    updateProgressBar('#structureTestPB');
+                        url: 'startStructureTest',
+                        dataType: "html"
+                    })
+                            .done(function( data ) {
+                                $('#waitImage').hide();
+                                $('#structureTestResults').html(data);
+                            });
                 }
             }
     );
-
-    $('#structureTestPB').puiprogressbar();
 });
-
-function updateProgressBar(id)
-{
-    setInterval(function() {
-        $.ajax({
-            url: 'checkProgress',
-            dataType: 'text'
-        })
-                .done(function(val)
-                {
-                    $(id).puiprogressbar('option', 'value', val);
-                });
-    }, 1000);
-
-}

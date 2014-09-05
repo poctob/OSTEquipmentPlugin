@@ -33,6 +33,17 @@ define('EQUIPMENT_TICKET_RECURRING__TABLE',
         TABLE_PREFIX . 'equipment_ticket_recurring');
 define('EQUIPMENT_TICKET_VIEW', TABLE_PREFIX . 'EquipmentTicketView');
 define('EQUIPMENT_SEARCH_VIEW', TABLE_PREFIX . 'EquipmentSearchView');
+define('EQUIPMENT_FORM_VIEW', TABLE_PREFIX . 'EquipmentFormView');
+
+define('EQUIPMENT_DELETE_TRIGGER', TABLE_PREFIX . 'equipment_ADEL');
+define('EQUIPMENT_INSERT_TRIGGER', TABLE_PREFIX . 'equipment_AINS');
+define('EQUIPMENT_UPDATE_TRIGGER', TABLE_PREFIX . 'equipment_AUPD');
+define('STATUS_INSERT_TRIGGER', TABLE_PREFIX . 'equipment_status_AINS');
+define('STATUS_UPDATE_TRIGGER', TABLE_PREFIX . 'equipment_status_AUPD');
+define('STATUS_DELETE_TRIGGER', TABLE_PREFIX . 'equipment_status_ADEL');
+
+define('EVENT_DELETE_TRIGGER', TABLE_PREFIX . 'ticket_event_AINS');
+define('EVENT_UPDATE_TRIGGER', TABLE_PREFIX . 'ticket_event_AUPD');
 
 define('OST_WEB_ROOT', osTicket::get_root_path(__DIR__));
 
