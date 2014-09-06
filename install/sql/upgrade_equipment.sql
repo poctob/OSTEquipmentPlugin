@@ -1,3 +1,4 @@
+SET SQL_SAFE_UPDATES=0$
 CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket_recurring` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
   `equipment_id` int(11) NOT NULL,
@@ -9,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket_recurring` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8$
 
-CREATE TABLE `%TABLE_PREFIX%equipment_config` (
+CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_config` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL DEFAULT 'undefined',
   `value` varchar(255) NOT NULL DEFAULT 'undefined',
@@ -128,7 +129,16 @@ BEGIN
 	END IF;
 END$
 
-call `%TABLE_PREFIX%UpgradeEquipmentFormFields`$
+call `%TABLE_PREFIX%UpgradeEquipmentFormFields`()$
+
+DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_ADEL`$
+
+CREATE TRIGGER `%TABLE_PREFIX%equipment_ADEL` AFTER DELETE ON `%TABLE_PREFIX%equipment` FOR EACH ROW
+BEGIN
+	SET @pk=OLD.equipment_id;
+	SET @list_pk=(SELECT id FROM `%TABLE_PREFIX%list` WHERE name='equipment');
+	DELETE FROM `%TABLE_PREFIX%list_items` WHERE list_id = @list_pk AND properties=CONCAT('',@pk); 
+END$
 
 DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_AINS`$
 
@@ -476,6 +486,5 @@ BEGIN
 	CLOSE cur1;
 END$
 
-SET SQL_SAFE_UPDATES=0$
 UPDATE `%TABLE_PREFIX%plugin` SET version = '0.3' WHERE `name`='Equipment Manager'$
 SET SQL_SAFE_UPDATES=1$	

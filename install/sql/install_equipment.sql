@@ -1,3 +1,4 @@
+SET SQL_SAFE_UPDATES=0$
 CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment` (
   `equipment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `category_id` int(10) unsigned NOT NULL DEFAULT '0',
@@ -54,18 +55,17 @@ CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_ticket_recurring` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8$
 
-CREATE TABLE `%TABLE_PREFIX%equipment_config` (
-   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL DEFAULT 'undefined',
-  `value` varchar(255) NOT NULL DEFAULT 'undefined',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `key_UNIQUE` (`key`)
+CREATE TABLE IF NOT EXISTS `%TABLE_PREFIX%equipment_config` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`key` varchar(255) NOT NULL DEFAULT 'undefined',
+`value` varchar(255) NOT NULL DEFAULT 'undefined',
+PRIMARY KEY (`id`),
+UNIQUE KEY `key_UNIQUE` (`key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8$
 
 REPLACE INTO `%TABLE_PREFIX%equipment_config` (`key`, `value`)
 VALUES ('recurrance_enabled','false')$ 
 
-SET SQL_SAFE_UPDATES=0$
 DELETE FROM `%TABLE_PREFIX%list` WHERE `name`='equipment_status'$ 
 INSERT INTO `%TABLE_PREFIX%list` (`name`, `created`,`notes`,`updated`)
 VALUES ('equipment_status',NOW(),'internal equipment plugin list, do not modify',NOW())$ 
@@ -77,7 +77,6 @@ VALUES ('equipment',NOW(),'internal equipment plugin list, do not modify',NOW())
 DELETE FROM `%TABLE_PREFIX%form` WHERE `title`='Equipment'$
 INSERT INTO `%TABLE_PREFIX%form` (`type`, `deletable`,`title`, `notes`, `created`, `updated`)
 VALUES ('G',0,'Equipment','Equipment internal form',NOW(),NOW())$ 
-SET SQL_SAFE_UPDATES=1$
 
 DROP PROCEDURE IF EXISTS `%TABLE_PREFIX%CreateEquipmentFormFields`$
 
@@ -153,7 +152,7 @@ BEGIN
 	END IF;
 END$
 
-call `%TABLE_PREFIX%CreateEquipmentFormFields`$
+CALL `%TABLE_PREFIX%CreateEquipmentFormFields`()$
 
 
 DROP TRIGGER IF EXISTS `%TABLE_PREFIX%equipment_ADEL`$
@@ -513,7 +512,5 @@ BEGIN
 	CLOSE cur1;
 END$
 
-
-SET SQL_SAFE_UPDATES=0$
 UPDATE `%TABLE_PREFIX%plugin` SET version = '0.3' WHERE `name`='Equipment Manager'$
 SET SQL_SAFE_UPDATES=1$	
