@@ -246,7 +246,7 @@ on(((`%TABLE_PREFIX%form_field`.`id` = `%TABLE_PREFIX%form_entry_values`.`field_
 left join `%TABLE_PREFIX%form` 
 on((`%TABLE_PREFIX%form`.`id` = `%TABLE_PREFIX%form_field`.`form_id`))) 
 left join `%TABLE_PREFIX%equipment_status` 
-on((`%TABLE_PREFIX%form_entry_values`.`value` = `%TABLE_PREFIX%equipment_status`.`name`)))) 
+on((`%TABLE_PREFIX%form_entry_values`.`value` like concat('%', `%TABLE_PREFIX%equipment_status`.`name`, '%'))))) 
 where ((`%TABLE_PREFIX%form`.`title` = 'Equipment') and 
 (`%TABLE_PREFIX%form`.`id` = `%TABLE_PREFIX%form_entry`.`form_id`) and 
 (`%TABLE_PREFIX%form_entry`.`object_type` = 'T'))$
@@ -259,12 +259,14 @@ select `%TABLE_PREFIX%equipment_ticket`.`equipment_id` AS `equipment_id`,
 `%TABLE_PREFIX%equipment_ticket`.`created` AS `created`,
 `%TABLE_PREFIX%equipment`.`category_id` AS `category_id`,
 `%TABLE_PREFIX%equipment`.`is_active` AS `is_active`,
-`%TABLE_PREFIX%ticket`.`status` AS `status` 
-from ((`%TABLE_PREFIX%equipment_ticket` 
-left join `%TABLE_PREFIX%equipment` 
-on((`%TABLE_PREFIX%equipment_ticket`.`equipment_id` = `%TABLE_PREFIX%equipment`.`equipment_id`))) 
-left join `%TABLE_PREFIX%ticket` 
-on((`%TABLE_PREFIX%equipment_ticket`.`ticket_id` = `%TABLE_PREFIX%ticket`.`ticket_id`)))$
+`%TABLE_PREFIX%ticket_status`.`state` AS `status` 
+from `ost_equipment_ticket` 
+left join `ost_equipment` 
+on(`ost_equipment_ticket`.`equipment_id` = `ost_equipment`.`equipment_id`)
+left join `ost_ticket` 
+on(`ost_equipment_ticket`.`ticket_id` = `ost_ticket`.`ticket_id`)
+left join `ost_ticket_status` 
+on(`ost_ticket`.`status_id` = `ost_ticket_status`.`id`)$
 
 DROP VIEW IF EXISTS `%TABLE_PREFIX%EquipmentSearchView`$
 
@@ -281,15 +283,25 @@ DROP TRIGGER IF EXISTS `%TABLE_PREFIX%ticket_event_AINS`$
 CREATE TRIGGER `%TABLE_PREFIX%ticket_event_AINS` AFTER INSERT ON `%TABLE_PREFIX%ticket_event` FOR EACH ROW
 BEGIN
 	IF NEW.state='closed' THEN
+               
 		SET @equipment_id = (SELECT equipment_id FROM `%TABLE_PREFIX%equipment_ticket`
-							WHERE ticket_id=NEW.ticket_id LIMIT 1);
-		IF ((@equipment_id IS NOT NULL) AND (@equipment_id>0)) THEN
-			SET @status_id = (SELECT status_id FROM `%TABLE_PREFIX%equipment_status`
-							WHERE baseline=1 LIMIT 1);
+							WHERE ticket_id=NEW.ticket_id LIMIT 1);            
 
-			IF ((@status_id IS NOT NULL) AND (@status_id>0)) THEN
-				UPDATE `%TABLE_PREFIX%equipment` SET status_id = @status_id
-				WHERE equipment_id = @equipment_id; 
+
+		IF ((@equipment_id IS NOT NULL) AND (@equipment_id>0)) THEN
+
+                                            SET @open_ticks = (SELECT COUNT(ticket_id) FROM `%TABLE_PREFIX%EquipmentTicketView`
+                                                            WHERE equipment_id = @equipment_id  AND
+								`status` != 'closed');
+
+                        IF @open_ticks = 0 THEN
+                            SET @status_id = (SELECT status_id FROM `%TABLE_PREFIX%equipment_status`
+                                                            WHERE baseline=1 LIMIT 1);
+
+                            IF ((@status_id IS NOT NULL) AND (@status_id>0)) THEN
+                                    UPDATE `%TABLE_PREFIX%equipment` SET status_id = @status_id
+                                    WHERE equipment_id = @equipment_id; 
+                            END IF;
 			END IF;
 		END IF;
 
@@ -304,6 +316,7 @@ BEGIN
 			SET @asset_id_str = (SELECT value FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
 							ticket_id= NEW.ticket_id AND field_label='Equipment' LIMIT 1);
 			SET @asset_id = (SELECT SUBSTRING_INDEX(@asset_id_str, 'Asset_ID:', -1));
+                        SET @asset_id = SUBSTRING(@asset_id, 1, CHAR_LENGTH(@asset_id) - 2);
 		END IF;
 
 		
@@ -336,6 +349,7 @@ BEGIN
 			SET @asset_id_str = (SELECT value FROM `%TABLE_PREFIX%EquipmentFormView` WHERE 
 							ticket_id= NEW.ticket_id AND field_label='Equipment' LIMIT 1);
 			SET @asset_id = (SELECT SUBSTRING_INDEX(@asset_id_str, 'Asset_ID:', -1));
+                        SET @asset_id = SUBSTRING(@asset_id, 1, CHAR_LENGTH(@asset_id) - 2);
 		END IF;
 
 		
@@ -512,5 +526,5 @@ BEGIN
 	CLOSE cur1;
 END$
 
-UPDATE `%TABLE_PREFIX%plugin` SET version = '0.3' WHERE `name`='Equipment Manager'$
+UPDATE `%TABLE_PREFIX%plugin` SET version = '0.4' WHERE `name`='Equipment Manager'$
 SET SQL_SAFE_UPDATES=1$	

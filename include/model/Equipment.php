@@ -163,11 +163,9 @@ class Equipment extends Entity {
 
     public static function getOpenTickets($id) {
         $ticket_ids = array();
-        $sql = 'SELECT et.ticket_id, et.equipment_id'
-                . ' FROM ' . EQUIPMENT_TICKET_TABLE . ' et '
-                . ' LEFT JOIN ' . TICKET_TABLE . ' ticket ON(et.ticket_id=ticket.ticket_id) '
-                . ' WHERE et.equipment_id=' . db_input($id)
-                . ' AND ticket.status=\'open\'';
+        $sql = 'SELECT ticket_id, equipment_id FROM ' . EQUIPMENT_TICKET_VIEW . ' '
+                . 'WHERE equipment_id=' . db_input($id) . ' '
+                . 'AND status="open"';
         $res = db_query($sql);
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {
@@ -179,11 +177,9 @@ class Equipment extends Entity {
 
     public static function getClosedTickets($id) {
         $ticket_ids = array();
-        $sql = 'SELECT et.ticket_id, et.equipment_id'
-                . ' FROM ' . EQUIPMENT_TICKET_TABLE . ' et '
-                . ' LEFT JOIN ' . TICKET_TABLE . ' ticket ON(et.ticket_id=ticket.ticket_id) '
-                . ' WHERE et.equipment_id=' . db_input($id)
-                . ' AND ticket.status=\'closed\'';
+         $sql = 'SELECT ticket_id, equipment_id FROM ' . EQUIPMENT_TICKET_VIEW . ' '
+                . 'WHERE equipment_id=' . db_input($id) . ' '
+                . 'AND status="closed"';
         $res = db_query($sql);
         if ($res && ($num = db_num_rows($res))) {
             while ($row = db_fetch_array($res)) {

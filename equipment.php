@@ -18,7 +18,7 @@ require_once (INCLUDE_DIR . 'class.osticket.php');
 
 require_once ('config.php');
 
-define ( 'EQUIPMENT_PLUGIN_VERSION', '0.3' );
+define ( 'EQUIPMENT_PLUGIN_VERSION', '0.4' );
 
 define ( 'EQUIPMENT_TABLE', TABLE_PREFIX . 'equipment' );
 define ( 'EQUIPMENT_CATEGORY_TABLE', TABLE_PREFIX . 'equipment_category' );
