@@ -260,13 +260,13 @@ select `%TABLE_PREFIX%equipment_ticket`.`equipment_id` AS `equipment_id`,
 `%TABLE_PREFIX%equipment`.`category_id` AS `category_id`,
 `%TABLE_PREFIX%equipment`.`is_active` AS `is_active`,
 `%TABLE_PREFIX%ticket_status`.`state` AS `status` 
-from `ost_equipment_ticket` 
-left join `ost_equipment` 
-on(`ost_equipment_ticket`.`equipment_id` = `ost_equipment`.`equipment_id`)
-left join `ost_ticket` 
-on(`ost_equipment_ticket`.`ticket_id` = `ost_ticket`.`ticket_id`)
-left join `ost_ticket_status` 
-on(`ost_ticket`.`status_id` = `ost_ticket_status`.`id`)$
+from `%TABLE_PREFIX%equipment_ticket` 
+left join `%TABLE_PREFIX%equipment` 
+on(`%TABLE_PREFIX%equipment_ticket`.`equipment_id` = `%TABLE_PREFIX%equipment`.`equipment_id`)
+left join `%TABLE_PREFIX%ticket` 
+on(`%TABLE_PREFIX%equipment_ticket`.`ticket_id` = `%TABLE_PREFIX%ticket`.`ticket_id`)
+left join `%TABLE_PREFIX%ticket_status` 
+on(`%TABLE_PREFIX%ticket`.`status_id` = `%TABLE_PREFIX%ticket_status`.`id`)$
 
 DROP VIEW IF EXISTS `%TABLE_PREFIX%EquipmentSearchView`$
 
