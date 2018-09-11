@@ -1,5 +1,6 @@
 {
     "require": {
-        "twig/twig": "1.*"
+        "twig/twig": "1.*",
+        "robmorgan/phinx": "^0.10.6"
     }
 }
