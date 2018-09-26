@@ -2,7 +2,7 @@
 ========
 
 .. versionadded:: 1.5
-    The dump function was added in Twig 1.5.
+    The ``dump`` function was added in Twig 1.5.
 
 The ``dump`` function dumps information about a template variable. This is
 mostly useful to debug a template that does not behave as expected by
@@ -65,5 +65,5 @@ Arguments
 
 * ``context``: The context to dump
 
-.. _`XDebug`:   http://xdebug.org/docs/display
-.. _`var_dump`: http://php.net/var_dump
+.. _`XDebug`:   https://xdebug.org/docs/display
+.. _`var_dump`: https://secure.php.net/var_dump

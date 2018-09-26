@@ -9,8 +9,11 @@
  * file that was distributed with this source code.
  */
 
-class Twig_Tests_AutoloaderTest extends PHPUnit_Framework_TestCase
+class Twig_Tests_AutoloaderTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @group legacy
+     */
     public function testAutoload()
     {
         $this->assertFalse(class_exists('FooBarFoo'), '->autoload() does not try to load classes that does not begin with Twig');

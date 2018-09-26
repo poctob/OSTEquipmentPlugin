@@ -59,6 +59,10 @@ Many IDEs support syntax highlighting and auto-completion for Twig:
 * *Notepad++* via the `Notepad++ Twig Highlighter`_
 * *Emacs* via `web-mode.el`_
 * *Atom* via the `PHP-twig for atom`_
+* *Visual Studio Code* via the `Twig pack`_
+
+Also, `TwigFiddle`_ is an online service that allows you to execute Twig templates
+from a browser; it supports all versions of Twig.
 
 Variables
 ---------
@@ -93,7 +97,7 @@ access the variable attribute:
     don't put the braces around them.
 
 If a variable or attribute does not exist, you will receive a ``null`` value
-when the ``strict_variables`` option is set to ``false``; alternatively, if ``strict_variables`` 
+when the ``strict_variables`` option is set to ``false``; alternatively, if ``strict_variables``
 is set, Twig will throw an error (see :ref:`environment options<environment_options>`).
 
 .. sidebar:: Implementation
@@ -290,33 +294,32 @@ designers or yourself:
 Including other Templates
 -------------------------
 
-The :doc:`include<tags/include>` tag is useful to include a template and
-return the rendered content of that template into the current one:
+The :doc:`include<functions/include>` function is useful to include a template
+and return the rendered content of that template into the current one:
 
 .. code-block:: jinja
 
-    {% include 'sidebar.html' %}
+    {{ include('sidebar.html') }}
 
-Per default included templates are passed the current context.
-
-The context that is passed to the included template includes variables defined
-in the template:
+By default, included templates have access to the same context as the template
+which includes them. This means that any variable defined in the main template
+will be available in the included template too:
 
 .. code-block:: jinja
 
     {% for box in boxes %}
-        {% include "render_box.html" %}
+        {{ include('render_box.html') }}
     {% endfor %}
 
-The included template ``render_box.html`` is able to access ``box``.
+The included template ``render_box.html`` is able to access the ``box`` variable.
 
-The filename of the template depends on the template loader. For instance, the
+The name of the template depends on the template loader. For instance, the
 ``Twig_Loader_Filesystem`` allows you to access other templates by giving the
 filename. You can access templates in subdirectories with a slash:
 
 .. code-block:: jinja
 
-    {% include "sections/articles/sidebar.html" %}
+    {{ include('sections/articles/sidebar.html') }}
 
 This behavior depends on the application embedding Twig.
 
@@ -421,10 +424,8 @@ everything by default.
 
 Twig supports both, automatic escaping is enabled by default.
 
-.. note::
-
-    Automatic escaping is only supported if the *escaper* extension has been
-    enabled (which is the default).
+The automatic escaping strategy can be configured via the
+:ref:`autoescape<environment_options>` option and defaults to ``html``.
 
 Working with Manual Escaping
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -541,6 +542,9 @@ macro call:
         <input type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="{{ size }}" />
     {% endmacro %}
 
+If extra positional arguments are passed to a macro call, they end up in the
+special ``varargs`` variable as a list of values.
+
 .. _twig-expressions:
 
 Expressions
@@ -581,7 +585,9 @@ exist:
   string. They are useful whenever you need a string in the template (for
   example as arguments to function calls, filters or just to extend or include
   a template). A string can contain a delimiter if it is preceded by a
-  backslash (``\``) -- like in ``'It\'s good'``.
+  backslash (``\``) -- like in ``'It\'s good'``. If the string contains a
+  backslash (e.g. ``'c:\Program Files'``) escape it by doubling it
+  (e.g. ``'c:\\Program Files'``).
 
 * ``42`` / ``42.23``: Integers and floating point numbers are created by just
   writing the number down. If a dot is present the number is a float,
@@ -605,7 +611,8 @@ exist:
     { 2: 'foo', 4: 'bar' }
 
     {# keys as expressions (the expression must be enclosed into parentheses) -- as of Twig 1.5 #}
-    { (1 + 1): 'foo', (a ~ 'b'): 'bar' }
+    {% set foo = 'foo' %}
+    { (foo): 'foo', (1 + 1): 'bar', (foo ~ 'b'): 'baz' }
 
 * ``true`` / ``false``: ``true`` represents the true value, ``false``
   represents the false value.
@@ -669,6 +676,10 @@ You can combine multiple expressions with the following operators:
 
     Twig also support bitwise operators (``b-and``, ``b-xor``, and ``b-or``).
 
+.. note::
+
+    Operators are case sensitive.
+
 Comparisons
 ~~~~~~~~~~~
 
@@ -693,7 +704,7 @@ string:
 
     .. code-block:: jinja
 
-        {% if phone matches '{^[\d\.]+$}' %}
+        {% if phone matches '/^[\\d\\.]+$/' %}
         {% endif %}
 
 Containment Operator
@@ -761,14 +772,26 @@ Other Operators
 .. versionadded:: 1.12.0
     Support for the extended ternary operator was added in Twig 1.12.0.
 
-The following operators are very useful but don't fit into any of the other
-categories:
-
-* ``..``: Creates a sequence based on the operand before and after the
-  operator (this is just syntactic sugar for the :doc:`range<functions/range>`
-  function).
+The following operators don't fit into any of the other categories:
 
 * ``|``: Applies a filter.
+
+* ``..``: Creates a sequence based on the operand before and after the operator
+  (this is just syntactic sugar for the :doc:`range<functions/range>` function):
+
+  .. code-block:: jinja
+
+      {{ 1..5 }}
+
+      {# equivalent to #}
+      {{ range(1, 5) }}
+
+  Note that you must use parentheses when combining it with the filter operator
+  due to the :ref:`operator precedence rules <twig-expressions>`:
+
+  .. code-block:: jinja
+
+      (1..5)|join(', ')
 
 * ``~``: Converts all operands into strings and concatenates them. ``{{ "Hello
   " ~ name ~ "!" }}`` would return (assuming ``name`` is ``'John'``) ``Hello
@@ -786,13 +809,20 @@ categories:
       {{ foo ?: 'no' }} is the same as {{ foo ? foo : 'no' }}
       {{ foo ? 'yes' }} is the same as {{ foo ? 'yes' : '' }}
 
+* ``??``: The null-coalescing operator:
+
+  .. code-block:: jinja
+
+      {# returns the value of foo if it is defined and not null, 'no' otherwise #}
+      {{ foo ?? 'no' }}
+
 String Interpolation
 ~~~~~~~~~~~~~~~~~~~~
 
 .. versionadded:: 1.5
     String interpolation was added in Twig 1.5.
 
-String interpolation (`#{expression}`) allows any valid expression to appear
+String interpolation (``#{expression}``) allows any valid expression to appear
 within a *double-quoted string*. The result of evaluating that expression is
 inserted into the string:
 
@@ -800,6 +830,8 @@ inserted into the string:
 
     {{ "foo #{bar} baz" }}
     {{ "foo #{1 + 2} baz" }}
+
+.. _templates-whitespace-control:
 
 Whitespace Control
 ------------------
@@ -838,7 +870,7 @@ leading and or trailing whitespace:
     {# output 'no spaces' #}
 
 The above sample shows the default whitespace control modifier, and how you can
-use it to remove whitespace around tags.  Trimming space will consume all whitespace
+use it to remove whitespace around tags. Trimming space will consume all whitespace
 for that side of the tag.  It is possible to use whitespace trimming on one side
 of a tag:
 
@@ -862,14 +894,16 @@ Extension<creating_extensions>` chapter.
 
 .. _`Twig bundle`:                https://github.com/Anomareh/PHP-Twig.tmbundle
 .. _`Jinja syntax plugin`:        http://jinja.pocoo.org/docs/integration/#vim
-.. _`vim-twig plugin`:            https://github.com/evidens/vim-twig
+.. _`vim-twig plugin`:            https://github.com/lumiliet/vim-twig
 .. _`Twig syntax plugin`:         http://plugins.netbeans.org/plugin/37069/php-twig
 .. _`Twig plugin`:                https://github.com/pulse00/Twig-Eclipse-Plugin
 .. _`Twig language definition`:   https://github.com/gabrielcorpse/gedit-twig-template-language
-.. _`extension repository`:       http://github.com/fabpot/Twig-extensions
+.. _`extension repository`:       https://github.com/twigphp/Twig-extensions
 .. _`Twig syntax mode`:           https://github.com/bobthecow/Twig-HTML.mode
 .. _`other Twig syntax mode`:     https://github.com/muxx/Twig-HTML.mode
 .. _`Notepad++ Twig Highlighter`: https://github.com/Banane9/notepadplusplus-twig
 .. _`web-mode.el`:                http://web-mode.org/
-.. _`regular expressions`:        http://php.net/manual/en/pcre.pattern.php
+.. _`regular expressions`:        https://secure.php.net/manual/en/pcre.pattern.php
 .. _`PHP-twig for atom`:          https://github.com/reesef/php-twig
+.. _`TwigFiddle`:                 https://twigfiddle.com/
+.. _`Twig pack`:                  https://marketplace.visualstudio.com/items?itemName=bajdzis.vscode-twig-pack

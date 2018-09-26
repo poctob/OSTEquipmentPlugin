@@ -192,21 +192,22 @@ class EquipmentPlugin extends Plugin
     }
     public function needUpgrade()
     {
-        $sql = 'SELECT version FROM ' . PLUGIN_TABLE . ' WHERE name=\'Equipment Manager\'';
+        // $sql = 'SELECT version FROM ' . PLUGIN_TABLE . ' WHERE name=\'Equipment Manager\'';
 
-        if (!($res = db_query($sql))) {
-            return true;
-        } else {
-            $ht = db_fetch_array($res);
-            if (floatval($ht['version']) < floatval(EQUIPMENT_PLUGIN_VERSION)) {
-                return true;
-            }
-        }
+        // if (!($res = db_query($sql))) {
+        //     return true;
+        // } else {
+        //     $ht = db_fetch_array($res);
+        //     if (floatval($ht['version']) < floatval(EQUIPMENT_PLUGIN_VERSION)) {
+        //         return true;
+        //     }
+        // }
         return false;
     }
     public function configureUpgrade()
     {
         $installer = new \util\EquipmentInstaller();
+        echo $installer->getDBMigrationsStatus();
 
         if (!$installer->upgrade()) {
             echo "Upgrade configuration error. " . "Unable to upgrade database tables!";

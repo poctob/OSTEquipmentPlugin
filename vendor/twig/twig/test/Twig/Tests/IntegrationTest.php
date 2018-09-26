@@ -141,6 +141,11 @@ class TwigTestExtension extends Twig_Extension
             new Twig_SimpleFilter('nl2br', array($this, 'nl2br'), array('pre_escape' => 'html', 'is_safe' => array('html'))),
             new Twig_SimpleFilter('escape_something', array($this, 'escape_something'), array('is_safe' => array('something'))),
             new Twig_SimpleFilter('preserves_safety', array($this, 'preserves_safety'), array('preserves_safety' => array('html'))),
+            new Twig_SimpleFilter('static_call_string', 'TwigTestExtension::staticCall'),
+            new Twig_SimpleFilter('static_call_array', array('TwigTestExtension', 'staticCall')),
+            new Twig_SimpleFilter('magic_call', array($this, 'magicCall')),
+            new Twig_SimpleFilter('magic_call_string', 'TwigTestExtension::magicStaticCall'),
+            new Twig_SimpleFilter('magic_call_array', array('TwigTestExtension', 'magicStaticCall')),
             new Twig_SimpleFilter('*_path', array($this, 'dynamic_path')),
             new Twig_SimpleFilter('*_foo_*_bar', array($this, 'dynamic_foo')),
         );
@@ -152,8 +157,17 @@ class TwigTestExtension extends Twig_Extension
             new Twig_SimpleFunction('§', array($this, '§Function')),
             new Twig_SimpleFunction('safe_br', array($this, 'br'), array('is_safe' => array('html'))),
             new Twig_SimpleFunction('unsafe_br', array($this, 'br')),
+            new Twig_SimpleFunction('static_call_string', 'TwigTestExtension::staticCall'),
+            new Twig_SimpleFunction('static_call_array', array('TwigTestExtension', 'staticCall')),
             new Twig_SimpleFunction('*_path', array($this, 'dynamic_path')),
             new Twig_SimpleFunction('*_foo_*_bar', array($this, 'dynamic_foo')),
+        );
+    }
+
+    public function getTests()
+    {
+        return array(
+            new Twig_SimpleTest('multi word', array($this, 'is_multi_word')),
         );
     }
 
@@ -168,7 +182,7 @@ class TwigTestExtension extends Twig_Extension
     }
 
     /**
-     * nl2br which also escapes, for testing escaper filters
+     * nl2br which also escapes, for testing escaper filters.
      */
     public function escape_and_nl2br($env, $value, $sep = '<br />')
     {
@@ -176,7 +190,7 @@ class TwigTestExtension extends Twig_Extension
     }
 
     /**
-     * nl2br only, for testing filters with pre_escape
+     * nl2br only, for testing filters with pre_escape.
      */
     public function nl2br($value, $sep = '<br />')
     {
@@ -205,13 +219,109 @@ class TwigTestExtension extends Twig_Extension
         return strtoupper($value);
     }
 
+    public static function staticCall($value)
+    {
+        return "*$value*";
+    }
+
     public function br()
     {
         return '<br />';
     }
 
-    public function getName()
+    public function is_multi_word($value)
     {
-        return 'integration_test';
+        return false !== strpos($value, ' ');
+    }
+
+    public function __call($method, $arguments)
+    {
+        if ('magicCall' !== $method) {
+            throw new BadMethodCallException('Unexpected call to __call');
+        }
+
+        return 'magic_'.$arguments[0];
+    }
+
+    public static function __callStatic($method, $arguments)
+    {
+        if ('magicStaticCall' !== $method) {
+            throw new BadMethodCallException('Unexpected call to __callStatic');
+        }
+
+        return 'static_magic_'.$arguments[0];
+    }
+}
+
+/**
+ * This class is used in tests for the "length" filter and "empty" test. It asserts that __call is not
+ * used to convert such objects to strings.
+ */
+class MagicCallStub
+{
+    public function __call($name, $args)
+    {
+        throw new Exception('__call shall not be called');
+    }
+}
+
+class ToStringStub
+{
+    /**
+     * @var string
+     */
+    private $string;
+
+    public function __construct($string)
+    {
+        $this->string = $string;
+    }
+
+    public function __toString()
+    {
+        return $this->string;
+    }
+}
+
+/**
+ * This class is used in tests for the length filter and empty test to show
+ * that when \Countable is implemented, it is preferred over the __toString()
+ * method.
+ */
+class CountableStub implements \Countable
+{
+    private $count;
+
+    public function __construct($count)
+    {
+        $this->count = $count;
+    }
+
+    public function count()
+    {
+        return $this->count;
+    }
+
+    public function __toString()
+    {
+        throw new Exception('__toString shall not be called on \Countables');
+    }
+}
+
+/**
+ * This class is used in tests for the length filter.
+ */
+class IteratorAggregateStub implements \IteratorAggregate
+{
+    private $data;
+
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->data);
     }
 }

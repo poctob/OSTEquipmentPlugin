@@ -13,13 +13,16 @@
  */
 namespace controller;
 
-class EquipmentStatus extends Controller {
+class EquipmentStatus extends Controller
+{
 
-    protected function getEntityClassName() {
-        return 'model\EquipmentStatus';
+    protected function getEntityClassName()
+    {
+        return '\EquipmentDB\EquipmentDB\OstEquipmentStatus';
     }
 
-    public function statusItemsJsonAction($status_id) {
+    public function statusItemsJsonAction($status_id)
+    {
         $equipment = Equipment_Status::getEquipment($status_id);
         $items = array();
 
@@ -31,7 +34,7 @@ class EquipmentStatus extends Controller {
                     'category' => $item->getCategory()->getName(),
                     'status' => $item->getStatus()->getName(),
                     'published' => $item->isPublished() ? 'Yes' : 'No',
-                    'active' => $item->isActive() ? 'Yes' : 'No'
+                    'active' => $item->isActive() ? 'Yes' : 'No',
                 );
                 $items[] = $item_data;
             }
@@ -39,21 +42,24 @@ class EquipmentStatus extends Controller {
         echo json_encode($items);
     }
 
-    protected function getListColumns() {
+    protected function getListColumns()
+    {
         return array(
             array('field' => 'name', 'headerText' => 'Name', 'sortable' => 'true'),
             array('field' => 'color', 'headerText' => 'Color', 'sortable' => 'true'),
             array('field' => 'image', 'headerText' => 'Image', 'sortable' => 'true'),
             array('field' => 'equipments', 'headerText' => 'Equipment', 'sortable' => 'true'),
-            array('field' => 'baseline', 'headerText' => 'Is Default?', 'sortable' => 'true')
+            array('field' => 'baseline', 'headerText' => 'Is Default?', 'sortable' => 'true'),
         );
     }
 
-    protected function getTitle($plural = true) {
+    protected function getTitle($plural = true)
+    {
         return 'Equipment Status';
     }
 
-    protected function getViewDirectory() {
+    protected function getViewDirectory()
+    {
         return 'status';
     }
 
