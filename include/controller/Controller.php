@@ -7,31 +7,38 @@ namespace controller;
  *
  * @author Alex Pavlunenko <alexp at xpresstek.net>
  */
-require_once(INCLUDE_DIR . 'class.staff.php');
+require_once INCLUDE_DIR . 'class.staff.php';
+require_once '../../vendor/autoload.php';
+require_once '../../generated-conf/config.php';
 
-abstract class Controller {
-   
-    protected abstract function getEntityClassName();
+abstract class Controller
+{
 
-    protected function getListTemplateName() {
+    abstract protected function getEntityClassName();
+
+    protected function getListTemplateName()
+    {
         return 'listTemplate.html.twig';
     }
 
-    protected function getViewTemplateName() {
+    protected function getViewTemplateName()
+    {
         return 'viewTemplate.html.twig';
     }
 
-    protected abstract function getListColumns();
+    abstract protected function getListColumns();
 
-    protected abstract function getTitle($plural = true);
+    abstract protected function getTitle($plural = true);
 
-    protected abstract function getViewDirectory();
+    abstract protected function getViewDirectory();
 
-    protected function defaultAction() {
+    protected function defaultAction()
+    {
         $this->listAction();
     }
 
-    public function render($template, $args = array()) {
+    public function render($template, $args = array())
+    {
         $loader = new \Twig_Loader_Filesystem(EQUIPMENT_VIEWS_DIR);
         $twig = new \Twig_Environment($loader);
 
@@ -49,10 +56,11 @@ abstract class Controller {
         }
 
         echo $twig->render($template,
-                $args);
+            $args);
     }
 
-    public static function setFlash($severity, $summary, $details) {
+    public static function setFlash($severity, $summary, $details)
+    {
         if (!empty($_SESSION['flash'])) {
             unset($_SESSION['flash']);
         }
@@ -60,13 +68,14 @@ abstract class Controller {
         $flash = array(
             'severity' => $severity,
             'summary' => $summary,
-            'details' => $details
+            'details' => $details,
         );
 
         $_SESSION['flash'] = $flash;
     }
 
-    public function listJsonAction() {
+    public function listJsonAction()
+    {
         $properties = array();
         $entityClass = $this->getEntityClassName();
         $items = $entityClass::getAll();
@@ -77,17 +86,19 @@ abstract class Controller {
         echo json_encode($properties);
     }
 
-    public function listAction() {
+    public function listAction()
+    {
         $args = array();
         $args['title'] = $this->getTitle();
         $args['dt_columns'] = $this->getListColumns();
 
         $template_name = $this->getListTemplateName();
         $this->render($template_name,
-                $args);
+            $args);
     }
 
-    public function viewAction($id = 0, $args = array()) {
+    public function viewAction($id = 0, $args = array())
+    {
 
         if ($id >= 0) {
             $entityClass = $this->getEntityClassName();
@@ -101,10 +112,11 @@ abstract class Controller {
         $args['stitle'] = $this->getTitle(false);
         $args['form_path'] = $this->getViewDirectory();
         $this->render($template_name,
-                $args);
+            $args);
     }
 
-    public function saveAction() {
+    public function saveAction()
+    {
 
         $entityClass = $this->getEntityClassName();
         $object = new $entityClass($_POST['id']);
@@ -112,53 +124,56 @@ abstract class Controller {
         if (isset($object)) {
             if (!$object->saveFromData($_POST)) {
                 $this::setFlash('error',
-                        'Failed to save item!',
-                        print_r($object->getErrors()));
+                    'Failed to save item!',
+                    print_r($object->getErrors()));
             } else {
                 $object->postSave($_POST);
                 $this::setFlash('info',
-                        'Success!',
-                        'Item Saved');
+                    'Success!',
+                    'Item Saved');
             }
         }
         $this->defaultAction();
     }
 
-    public function deleteAction() {
+    public function deleteAction()
+    {
         $entityClass = $this->getEntityClassName();
         $item = new $entityClass($_POST['id']);
         if (isset($item) && $item->delete()) {
             $this::setFlash('info',
-                    'Success!',
-                    'Item Deleted');
+                'Success!',
+                'Item Deleted');
         } else {
             $this::setFlash('error',
-                    '!',
-                    'Failed to delete Item!');
+                '!',
+                'Failed to delete Item!');
         }
         $this->listAction();
     }
 
-    public function openTicketsJsonAction($item_id) {
+    public function openTicketsJsonAction($item_id)
+    {
         $entityClass = $this->getEntityClassName();
         $ticket_id = $entityClass::getTicketList('open',
-                        $item_id);
+            $item_id);
         $tickets = $this->ticketsAction('open',
-                $ticket_id);
+            $ticket_id);
         echo json_encode($tickets);
     }
 
-    public function closedTicketsJsonAction($item_id) {
+    public function closedTicketsJsonAction($item_id)
+    {
         $entityClass = $this->getEntityClassName();
         $ticket_id = $entityClass::getTicketList('closed',
-                        $item_id);
+            $item_id);
         $tickets = $this->ticketsAction('closed',
-                $ticket_id);
+            $ticket_id);
         echo json_encode($tickets);
     }
-    
 
-    protected function ticketsAction($type, $ticket_id) {
+    protected function ticketsAction($type, $ticket_id)
+    {
         $tickets = array();
         foreach ($ticket_id as $id) {
             $ticket = \Ticket::lookup($id['ticket_id']);
@@ -188,7 +203,8 @@ abstract class Controller {
         return $tickets;
     }
 
-    private function elapsedTime($sec) {
+    private function elapsedTime($sec)
+    {
 
         if (!$sec || !is_numeric($sec)) {
             return "";
@@ -200,10 +216,14 @@ abstract class Controller {
         $rem = $rem % 3600;
         $mins = round($rem / 60);
 
-        if ($days > 0)
+        if ($days > 0) {
             $tstring = $days . 'd, ';
-        if ($hrs > 0)
+        }
+
+        if ($hrs > 0) {
             $tstring = $tstring . $hrs . 'h, ';
+        }
+
         $tstring = $tstring . $mins . 'm';
 
         return $tstring;

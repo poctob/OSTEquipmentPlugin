@@ -12,15 +12,13 @@
  * @author Alex Pavlunenko <alexp at xpresstek.net>
  */
 
-set_include_path(get_include_path().PATH_SEPARATOR.dirname(__file__).'/include');
+set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__file__) . '/include');
 return array(
-    'id' =>             'xpresstek:equipment', # notrans
-    'version' =>        '0.4',
-    'name' =>           'Equipment Manager',
-    'author' =>         'Alex Pavlunenko',
-    'description' =>    'Provides equipment asset management capability.',
-    'url' =>            'http://www.xpresstek.net/osticket/plugins/equipment',
-    'plugin' =>         'equipment.php:EquipmentPlugin'
+    'id' => 'xpresstek:equipment', # notrans
+    'version' => '2.0',
+    'name' => 'Equipment Manager',
+    'author' => 'Alex Pavlunenko',
+    'description' => 'Provides equipment asset management capability.',
+    'url' => 'http://www.xpresstek.net/osticket/plugins/equipment',
+    'plugin' => 'equipment.php:EquipmentPlugin',
 );
-
-?>
